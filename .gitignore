@@ -1,2 +1,8 @@
+# IDE folders
 .idea
+.vscode
+
+# Python virtual environment folders
 venv
+env
+
