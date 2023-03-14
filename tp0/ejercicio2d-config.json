@@ -19,7 +19,7 @@
     "statuses": ["POISON", "BURN", "PARALYSIS", "SLEEP", "FREEZE", "NONE"],
 
 
-    "first_pokemon": "caterpie",
-    "second_pokemon": "mewtwo",
+    "first_pokemon": "onix",
+    "second_pokemon": "snorlax",
     "default_level": 100
 }
