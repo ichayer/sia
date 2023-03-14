@@ -16,5 +16,11 @@
         "heavyball"
     ],
     "hp_percentages": [1.0, 0.8, 0.6, 0.4, 0.2, 0.0],
-    "pokemon_name": "caterpie"
+    "statuss": ["POISON", "BURN", "PARALYSIS", "SLEEP", "FREEZE", "NONE"],
+    
+    "default_pokemon_name": "caterpie",
+    "default_hp_percentage": 1.0,
+    "default_level": 100,
+    "default_status": "NONE",
+    "default_pokeball": "pokeball"
 }
