@@ -1,12 +1,5 @@
 {
-    "iterations": 100,
     "level": 100,
     "status": "NONE",
-    "hp_percentage": 1.0,
-    "pokeballs": [
-        "pokeball",
-        "ultraball",
-        "fastball",
-        "heavyball"
-    ]
+    "hp_percentage": 1.0
 }

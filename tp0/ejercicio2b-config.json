@@ -1,7 +1,6 @@
 {
-    "iterations": 1000,
     "level": 100,
-    "hp_percentages": [1.0, 0.8, 0.6, 0.4, 0.2, 0.0],
+    "hp_percentages": [1.0, 0.8, 0.6, 0.4, 0.2],
     "status": "NONE",
     "pokeball": "pokeball",
     "pokemon_name": "caterpie"

@@ -1,0 +1,9 @@
+{
+	"iterations": 100,
+	"pokeballs": [
+			"pokeball",
+			"ultraball",
+			"fastball",
+			"heavyball"
+	]
+}

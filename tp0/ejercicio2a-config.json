@@ -1,7 +1,4 @@
 {
-    "iterations": 10000,
     "level": 100,
-    "hp_percentage": 1.0,
-    "pokeball": "pokeball",
-    "pokemon_name": "snorlax"
+    "hp_percentage": 1.0
 }
