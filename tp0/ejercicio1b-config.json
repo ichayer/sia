@@ -1,13 +1,6 @@
 {
-    "iterations": 250,
     "level": 100,
     "status": "NONE",
     "hp_percentage": 1.0,
-    "pokeballs": [
-        "pokeball",
-        "ultraball",
-        "fastball",
-        "heavyball"
-    ],
     "pokeball_compare": "pokeball"
 }
