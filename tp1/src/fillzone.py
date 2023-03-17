@@ -30,6 +30,9 @@ class FillzoneState:
     def is_valid_move(self, color_index: int) -> bool:
         return self.grid[0][0] != color_index and 0 < color_index < self.color_count
     
+    def is_solved(self):
+        return self.grid[0][0] == self.grid[-1][-1] 
+    
     def __str__(self) -> str:
         s = ''
         for y in range(0, self.grid_size):
