@@ -11,6 +11,8 @@ class FillzoneState:
     
      
     def play_color(self, color_index: int):
+        if not self.is_valid_move(color_index):
+            return self
         from_color = self.grid[0][0]
         res = clone_fillzone(self)
         border = deque([(0, 0)])
@@ -25,6 +27,8 @@ class FillzoneState:
                 border.append(neighbor)
         return res
     
+    def is_valid_move(self, color_index: int) -> bool:
+        return self.grid[0][0] != color_index and 0 < color_index < self.color_count
     
     def __str__(self) -> str:
         s = ''
