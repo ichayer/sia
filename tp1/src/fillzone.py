@@ -9,7 +9,7 @@ class FillzoneState:
         self.color_count = color_count
         self.grid = [[0 for _ in range(grid_size)] for _ in range(grid_size)]
     
-     
+    
     def play_color(self, color_index: int):
         if not self.is_valid_move(color_index):
             return self
@@ -27,8 +27,10 @@ class FillzoneState:
                 border.append(neighbor)
         return res
     
+    
     def is_valid_move(self, color_index: int) -> bool:
         return self.grid[0][0] != color_index and 0 <= color_index < self.color_count
+    
     
     def is_solved(self):
         for y in range(self.grid_size):
@@ -37,6 +39,7 @@ class FillzoneState:
                     return False
         return True
     
+    
     def __str__(self) -> str:
         s = ''
         for y in range(0, self.grid_size):
@@ -44,7 +47,20 @@ class FillzoneState:
                 s += self.display_chars[self.grid[x][y]].__str__()
             s += '\n'
         return s
-
+    
+    
+    def __eq__(self, other: object) -> bool:
+        if (self.grid_size != other.grid_size or self.color_count != other.color_count):
+            return False
+        
+        for y in range(0, self.grid_size):
+            for x in range(0, self.grid_size):
+                if (self.grid[x][y] != other.grid[x][y]):
+                    return False
+        
+        return True
+    
+    
     def __hash__(self) -> int:
         h = 0
         for y in range(0, self.grid_size):
