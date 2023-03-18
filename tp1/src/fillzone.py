@@ -45,6 +45,13 @@ class FillzoneState:
             s += '\n'
         return s
 
+    def __hash__(self) -> int:
+        h = 0
+        for y in range(0, self.grid_size):
+            for x in range(0, self.grid_size):
+                h = h * 31 + self.grid[x][y]
+        return h
+
 
 def new_fillzone_game(grid_size, color_count) -> FillzoneState:
     g = FillzoneState(grid_size, color_count)
