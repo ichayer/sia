@@ -12,7 +12,10 @@ class FillzoneState:
     
     def play_color(self, color_index: int):
         if not self.is_valid_move(color_index):
+            raise ValueError('Attempted to play an invalid move: ' + color_index.__str__() + ' but color_count is ' + self.color_count.__str__())
+        if color_index == self.grid[0][0]:
             return self
+        
         from_color = self.grid[0][0]
         res = clone_fillzone(self)
         border = deque([(0, 0)])
@@ -29,7 +32,7 @@ class FillzoneState:
     
     
     def is_valid_move(self, color_index: int) -> bool:
-        return self.grid[0][0] != color_index and 0 <= color_index < self.color_count
+        return 0 <= color_index < self.color_count
     
     
     def is_solved(self):
