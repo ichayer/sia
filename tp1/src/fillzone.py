@@ -4,7 +4,7 @@ from collections import deque
 class FillzoneState:
     display_chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     
-    def __init__(self, grid_size: int, color_count: int):
+    def __init__(self, grid_size: int, color_count: int) -> None:
         self.grid_size = grid_size
         self.color_count = color_count
         self.grid = [[0 for _ in range(grid_size)] for _ in range(grid_size)]
@@ -35,7 +35,7 @@ class FillzoneState:
         return 0 <= color_index < self.color_count
     
     
-    def is_solved(self):
+    def is_solved(self) -> bool:
         for y in range(self.grid_size):
             for x in range(self.grid_size):
                 if (self.grid[x][y] != self.grid[0][0]):
@@ -86,3 +86,11 @@ def clone_fillzone(fz: FillzoneState) -> FillzoneState:
         for x in range(g.grid_size):
             g.grid[x][y] = fz.grid[x][y]
     return g
+
+
+class FillzoneSolveResult:
+    def __init__(self, solution: list[int], nodes_expanded: int, border_nodes: int, time) -> None:
+        self.solution = solution
+        self.nodes_expanded = nodes_expanded
+        self.border_nodes = border_nodes
+        self.time = time

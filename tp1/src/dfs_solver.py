@@ -1,8 +1,10 @@
-from .fillzone import FillzoneState
+from .fillzone import FillzoneState, FillzoneSolveResult
+from time import perf_counter
 
-def dfs_solve(fz: FillzoneState) -> list[int]:
+def dfs_solve(fz: FillzoneState) -> FillzoneSolveResult:
     explored = set()
     border = [(fz, None)]
+    time_start = perf_counter()
     
     while len(border) > 0:
         current = border.pop()
@@ -13,7 +15,7 @@ def dfs_solve(fz: FillzoneState) -> list[int]:
                 result.append(current[0].grid[0][0])
                 current = current[1]
             result.reverse()
-            return result
+            return FillzoneSolveResult(result, len(explored), len(border), perf_counter() - time_start)
         
         if current[0] in explored:
             continue
@@ -27,4 +29,4 @@ def dfs_solve(fz: FillzoneState) -> list[int]:
         
     
     # All fillzone games are solvable. This should never happen.
-    return None
+    return FillzoneSolveResult(None, len(explored), len(border), perf_counter() - time_start)
