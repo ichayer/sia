@@ -26,7 +26,7 @@ def a_star_solver(state: FillzoneState, heuristic: callable(FillzoneState)) -> F
     time_start = perf_counter()
 
     while len(border) > 0:
-        # node_current is always the node with less f(n)
+        # node_current is always the node with less f(n), or, less h(n) in case their f(n)s are equals
         _, node_current = heapq.heappop(border)
         state_current = node_current.state
 
