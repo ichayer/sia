@@ -71,6 +71,9 @@ class FillzoneState:
                 h = h * 31 + self.grid[x][y]
         return h
 
+    def get_target_color(self) -> int:
+        return self.grid[0][0]
+
 
 def new_fillzone_game(grid_size, color_count) -> FillzoneState:
     g = FillzoneState(grid_size, color_count)
