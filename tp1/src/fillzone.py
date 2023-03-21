@@ -88,6 +88,27 @@ def clone_fillzone(fz: FillzoneState) -> FillzoneState:
     return g
 
 
+def find_conquered_border(fz: FillzoneState) -> tuple[set[tuple[int, int]], set[tuple[int, int]]]:
+    conquered = set()
+    border = [(0, 0)]
+    final_border = set()
+    
+    while len(border) > 0:
+        c = border.pop()
+        if c in conquered:
+            continue
+        conquered.add(c)
+        for neighbor in [(c[0]-1, c[1]), (c[0]+1, c[1]), (c[0], c[1]-1), (c[0], c[1]+1)]:
+            if neighbor[0] < 0 or neighbor[0] >= fz.grid_size or neighbor[1] < 0 or neighbor[1] >= fz.grid_size:
+                continue
+            if fz.grid[neighbor[0]][neighbor[1]] == fz.grid[0][0]:
+                border.append(neighbor)
+            else:
+                final_border.add(neighbor)
+    
+    return conquered, final_border
+
+
 class FillzoneSolveResult:
     def __init__(self, solution: list[int], nodes_expanded: int, border_nodes: int, time) -> None:
         self.solution = solution

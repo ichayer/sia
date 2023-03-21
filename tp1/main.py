@@ -1,4 +1,4 @@
-from src.fillzone import FillzoneState, new_fillzone_game
+from src.fillzone import FillzoneState, new_fillzone_game, find_conquered_border
 from src.bfs_solver import bfs_solve
 from src.dfs_solver import dfs_solve
 from src.heuristics import AdmissibleHeuristics, NonAdmissibleHeuristics
@@ -20,7 +20,7 @@ next = fz
 for i in range(len(solution)):
     move = solution[i]
     next = next.play_color(move)
-    print("Move " + str(i) + ": color " + str(move))
+    print("Move " + str(i) + ": color " + str(move) + " (" + str(NonAdmissibleHeuristics.amount_of_unconquered_cells(next)) + " colors left)")
     print(next)
 
 print("-------------------- RUNNING DFS --------------------")
@@ -36,7 +36,9 @@ next = fz
 for i in range(len(solution)):
     move = solution[i]
     next = next.play_color(move)
-    print("Move " + str(i) + ": color " + str(move))
+    conquered, border = find_conquered_border(next)
+    print("Move " + str(i) + ": color " + str(move) + " (" + str(NonAdmissibleHeuristics.amount_of_unconquered_cells(next)) + " colors left)")
+    print(str(len(conquered)) + " Conquered, " + str(len(border)) + " Bordered: " + str(list(border)))
     print(next)
 
 
