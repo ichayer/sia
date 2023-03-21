@@ -76,7 +76,7 @@ def new_fillzone_game(grid_size, color_count) -> FillzoneState:
     g = FillzoneState(grid_size, color_count)
     for y in range(g.grid_size):
         for x in range(g.grid_size):
-            g.grid[x][y] = randrange(0, g.color_count - 1)
+            g.grid[x][y] = randrange(0, g.color_count)
     return g
 
 

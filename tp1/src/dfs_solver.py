@@ -5,7 +5,8 @@ def dfs_solve(fz: FillzoneState) -> FillzoneSolveResult:
     explored = set()
     border = [(fz, None)]
     time_start = perf_counter()
-    
+
+
     while len(border) > 0:
         current = border.pop()
         
@@ -21,10 +22,10 @@ def dfs_solve(fz: FillzoneState) -> FillzoneSolveResult:
             continue
         
         explored.add(current[0])
-        for nextmove in range(fz.color_count):
-            if nextmove == current[0].grid[0][0]:
+        for color in range(fz.color_count):
+            if color == current[0].grid[0][0]:
                 continue
-            next = current[0].play_color(nextmove)
+            next = current[0].play_color(color)
             border.append((next, current))
         
     
