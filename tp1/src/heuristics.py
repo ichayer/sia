@@ -4,12 +4,12 @@ from .fillzone import FillzoneState, find_conquered_border
 # def heuristic_name(fz: FillzoneState) -> int
 
 class AdmissibleHeuristics:
-    def different_colors_in_game(fz: FillzoneState) -> int:
+    def different_colors_in_game_minus_one(fz: FillzoneState) -> int:
         colors = set()
         for y in range(fz.grid_size):
             for x in range(fz.grid_size):
                 colors.add(fz.grid[x][y])
-        return len(colors)
+        return len(colors) - 1
     
     
     def different_colors_in_border(fz: FillzoneState) -> int:

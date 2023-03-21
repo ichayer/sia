@@ -20,7 +20,7 @@ next = fz
 for i in range(len(solution)):
     move = solution[i]
     next = next.play_color(move)
-    print("Move " + str(i) + ": color " + str(move) + " (" + str(NonAdmissibleHeuristics.amount_of_unconquered_cells(next)) + " colors left)")
+    print("Move " + str(i) + ": color " + str(move) + " (" + str(AdmissibleHeuristics.different_colors_in_game_minus_one(next)+1) + " colors left)")
     print(next)
 
 print("-------------------- RUNNING DFS --------------------")
@@ -37,7 +37,7 @@ for i in range(len(solution)):
     move = solution[i]
     next = next.play_color(move)
     conquered, border = find_conquered_border(next)
-    print("Move " + str(i) + ": color " + str(move) + " (" + str(NonAdmissibleHeuristics.amount_of_unconquered_cells(next)) + " colors left)")
+    print("Move " + str(i) + ": color " + str(move) + " (" + str(NonAdmissibleHeuristics.amount_of_unconquered_cells(next)) + " unconquered cells left)")
     print(str(len(conquered)) + " Conquered, " + str(len(border)) + " Bordered: " + str(list(border)))
     print(next)
 
