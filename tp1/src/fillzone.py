@@ -12,20 +12,20 @@ class FillzoneState:
     
     def play_color(self, color_index: int):
         if not self.is_valid_move(color_index):
-            raise ValueError('Attempted to play an invalid move: ' + color_index.__str__() + ' but color_count is ' + self.color_count.__str__())
+            raise ValueError('Attempted to play an invalid move: ' + str(color_index) + ' but color_count is ' + str(self.color_count))
         if color_index == self.grid[0][0]:
             return self
         
         from_color = self.grid[0][0]
         res = clone_fillzone(self)
         border = deque([(0, 0)])
-        while (len(border) > 0):
+        while len(border) > 0:
             c = border.pop()
             res.grid[c[0]][c[1]] = color_index
             for neighbor in [(c[0]-1, c[1]), (c[0]+1, c[1]), (c[0], c[1]-1), (c[0], c[1]+1)]:
-                if (neighbor[0] < 0 or neighbor[0] >= res.grid_size or neighbor[1] < 0 or neighbor[1] >= res.grid_size):
+                if neighbor[0] < 0 or neighbor[0] >= res.grid_size or neighbor[1] < 0 or neighbor[1] >= res.grid_size:
                     continue
-                if (res.grid[neighbor[0]][neighbor[1]] != from_color or res.grid[neighbor[0]][neighbor[1]] == color_index):
+                if res.grid[neighbor[0]][neighbor[1]] != from_color or res.grid[neighbor[0]][neighbor[1]] == color_index:
                     continue
                 border.append(neighbor)
         return res
@@ -47,7 +47,7 @@ class FillzoneState:
         s = ''
         for y in range(0, self.grid_size):
             for x in range(0, self.grid_size):
-                s += self.display_chars[self.grid[x][y]].__str__()
+                s += str(self.display_chars[self.grid[x][y]])
             s += '\n'
         return s
     
