@@ -18,6 +18,12 @@ class AdmissibleHeuristics:
         for cell in border:
             colors.add(fz.grid[cell[0]][cell[1]])
         return len(colors)
+      
+    def combination_of_heuristics(fz: FillzoneState, *heuristics) -> int:
+      ret = 0
+      for heuristic in heuristics:
+        ret += heuristic(fz)
+      return ret
 
 
 class NonAdmissibleHeuristics:

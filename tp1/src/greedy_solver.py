@@ -37,7 +37,7 @@ def greedy_solve(fz: FillzoneState, heuristic: callable(FillzoneState)) -> Fillz
             
             next_list[heuristic_result].append(next)
             
-        for heuristic_return in sorted(next_list.keys()):
+        for heuristic_return in sorted(next_list.keys(), reverse=True):
           for state in next_list[heuristic_return]:
             border.append((state, current))
         
