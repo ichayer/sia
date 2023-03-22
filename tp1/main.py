@@ -73,7 +73,7 @@ elif algorithm == "GREEDY":
 
 elif algorithm == "A":
     print("-------------------- RUNNING A* --------------------")
-    result = a_star_solver(fz, AdmissibleHeuristics.different_colors_in_game_minus_one)
+    result = a_star_solver(fz, AdmissibleHeuristics.different_colors_in_border)
     solution = result.solution
     print("A* Solution:")
     print("Time: " + str(result.time) + "s, Nodes Expanded: " + str(result.nodes_expanded) + ", Border Nodes: " + str(result.border_nodes))
