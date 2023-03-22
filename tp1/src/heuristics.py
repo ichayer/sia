@@ -20,10 +20,11 @@ class AdmissibleHeuristics:
         return len(colors)
       
     def combination_of_heuristics(fz: FillzoneState, *heuristics) -> int:
-      ret = 0
+      ret = []
       for heuristic in heuristics:
-        ret += heuristic(fz)
-      return ret
+        ret.append(heuristic(fz))
+        
+      return max(ret)
 
 
 class NonAdmissibleHeuristics:
