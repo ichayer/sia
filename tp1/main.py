@@ -4,7 +4,7 @@ from src.fillzone import FillzoneState, new_fillzone_game, find_conquered_border
 from src.bfs_solver import bfs_solve
 from src.dfs_solver import dfs_solve
 from src.greedy_solver import greedy_solve
-from src.a_star_solve import a_star_solve
+from src.a_star_solver import a_star_solve
 from src.heuristics import AdmissibleHeuristics, NonAdmissibleHeuristics
 
 with open("config.json", "r") as f:
