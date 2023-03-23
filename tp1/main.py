@@ -4,7 +4,7 @@ from src.fillzone import FillzoneState, new_fillzone_game, find_conquered_border
 from src.bfs_solver import bfs_solve
 from src.dfs_solver import dfs_solve
 from src.greedy_solver import greedy_solve
-from src.a_star_solver import a_star_solver
+from src.a_star_solve import a_star_solve
 from src.heuristics import AdmissibleHeuristics, NonAdmissibleHeuristics
 
 with open("config.json", "r") as f:
@@ -73,7 +73,7 @@ elif algorithm == "GREEDY":
 
 elif algorithm == "A":
     print("-------------------- RUNNING A* --------------------")
-    result = a_star_solver(fz, AdmissibleHeuristics.different_colors_in_border)
+    result = a_star_solve(fz, AdmissibleHeuristics.different_colors_in_border)
     solution = result.solution
     print("A* Solution:")
     print("Time: " + str(result.time) + "s, Nodes Expanded: " + str(result.nodes_expanded) + ", Border Nodes: " + str(result.border_nodes))

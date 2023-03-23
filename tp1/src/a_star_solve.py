@@ -20,7 +20,7 @@ class FillzoneAStarNode:
 
         return self.f_value() < other.f_value()
 
-def a_star_solver(state: FillzoneState, heuristic: callable(FillzoneState)) -> FillzoneSolveResult:
+def a_star_solve(state: FillzoneState, heuristic: callable(FillzoneState)) -> FillzoneSolveResult:
     states_explored = set()
     border = [(heuristic(state), FillzoneAStarNode(state, 0, 0, None))]
     time_start = perf_counter()
@@ -62,7 +62,7 @@ def a_star_solver(state: FillzoneState, heuristic: callable(FillzoneState)) -> F
 def get_fill_zone_zone_result(border, node_current, states_explored, time_start) -> FillzoneSolveResult:
 
     result = []
-    while node_current is not None:
+    while node_current.parent is not None:
         result.append(node_current.state.grid[0][0])
         node_current = node_current.parent
     result.reverse()
