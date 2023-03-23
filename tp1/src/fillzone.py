@@ -2,7 +2,7 @@ from random import randrange
 from collections import deque
 
 class FillzoneState:
-    display_chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    display_chars = "🟥🟩🟦🟨🟪🟫⬜⬛89ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     
     def __init__(self, grid_size: int, color_count: int) -> None:
         self.grid_size = grid_size

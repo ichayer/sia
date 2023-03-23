@@ -1,5 +1,5 @@
 {
-  "grid_size": 8,
-  "color_count": 5,
+  "grid_size": 5,
+  "color_count": 3,
   "algorithm": "A"
 }
