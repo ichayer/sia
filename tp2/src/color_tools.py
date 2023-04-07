@@ -10,6 +10,13 @@ from colr import color
 
 # En el main hay un ejemplo
 
+# Página con ecuaciones de los pasajes entre espacios
+# http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html 
+
+# Página para mezclar colores para referencia
+# https://pinetools.com/es/mezclar-colores 
+
+
 class RGBColor:
     def __init__(self, r: int, g: int, b: int) -> None:
         if r<0 or r>255 or g<0 or g>255 or b<0 or b>255:
