@@ -18,7 +18,7 @@ def uniform_multigen(population: list[Individual], generation: int) -> None:
 def complete(population: list[Individual], generation: int) -> None:
     r = random.uniform(0, 100)
     probability = max(100 / math.pow(2, generation), 2)
-    change = 3
+    change = max(100 / math.pow(2, generation), 5)
     if probability >= r:
         for individual in population:
             sum_ratios = 0

@@ -3,5 +3,5 @@
 	"crossover": 0,
 	"mutation": 3,
 	"finish": 0,
-	"population": 20
+	"population": 10
 }

@@ -1,5 +1,6 @@
 import math
-from colormath.color_objects import XYZColor
+from colormath.color_objects import XYZColor, LabColor
+from colormath.color_conversions import convert_color
 
 
 class MyXYZColor:
@@ -26,6 +27,11 @@ class MyXYZColor:
         return other + str(self)
 
 
-def similitude(c1: MyXYZColor, c2: MyXYZColor) -> float:
+def similitude(c1: XYZColor, c2: XYZColor) -> float:
+    lab1 = convert_color(c1, LabColor, through_rgb_type=LabColor, target_illuminant='d50')
+    lab2 = convert_color(c2, LabColor, through_rgb_type=LabColor, target_illuminant='d50')
     return math.sqrt(
-        c1.color.xyz_x * c2.color.xyz_x + c1.color.xyz_y * c2.color.xyz_y + c1.color.xyz_z * c2.color.xyz_z)
+        (lab1.lab_l - lab2.lab_l)*(lab1.lab_l - lab2.lab_l) + (lab1.lab_a - lab2.lab_a)*(lab1.lab_a - lab2.lab_a) + (lab1.lab_b - lab2.lab_b)*(lab1.lab_b - lab2.lab_b))
+
+
+    # return 1 - math.sqrt((c1.xyz_x - c2.xyz_x)*(c1.xyz_x - c2.xyz_x) + (c1.xyz_y - c2.xyz_y)*(c1.xyz_y - c2.xyz_y) + (c1.xyz_z - c2.xyz_z)*(c1.xyz_z - c2.xyz_z))

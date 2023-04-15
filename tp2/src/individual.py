@@ -33,8 +33,7 @@ class Individual:
             map(lambda x: (x[0].color.xyz_x * x[1] / 100, x[0].color.xyz_y * x[1] / 100, x[0].color.xyz_z * x[1] / 100),
                 self.color_ratios))
         sum_reduce = functools.reduce(lambda x, y: [x[0] + y[0], x[1] + y[1], x[2] + y[2]], sum_map)
-        self.xyz = XYZColor(sum_reduce[0], sum_reduce[1],
-                            sum_reduce[2])
+        self.xyz = XYZColor(sum_reduce[0], sum_reduce[1], sum_reduce[2])
         self.rgb = convert_color(self.xyz, AdobeRGBColor, through_rgb_type=AdobeRGBColor, target_illuminant='d50')
 
     def mutate(self, gen: int, allele: float):
