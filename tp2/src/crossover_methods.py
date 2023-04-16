@@ -100,7 +100,32 @@ def annular(parents: list[Individual]) -> list[Individual]:
 
 
 def uniform(parents: list[Individual]) -> list[Individual]:
-    return 4
+    children = []
+    ratios1 = []
+    ratios2 = []
+    sum1 = 0
+    sum2 = 0
+    parent1 = parents[0]
+    parent2 = parents[1]
+    p = 0.5
+    for i in range(len(parent1.color_ratios)):
+        r = random.randint(0, 1)
+        if r <= p:
+            ratios1.append(parent1.color_ratios[i])
+            sum1 += parent1.color_ratios[i][1]
+            ratios2.append(parent2.color_ratios[i])
+            sum2 += parent2.color_ratios[i][1]
+        else:
+            ratios1.append(parent2.color_ratios[i])
+            sum1 += parent2.color_ratios[i][1]
+            ratios2.append(parent1.color_ratios[i])
+            sum2 += parent1.color_ratios[i][1]
+
+    if sum1 != 0:
+        children.append(Individual(ratios1))
+    if sum2 != 0:
+        children.append(Individual(ratios2))
+    return children
 
 
 crossover_list = {
