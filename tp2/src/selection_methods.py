@@ -72,15 +72,10 @@ def elite(actual_gen: list[Individual], new_gen: list[Individual], population_li
 
     fitness, sum_fitness = _population_fitness(all_gen, color_target)
 
-    fitness_copy = [fitness[i] for i in range(len(fitness))]
-    fitness_copy.sort()
-    min_fitness = fitness_copy[-population_limit - 1]
+    array = [(all_gen[i], fitness[i]) for i in range(len(all_gen))]
+    array.sort(key=lambda x:x[1])
 
-    next_gen = []
-    for i in range(len(all_gen)):
-        if fitness[i] >= min_fitness:
-            next_gen.append(all_gen[i])
-
+    next_gen = [array[-i-1][0] for i in range(0, population_limit)]
     return next_gen
 
 
