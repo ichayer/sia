@@ -66,7 +66,22 @@ def roulette(actual_gen: list[Individual], new_gen: list[Individual], population
 
 def elite(actual_gen: list[Individual], new_gen: list[Individual], population_limit: int, color_target: XYZColor) -> \
         list[Individual]:
-    pass
+    all_gen = actual_gen + new_gen
+    if len(all_gen) <= population_limit:
+        return all_gen
+
+    fitness, sum_fitness = _population_fitness(all_gen, color_target)
+
+    fitness_copy = [fitness[i] for i in range(len(fitness))]
+    fitness_copy.sort()
+    min_fitness = fitness_copy[-population_limit - 1]
+
+    next_gen = []
+    for i in range(len(all_gen)):
+        if fitness[i] >= min_fitness:
+            next_gen.append(all_gen[i])
+
+    return next_gen
 
 
 def det_tournaments(actual_gen: list[Individual], new_gen: list[Individual], population_limit: int,

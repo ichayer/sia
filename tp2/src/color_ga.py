@@ -77,8 +77,7 @@ class ColorGeneticAlgorithm:
             # Crossover
             random.shuffle(self.actual_gen)
             for i, ind in enumerate(self.actual_gen):
-                l = crossover(self.crossover_method,
-                              [self.actual_gen[i], self.actual_gen[(i + 1) % len(self.actual_gen)]])
+                l = crossover(self.crossover_method, [self.actual_gen[i], self.actual_gen[(i + 1) % len(self.actual_gen)]])
                 for j in range(len(l)):
                     new_gen.append(l[j])
 
@@ -98,8 +97,7 @@ class ColorGeneticAlgorithm:
             """
 
             # Selection
-            self.actual_gen = selection(self.selection_method, self.actual_gen, new_gen, self.population,
-                                        self.color_target)
+            self.actual_gen = selection(self.selection_method, self.actual_gen, new_gen, self.population, self.color_target)
             """
             print("\nSelection:\n")
             """
