@@ -27,6 +27,10 @@ class ColorGeneticAlgorithm:
         self.selection_method = config["selection_method"] if "selection_method" in config else "roulette"
         self.crossover_method = config["crossover_method"] if "crossover_method" in config else "one_point"
         self.mutation_method = config["mutation_method"] if "mutation_method" in config else "complete"
+        self.mutation_method_params = config["mutation_method_params"] if "mutation_method_params" in config else {
+            "pm": 0.4,
+            "change": 10
+        }
         self.finish_method = config["finish_method"] if "finish_method" in config else ["by_time"]
         self.finish_parameters = config["finish_parameters"] if "finish_parameters" in config else {
             "generation": 15,
@@ -85,7 +89,7 @@ class ColorGeneticAlgorithm:
             """
 
             # Mutation
-            mutation(self.mutation_method, new_gen, self.generation)
+            mutation(self.mutation_method, self.mutation_method_params, new_gen, self.generation)
 
             """ # Shows individual after mutation
             print("\nMutation:\n")

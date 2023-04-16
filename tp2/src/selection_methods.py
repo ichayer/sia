@@ -78,7 +78,7 @@ selection_list = {
 }
 
 
-def selection(config_selection: int, actual_gen: list[Individual], new_gen: list[Individual], population_limit: int,
+def selection(config_selection: str, actual_gen: list[Individual], new_gen: list[Individual], population_limit: int,
               color_target: XYZColor) -> list[Individual]:
     if population_limit > len(actual_gen) + len(new_gen):
         return actual_gen + new_gen

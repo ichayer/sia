@@ -10,6 +10,10 @@
 
 	"//mutation_method_comment": "gen, limited_multigen, uniform_multigen, complete",
 	"mutation_method": "complete",
+	"mutation_method_params": {
+		"pm": 0.4,
+		"change": 10
+	},
 
 	"//finish_method_comment": "Whichever happens first, can be combined.",
 	"//finish_method_comment2": "by_time, by_generation, by_distance",

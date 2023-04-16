@@ -56,5 +56,5 @@ crossover_list = {
 }
 
 
-def crossover(config_crossover: int, parents: list[Individual]) -> list[Individual]:
+def crossover(config_crossover: str, parents: list[Individual]) -> list[Individual]:
     return crossover_list[config_crossover](parents)
