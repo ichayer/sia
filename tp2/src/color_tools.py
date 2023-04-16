@@ -3,6 +3,9 @@ from colormath.color_objects import XYZColor, LabColor
 from colormath.color_conversions import convert_color
 
 
+max_similitude = 292.5 # Closer value is 292.46538256689457297655580845757745254615134712211126179545672140
+
+
 # The similarity between two colors is calculated in the LAB space because it is the most accurate to the human eye.
 def similitude(c1: XYZColor, c2: XYZColor) -> float:
     lab1 = convert_color(c1, LabColor, through_rgb_type=LabColor, target_illuminant='d50')

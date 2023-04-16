@@ -2,7 +2,7 @@ import random
 
 from .individual import Individual
 from colormath.color_objects import XYZColor
-from .color_tools import similitude
+from .color_tools import similitude, max_similitude
 
 
 # Selection functions don't work in place. They return the new final generation (list of Individual).
@@ -17,19 +17,14 @@ def __fitness(gen: list[Individual], color_target: XYZColor):
     fitness = []
     sum_fitness = 0
     for i in range(len(gen)):
-        fitness.append(similitude(gen[i].xyz, color_target))
+        fitness.append(max_similitude - similitude(gen[i].xyz, color_target))
         sum_fitness += fitness[i]
-
-    sum_fitness_reverse = 0
-    for i in range(len(gen)):
-        fitness[i] = 1 / (fitness[i] / sum_fitness)
-        sum_fitness_reverse += fitness[i]
 
     relative_fitness = []
     accumulated_fitness = []
     sum_accumulated_fitness = 0
     for i in range(len(fitness)):
-        relative_fitness.append(fitness[i] / sum_fitness_reverse)
+        relative_fitness.append(fitness[i] / sum_fitness)
         sum_accumulated_fitness += relative_fitness[i]
         accumulated_fitness.append(sum_accumulated_fitness)
 

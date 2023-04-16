@@ -24,10 +24,10 @@ class ColorGeneticAlgorithm:
         self.color_target = convert_color(color_target, XYZColor, through_rgb_type=AdobeRGBColor,
                                           target_illuminant='d50')
         self.population = config["population"] if "population" in config else 15
-        self.selection_method = config["selection_method"] if "selection_method" in config else 0
-        self.crossover_method = config["crossover_method"] if "crossover_method" in config else 0
-        self.mutation_method = config["mutation_method"] if "mutation_method" in config else 3
-        self.finish_method = config["finish_method"] if "finish_method" in config else [0]
+        self.selection_method = config["selection_method"] if "selection_method" in config else "roulette"
+        self.crossover_method = config["crossover_method"] if "crossover_method" in config else "one_point"
+        self.mutation_method = config["mutation_method"] if "mutation_method" in config else "complete"
+        self.finish_method = config["finish_method"] if "finish_method" in config else ["by_time"]
         self.finish_parameters = config["finish_parameters"] if "finish_parameters" in config else {
             "generation": 15,
             "seconds": 5,
