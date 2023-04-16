@@ -1,3 +1,4 @@
+import math
 import random
 from .individual import Individual
 
@@ -69,7 +70,33 @@ def two_points(parents: list[Individual]) -> list[Individual]:
 
 
 def annular(parents: list[Individual]) -> list[Individual]:
-    return 3
+    children = []
+    r = random.randint(0, len(parents[0].color_ratios) - 1)
+    length = random.randint(0, math.ceil(len(parents[0].color_ratios) / 2))
+    ratios1 = []
+    ratios2 = []
+    sum1 = 0
+    sum2 = 0
+    parent1 = parents[0]
+    parent2 = parents[1]
+    for i in range(len(parent1.color_ratios)):
+        circular_position = (i - r + len(parent1.color_ratios)) % len(parent1.color_ratios)
+        if circular_position < length:
+            ratios1.append(parent1.color_ratios[i])
+            sum1 += parent1.color_ratios[i][1]
+            ratios2.append(parent2.color_ratios[i])
+            sum2 += parent2.color_ratios[i][1]
+        else:
+            ratios1.append(parent2.color_ratios[i])
+            sum1 += parent2.color_ratios[i][1]
+            ratios2.append(parent1.color_ratios[i])
+            sum2 += parent1.color_ratios[i][1]
+
+    if sum1 != 0:
+        children.append(Individual(ratios1))
+    if sum2 != 0:
+        children.append(Individual(ratios2))
+    return children
 
 
 def uniform(parents: list[Individual]) -> list[Individual]:
