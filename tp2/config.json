@@ -2,18 +2,18 @@
 	"//population_comment": "Population limit",
 	"population": 20,
 
-	"//selection_method_comment": "0 = roulette, 1 = elite, 2 = det_tournaments, 3 = prob_tournaments",
-	"selection_method": 0,
+	"//selection_method_comment": "roulette, elite, det_tournaments, prob_tournaments",
+	"selection_method": "roulette",
 
-	"//crossover_method_comment": "0 = one_point, 1 = two_points, 2 = annular, 3 = uniform",
-	"crossover_method": 0,
+	"//crossover_method_comment": "one_point, two_points, annular, uniform",
+	"crossover_method": "one_point",
 
-	"//mutation_method_comment": "0 = gen, 1 = limited_multigen, 2 = uniform_multigen, 3 = complete",
-	"mutation_method": 3,
+	"//mutation_method_comment": "gen, limited_multigen, uniform_multigen, complete",
+	"mutation_method": "complete",
 
 	"//finish_method_comment": "Whichever happens first, can be combined.",
-	"//finish_method_comment2": "0 = by_time, 1 = by_generation, 2 = by_distance",
-	"finish_method": [0, 1, 2],
+	"//finish_method_comment2": "by_time, by_generation, by_distance",
+	"finish_method": ["by_time", "by_generation", "by_distance"],
 
 	"//finish_parameters_comment": "Complete for the respective methods to work",
 	"finish_parameters": {

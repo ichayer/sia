@@ -55,7 +55,12 @@ def complete(population: list[Individual], generation: int) -> None:
             individual.normalize()
 
 
-mutation_list = [gen, limited_multigen, uniform_multigen, complete]
+mutation_list = {
+    "gen": gen,
+    "limited_multigen": limited_multigen,
+    "uniform_multigen": uniform_multigen,
+    "complete": complete
+}
 
 
 def mutation(config_mutation: int, population: list[Individual], generation: int) -> None:

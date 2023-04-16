@@ -22,7 +22,11 @@ def by_distance(parameters: dict, start_time: float, generation: int, distance: 
     return distance <= parameters["distance"]
 
 
-finish_list = [by_time, by_generation, by_distance]
+finish_list = {
+    "by_time": by_time,
+    "by_generation": by_generation,
+    "by_distance": by_distance
+}
 
 
 def finish(config_finish: list, parameters: dict, start_time: float, generation: int, distance: float) -> bool:

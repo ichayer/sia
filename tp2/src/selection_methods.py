@@ -75,7 +75,12 @@ def prob_tournaments(actual_gen: list[Individual], new_gen: list[Individual], po
     return 4
 
 
-selection_list = [roulette, elite, det_tournaments, prob_tournaments]
+selection_list = {
+    "roulette": roulette,
+    "elite": elite,
+    "det_tournaments": det_tournaments,
+    "prob_tournaments": prob_tournaments
+}
 
 
 def selection(config_selection: int, actual_gen: list[Individual], new_gen: list[Individual], population_limit: int,

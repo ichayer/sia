@@ -48,7 +48,12 @@ def uniform(parents: list[Individual]) -> list[Individual]:
     return 4
 
 
-crossover_list = [one_point, two_points, annular, uniform]
+crossover_list = {
+    "one_point": one_point,
+    "two_points": two_points,
+    "annular": annular,
+    "uniform": uniform
+}
 
 
 def crossover(config_crossover: int, parents: list[Individual]) -> list[Individual]:

@@ -73,7 +73,7 @@ class ColorGeneticAlgorithm:
             # Crossover
             random.shuffle(self.actual_gen)
             for i, ind in enumerate(self.actual_gen):
-                l = crossover(self.selection_method,
+                l = crossover(self.crossover_method,
                               [self.actual_gen[i], self.actual_gen[(i + 1) % len(self.actual_gen)]])
                 for j in range(len(l)):
                     new_gen.append(l[j])
