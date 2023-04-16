@@ -1,4 +1,5 @@
 import random
+import math
 
 from .individual import Individual
 from colormath.color_objects import XYZColor
@@ -81,7 +82,25 @@ def elite(actual_gen: list[Individual], new_gen: list[Individual], population_li
 
 def det_tournaments(actual_gen: list[Individual], new_gen: list[Individual], population_limit: int,
                     color_target: XYZColor) -> list[Individual]:
-    pass
+    all_gen = actual_gen + new_gen
+    if len(all_gen) <= population_limit:
+        return population_limit
+
+    inds_per_tournament =  math.ceil(len(all_gen) / 2.0)
+    next_gen = []
+
+    for t in range(0, population_limit):
+        chosen = [(i < inds_per_tournament) for i in range(0, len(all_gen))]
+        random.shuffle(chosen)
+        tournament = []
+        for i in range(0, len(all_gen)):
+            if chosen[i]:
+                tournament.append(all_gen[i])
+        winner = max(tournament, key=lambda x:_individual_fitness(x, color_target))
+        next_gen.append(winner)
+        all_gen.remove(winner)
+
+    return next_gen
 
 
 def prob_tournaments(actual_gen: list[Individual], new_gen: list[Individual], population_limit: int,
