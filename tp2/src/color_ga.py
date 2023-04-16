@@ -59,7 +59,8 @@ class ColorGeneticAlgorithm:
         for i, ind in enumerate(self.actual_gen):
             print(f"Ind {i}: \t {ind}")
 
-    def start(self) -> None:
+    # todo: add a better return value
+    def start(self):
         start_time = time.time()
         # Generation 0
         self.__gen0()
@@ -67,6 +68,7 @@ class ColorGeneticAlgorithm:
         print("\nStarting the algorithm...\n")
 
         distance = [self.finish_parameters["distance"] + 1]
+        history = []
         while not finish(self.finish_method, self.finish_parameters, start_time, self.generation, min(distance)):
             # Generation i
             self.generation += 1
@@ -77,7 +79,8 @@ class ColorGeneticAlgorithm:
             # Crossover
             random.shuffle(self.actual_gen)
             for i, ind in enumerate(self.actual_gen):
-                l = crossover(self.crossover_method, [self.actual_gen[i], self.actual_gen[(i + 1) % len(self.actual_gen)]])
+                l = crossover(self.crossover_method,
+                              [self.actual_gen[i], self.actual_gen[(i + 1) % len(self.actual_gen)]])
                 for j in range(len(l)):
                     new_gen.append(l[j])
 
@@ -97,16 +100,29 @@ class ColorGeneticAlgorithm:
             """
 
             # Selection
-            self.actual_gen = selection(self.selection_method, self.actual_gen, new_gen, self.population, self.color_target)
+            self.actual_gen = selection(self.selection_method, self.actual_gen, new_gen, self.population,
+                                        self.color_target)
             """
             print("\nSelection:\n")
             """
             distance = []
             for i, ind in enumerate(self.actual_gen):
-                distance.append(similitude(ind.xyz, self.color_target))
+                individual_distance = similitude(ind.xyz, self.color_target)
+                distance.append(individual_distance)
 
             sorted_indexes = sorted(range(len(distance)), key=lambda k: distance[k])
 
+            individuals_distance = []
             for i in sorted_indexes:
-                print(f"IND{i}: \t {self.actual_gen[i]} DIST:{str(round(distance[i], 2))}")
+                individual = self.actual_gen[i]
+                individual_distance = distance[i]
+                print(f"IND{i}: \t {individual} DIST:{str(round(individual_distance, 2))}")
+                individuals_distance.append({
+                    'individual': individual,
+                    'distance': individual_distance,
+                    # todo: maybe this is not necessary
+                    'index': i,
+                })
+            history.append(individuals_distance)
 
+        return {'history': history}

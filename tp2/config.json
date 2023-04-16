@@ -3,10 +3,10 @@
 	"population": 20,
 
 	"//selection_method_comment": "roulette, elite, det_tournaments, prob_tournaments",
-	"selection_method": "roulette",
+	"selection_method": "elite",
 
 	"//crossover_method_comment": "one_point, two_points, annular, uniform",
-	"crossover_method": "uniform",
+	"crossover_method": "one_point",
 
 	"//mutation_method_comment": "gen, limited_multigen, uniform_multigen, complete",
 	"mutation_method": "complete",

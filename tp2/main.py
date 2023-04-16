@@ -23,4 +23,4 @@ config_parameters = {
 }
 
 ga = ColorGeneticAlgorithm([red, green, blue, yellow, pink, cian], target, config_parameters)
-ga.start()
+results = ga.start()
