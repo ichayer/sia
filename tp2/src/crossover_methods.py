@@ -1,5 +1,5 @@
 import random
-from tp2.src.individual import Individual
+from .individual import Individual
 
 
 # Crossover functions return one or two children. Only one child if one of them has all genes at 0% ("Dead individual")

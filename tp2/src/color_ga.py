@@ -2,12 +2,12 @@ import random
 import time
 from colormath.color_conversions import convert_color
 from colormath.color_objects import XYZColor, AdobeRGBColor
-from tp2.src.individual import Individual
-from tp2.src.crossover_methods import crossover
-from tp2.src.mutation_methods import mutation
-from tp2.src.selection_methods import selection
-from tp2.src.finish_methods import finish
-from tp2.src.color_tools import similitude
+from .individual import Individual
+from .crossover_methods import crossover
+from .mutation_methods import mutation
+from .selection_methods import selection
+from .finish_methods import finish
+from .color_tools import similitude
 
 
 # Parameters are received as RGB for simplicity and user convenience, but we save them as XYZ

@@ -1,6 +1,6 @@
 import math
 import random
-from tp2.src.individual import Individual
+from .individual import Individual
 
 
 # Mutations methods don't return anything. They work in place with the population variable.

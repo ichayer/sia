@@ -1,8 +1,8 @@
 import random
 
-from tp2.src.individual import Individual
+from .individual import Individual
 from colormath.color_objects import XYZColor
-from tp2.src.color_tools import similitude
+from .color_tools import similitude
 
 
 # Selection functions don't work in place. They return the new final generation (list of Individual).
