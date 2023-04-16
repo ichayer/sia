@@ -105,7 +105,28 @@ def det_tournaments(actual_gen: list[Individual], new_gen: list[Individual], pop
 
 def prob_tournaments(actual_gen: list[Individual], new_gen: list[Individual], population_limit: int,
                      color_target: XYZColor) -> list[Individual]:
-    pass
+    threshold = 1 - random.uniform(0, 0.5) # random in range (0.5, 1]
+    all_gen = actual_gen + new_gen
+    next_gen = []
+    while len(all_gen) != 0 and len(next_gen) < population_limit:
+        if len(all_gen) == 1:
+            next_gen.append(all_gen[0])
+            all_gen.clear()
+            break
+
+        chosen = [(i < 2) for i in range(0, len(all_gen))]
+        random.shuffle(chosen)
+        fightClub = []
+        for i in range(0, len(all_gen)):
+            if chosen[i]:
+                fightClub.append(all_gen[i])
+        fightClub.sort(key=lambda x:_individual_fitness(x, color_target))
+        r = random.random()
+        winner = fightClub[1 if r < threshold else 0]
+        next_gen.append(winner)
+        all_gen.remove(winner)
+
+    return next_gen
 
 
 selection_list = {
