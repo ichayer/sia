@@ -10,15 +10,24 @@ from .color_tools import similitude, max_similitude
 # If the population limit has not yet been reached, parents and children are returned together. The wrapper function already does this.
 # if population_limit > len(actual_gen) + len(new_gen): return next_gen
 
-# __Fitness Function
-# Returns fitness, relative fitness and accumulated fitness.
-# TODO: Maybe we can store the fitness (after sum_fitness_reverse) in the Individual
-def __fitness(gen: list[Individual], color_target: XYZColor):
+# Calculates the fitness for a single individual.
+def _individual_fitness(individual: Individual, color_target: XYZColor) -> float:
+    return max_similitude - similitude(individual.xyz, color_target)
+
+
+# Calculates the fitness for a population.
+def _population_fitness(gen: list[Individual], color_target: XYZColor) -> tuple[list[float], float]:
     fitness = []
     sum_fitness = 0
     for i in range(len(gen)):
-        fitness.append(max_similitude - similitude(gen[i].xyz, color_target))
+        fitness.append(_individual_fitness(gen[i], color_target))
         sum_fitness += fitness[i]
+    return fitness, sum_fitness
+
+
+# Calculates the fitness, relative fitness, and accumulated fitness for a population.
+def _population_fitness_accum(gen: list[Individual], color_target: XYZColor) -> tuple[list[float], list[float], list[float]]:
+    fitness, sum_fitness = _population_fitness(gen, color_target)
 
     relative_fitness = []
     accumulated_fitness = []
@@ -41,7 +50,7 @@ def roulette(actual_gen: list[Individual], new_gen: list[Individual], population
     lr = []
     chosen = [False] * len(next_gen)
     randomly_chosen = 0
-    fitness, relative_fitness, accumulated_fitness = __fitness(next_gen, color_target)
+    fitness, relative_fitness, accumulated_fitness = _population_fitness_accum(next_gen, color_target)
 
     while randomly_chosen < population_limit:
         r = random.random()
@@ -57,17 +66,32 @@ def roulette(actual_gen: list[Individual], new_gen: list[Individual], population
 
 def elite(actual_gen: list[Individual], new_gen: list[Individual], population_limit: int, color_target: XYZColor) -> \
         list[Individual]:
-    return 2
+    all_gen = actual_gen + new_gen
+    if len(all_gen) <= population_limit:
+        return all_gen
+
+    fitness, sum_fitness = _population_fitness(all_gen, color_target)
+
+    fitness_copy = [fitness[i] for i in range(len(fitness))]
+    fitness_copy.sort()
+    min_fitness = fitness_copy[-population_limit - 1]
+
+    next_gen = []
+    for i in range(len(all_gen)):
+        if fitness[i] >= min_fitness:
+            next_gen.append(all_gen[i])
+
+    return next_gen
 
 
 def det_tournaments(actual_gen: list[Individual], new_gen: list[Individual], population_limit: int,
                     color_target: XYZColor) -> list[Individual]:
-    return 3
+    pass
 
 
 def prob_tournaments(actual_gen: list[Individual], new_gen: list[Individual], population_limit: int,
                      color_target: XYZColor) -> list[Individual]:
-    return 4
+    pass
 
 
 selection_list = {
