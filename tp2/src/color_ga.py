@@ -106,4 +106,9 @@ class ColorGeneticAlgorithm:
             distance = []
             for i, ind in enumerate(self.actual_gen):
                 distance.append(similitude(ind.xyz, self.color_target))
-                print(f"IND{i}: \t {ind} DIST:{str(round(distance[i], 2))}")
+
+            sorted_indexes = sorted(range(len(distance)), key=lambda k: distance[k])
+
+            for i in sorted_indexes:
+                print(f"IND{i}: \t {self.actual_gen[i]} DIST:{str(round(distance[i], 2))}")
+

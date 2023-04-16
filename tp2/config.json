@@ -6,7 +6,7 @@
 	"selection_method": "roulette",
 
 	"//crossover_method_comment": "one_point, two_points, annular, uniform",
-	"crossover_method": "one_point",
+	"crossover_method": "two_points",
 
 	"//mutation_method_comment": "gen, limited_multigen, uniform_multigen, complete",
 	"mutation_method": "complete",
