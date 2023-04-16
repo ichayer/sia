@@ -25,6 +25,7 @@ def complete(population: list[Individual], generation: int) -> None:
     r = random.uniform(0, 100)
     probability = max(100 / math.pow(2, generation),
                       2)  # TODO: bring these variables (prob and change) to the config (and remove generation parameter if possible)
+    # If generation > 1024, pow(2,1024) doesn't work.
     change = max(100 / math.pow(2, generation), 5)
     if probability >= r:
         for individual in population:
