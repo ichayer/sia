@@ -22,7 +22,7 @@ class Individual:
 
     def __str__(self) -> str:
         r = ""
-        r += f"{color('  ', fore=(0, 0, 0), back=f'{self.rgb.get_rgb_hex()}')}\t"
+        r += f"{color('  ', fore=(0, 0, 0), back=f'{self.rgb.get_rgb_hex()}')}\t\t"
         for i, tupl in enumerate(self.color_ratios):
             rgb = convert_color(tupl[0], AdobeRGBColor, through_rgb_type=AdobeRGBColor, target_illuminant='d50')
             r += f"C{i}: {color('  ', fore=(0, 0, 0), back=f'{rgb.get_rgb_hex()}')}\t {str(round(tupl[1], 2))}%\t"
