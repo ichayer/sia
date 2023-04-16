@@ -92,11 +92,11 @@ def det_tournaments(actual_gen: list[Individual], new_gen: list[Individual], pop
     for t in range(0, population_limit):
         chosen = [(i < inds_per_tournament) for i in range(0, len(all_gen))]
         random.shuffle(chosen)
-        tournament = []
+        fight_club = []
         for i in range(0, len(all_gen)):
             if chosen[i]:
-                tournament.append(all_gen[i])
-        winner = max(tournament, key=lambda x:_individual_fitness(x, color_target))
+                fight_club.append(all_gen[i])
+        winner = max(fight_club, key=lambda x:_individual_fitness(x, color_target))
         next_gen.append(winner)
         all_gen.remove(winner)
 
@@ -116,13 +116,13 @@ def prob_tournaments(actual_gen: list[Individual], new_gen: list[Individual], po
 
         chosen = [(i < 2) for i in range(0, len(all_gen))]
         random.shuffle(chosen)
-        fightClub = []
+        fight_club = []
         for i in range(0, len(all_gen)):
             if chosen[i]:
-                fightClub.append(all_gen[i])
-        fightClub.sort(key=lambda x:_individual_fitness(x, color_target))
+                fight_club.append(all_gen[i])
+        fight_club.sort(key=lambda x:_individual_fitness(x, color_target))
         r = random.random()
-        winner = fightClub[1 if r < threshold else 0]
+        winner = fight_club[1 if r < threshold else 0]
         next_gen.append(winner)
         all_gen.remove(winner)
 
