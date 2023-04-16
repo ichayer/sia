@@ -2,14 +2,15 @@ import random
 
 from colormath.color_conversions import convert_color
 from colormath.color_objects import XYZColor, AdobeRGBColor
-from tp2.src.color_tools import MyXYZColor
 from tp2.src.individual import Individual
 from tp2.src.crossover_methods import crossover
 from tp2.src.mutation_methods import mutation
 from tp2.src.selection_methods import selection
 
 
-# parameters are received as RGB for simplicity, but we saved as XYZ
+# Parameters are received as RGB for simplicity and user convenience, but we save them as XYZ
+# It is in charge of saving all the parameters and iterating in the generations up to the cutting criterion.
+# Once an instance is created, the start function must be called
 class ColorGeneticAlgorithm:
     generation = int
     actual_gen = []
@@ -33,7 +34,7 @@ class ColorGeneticAlgorithm:
         self.generation = 0
 
         for color_xyz in self.color_set:
-            ratios.append([MyXYZColor(color_xyz), 0])
+            ratios.append([color_xyz, 0])
 
         ratios[0][1] = 100
         self.actual_gen.append(Individual(ratios))
@@ -53,7 +54,7 @@ class ColorGeneticAlgorithm:
 
         print("\nStarting the algorithm...\n")
 
-        while self.generation < 5:
+        while self.generation < 15:
             # Generation i
             self.generation += 1
             new_gen = []

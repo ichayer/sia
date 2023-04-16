@@ -2,8 +2,14 @@ import random
 from tp2.src.individual import Individual
 
 
-# Bc performance, individuals are not returned, but their genes
+# Crossover functions return one or two children. Only one child if one of them has all genes at 0% ("Dead individual")
+# To do this, the ratios of the colors are added in a variable as they are iterated.
 
+# One Point Crossover
+# A random point is taken, and the genes of the parents are divided in two parts,
+# 1) from the start of the array to and including that point,
+# 2) from that excluded point to the end of the array.
+# A child antisymmetric-ally receives those parts of the genes from his parents.
 def one_point(parents: list[Individual]) -> list[Individual]:
     l = []
     r = random.randint(0, len(parents[0].color_ratios) - 1)

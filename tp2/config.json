@@ -1,7 +1,9 @@
+
 {
 	"selection": 0,
 	"crossover": 0,
 	"mutation": 3,
 	"finish": 0,
-	"population": 10
+	"population": 20,
+	"//comment": "TODO: bring probability mutation and change mutation to the config (and remove generation parameter if possible)"
 }

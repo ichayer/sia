@@ -5,7 +5,14 @@ from colormath.color_objects import XYZColor
 from tp2.src.color_tools import similitude
 
 
-# Use-all
+# Selection functions don't work in place. They return the new final generation (list of Individual).
+# Use-all implementation. Parents and children are considered in the selection.
+# If the population limit has not yet been reached, parents and children are returned together. The wrapper function already does this.
+# if population_limit > len(actual_gen) + len(new_gen): return next_gen
+
+# __Fitness Function
+# Returns fitness, relative fitness and accumulated fitness.
+# TODO: Maybe we can store the fitness (after sum_fitness_reverse) in the Individual
 def __fitness(gen: list[Individual], color_target: XYZColor):
     fitness = []
     sum_fitness = 0
@@ -29,12 +36,12 @@ def __fitness(gen: list[Individual], color_target: XYZColor):
     return fitness, relative_fitness, accumulated_fitness
 
 
+# Roulette Selection
+# Uses r = random[0,1) as many times until (population_limit)-individuals have been selected.
+# Choose the first individual i such that r < accumulated_fitness[i]
 def roulette(actual_gen: list[Individual], new_gen: list[Individual], population_limit: int, color_target: XYZColor) -> \
         list[Individual]:
     next_gen = [j for i in [actual_gen, new_gen] for j in i]
-
-    if population_limit > len(actual_gen) + len(new_gen):
-        return next_gen
 
     lr = []
     chosen = [False] * len(next_gen)
@@ -73,4 +80,6 @@ selection_list = [roulette, elite, det_tournaments, prob_tournaments]
 
 def selection(config_selection: int, actual_gen: list[Individual], new_gen: list[Individual], population_limit: int,
               color_target: XYZColor) -> list[Individual]:
+    if population_limit > len(actual_gen) + len(new_gen):
+        return actual_gen + new_gen
     return selection_list[config_selection](actual_gen, new_gen, population_limit, color_target)
