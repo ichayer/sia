@@ -42,6 +42,7 @@ class ColorGeneticAlgorithm:
 
     def __gen0(self) -> None:
         ratios = []
+        self.actual_gen = []
         self.generation = 0
 
         for color_xyz in self.color_set:
