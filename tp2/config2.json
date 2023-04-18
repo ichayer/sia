@@ -24,8 +24,8 @@
   ],
   "mutation_method": "complete",
   "mutation_method_params": {
-    "pm": 0.4,
-    "change": 10
+    "pm": 1,
+    "change": 5
   },
   "//finish_method_comment": "Whichever happens first, can be combined.",
   "//finish_method_comment2": "by_time, by_generation, by_distance",
@@ -37,7 +37,7 @@
   "//finish_parameters_comment": "Complete for the respective methods to work",
   "finish_parameters": {
     "seconds": 5,
-    "generation": 12,
+    "generation": 100,
     "distance": 0.4
   },
   "//comment": "TODO: bring probability mutation and change mutation to the config (and remove generation parameter if possible)",

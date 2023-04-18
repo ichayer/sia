@@ -1,14 +1,14 @@
 {
   "//population_comment": "Population limit",
   "population": 20,
-  "should_print": false,
+  "should_print": true,
   "selection_method_options": [
     "roulette",
     "elite",
     "det_tournaments",
     "prob_tournaments"
   ],
-  "selection_method": "roulette",
+  "selection_method": "elite",
   "crossover_method_options": [
     "one_point",
     "two_points",
@@ -22,10 +22,10 @@
     "uniform_multigen",
     "complete"
   ],
-  "mutation_method": "complete",
+  "mutation_method": "limited_multigen",
   "mutation_method_params": {
-    "pm": 0.4,
-    "change": 10
+    "pm": 0.2,
+    "change": 5
   },
   "//finish_method_comment": "Whichever happens first, can be combined.",
   "//finish_method_comment2": "by_time, by_generation, by_distance",
@@ -37,7 +37,7 @@
   "//finish_parameters_comment": "Complete for the respective methods to work",
   "finish_parameters": {
     "seconds": 5,
-    "generation": 12,
+    "generation": 100,
     "distance": 0.4
   },
   "//comment": "TODO: bring probability mutation and change mutation to the config (and remove generation parameter if possible)",
