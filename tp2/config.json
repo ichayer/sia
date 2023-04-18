@@ -1,11 +1,27 @@
 {
   "//population_comment": "Population limit",
   "population": 20,
-  "//selection_method_comment": "roulette, elite, det_tournaments, prob_tournaments",
+  "should_print": false,
+  "selection_method_options": [
+    "roulette",
+    "elite",
+    "det_tournaments",
+    "prob_tournaments"
+  ],
   "selection_method": "roulette",
-  "//crossover_method_comment": "one_point, two_points, annular, uniform",
+  "crossover_method_options": [
+    "one_point",
+    "two_points",
+    "annular",
+    "uniform"
+  ],
   "crossover_method": "uniform",
-  "//mutation_method_comment": "gen, limited_multigen, uniform_multigen, complete",
+  "mutation_method_options": [
+    "gen",
+    "limited_multigen",
+    "uniform_multigen",
+    "complete"
+  ],
   "mutation_method": "complete",
   "mutation_method_params": {
     "pm": 0.4,

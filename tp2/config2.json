@@ -1,0 +1,77 @@
+{
+  "//population_comment": "Population limit",
+  "population": 20,
+  "should_print": false,
+  "selection_method_options": [
+    "roulette",
+    "elite",
+    "det_tournaments",
+    "prob_tournaments"
+  ],
+  "selection_method": "roulette",
+  "crossover_method_options": [
+    "one_point",
+    "two_points",
+    "annular",
+    "uniform"
+  ],
+  "crossover_method": "uniform",
+  "mutation_method_options": [
+    "gen",
+    "limited_multigen",
+    "uniform_multigen",
+    "complete"
+  ],
+  "mutation_method": "complete",
+  "mutation_method_params": {
+    "pm": 0.4,
+    "change": 10
+  },
+  "//finish_method_comment": "Whichever happens first, can be combined.",
+  "//finish_method_comment2": "by_time, by_generation, by_distance",
+  "finish_method": [
+    "by_time",
+    "by_generation",
+    "by_distance"
+  ],
+  "//finish_parameters_comment": "Complete for the respective methods to work",
+  "finish_parameters": {
+    "seconds": 5,
+    "generation": 12,
+    "distance": 0.4
+  },
+  "//comment": "TODO: bring probability mutation and change mutation to the config (and remove generation parameter if possible)",
+  "palettes": [
+    {
+      "name": "RGB",
+      "colors": [
+        [
+          255,
+          0,
+          0
+        ],
+        [
+          0,
+          255,
+          0
+        ],
+        [
+          0,
+          0,
+          255
+        ]
+      ],
+      "description": "Paleta de colores clasica RGB"
+    }
+  ],
+  "targets": [
+    {
+      "name": "Naranja Pastel",
+      "color": [
+        247,
+        177,
+        149
+      ]
+    }
+  ]
+}

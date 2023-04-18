@@ -16,6 +16,7 @@ from .color_tools import similitude
 class ColorGeneticAlgorithm:
     generation = int
     actual_gen = []
+    should_print = True
 
     def __init__(self, color_set: list[AdobeRGBColor], color_target: AdobeRGBColor, config: dict) -> None:
         self.color_set = list(
@@ -37,6 +38,7 @@ class ColorGeneticAlgorithm:
             "seconds": 5,
             "distance": 0.4
         }
+        self.should_print = config["should_print"] if "should_print" in config else True
 
         print(self.population)
 
@@ -85,27 +87,13 @@ class ColorGeneticAlgorithm:
                 for j in range(len(l)):
                     new_gen.append(l[j])
 
-            """ # Shows individual after crossover 
-            print("\nCrossover:\n")
-            for i, ind in enumerate(new_gen):
-                print(f"Ind{i}: \t {ind}")
-            """
-
             # Mutation
             mutation(self.mutation_method, self.mutation_method_params, new_gen, self.generation)
-
-            """ # Shows individual after mutation
-            print("\nMutation:\n")
-            for i, ind in enumerate(new_gen):
-                print(f"Ind{i}: \t {ind}")
-            """
 
             # Selection
             self.actual_gen = selection(self.selection_method, self.actual_gen, new_gen, self.population,
                                         self.color_target)
-            """
-            print("\nSelection:\n")
-            """
+
             distance = []
             for i, ind in enumerate(self.actual_gen):
                 individual_distance = similitude(ind.xyz, self.color_target)
@@ -117,7 +105,8 @@ class ColorGeneticAlgorithm:
             for i in sorted_indexes:
                 individual = self.actual_gen[i]
                 individual_distance = distance[i]
-                print(f"IND{i}: \t {individual} DIST:{str(round(individual_distance, 2))}")
+                if self.should_print:
+                    print(f"IND{i}: \t {individual} DIST:{str(round(individual_distance, 2))}")
                 individuals_distance.append({
                     'individual': individual,
                     'distance': individual_distance,
