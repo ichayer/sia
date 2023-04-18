@@ -84,7 +84,7 @@ def det_tournaments(actual_gen: list[Individual], new_gen: list[Individual], pop
                     color_target: XYZColor) -> list[Individual]:
     all_gen = actual_gen + new_gen
     if len(all_gen) <= population_limit:
-        return population_limit
+        return all_gen
 
     inds_per_tournament =  math.ceil(len(all_gen) / 2.0)
     next_gen = []
