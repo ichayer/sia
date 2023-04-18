@@ -20,7 +20,7 @@ def gen(individual: Individual, pm: float, change: float) -> None:
 
 def limited_multigen(individual: Individual, pm: float, change: float) -> None:
     amount_to_mutate = random.randint(1, len(individual.color_ratios))
-    chosen = [(i < amount_to_mutate) for i in range(amount_to_mutate)]
+    chosen = [(i < amount_to_mutate) for i in range(len(individual.color_ratios))]
     random.shuffle(chosen)
     for i in range(len(individual.color_ratios)):
         if chosen[i] and random.random() < pm:
