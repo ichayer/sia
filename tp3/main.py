@@ -26,7 +26,7 @@ class simple_perceptron:
     def evaluate_and_adjust(self, input, expected_output) -> float:
         output = self.evaluate(input)
         if output != expected_output:
-            self.delta_w += 2 * learning_rate * expected_output * np.concatenate(([1], input))
+            self.delta_w += 2 * learning_rate * expected_output * np.concatenate(([-1], input))
         
         return output
     
