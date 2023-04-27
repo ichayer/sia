@@ -21,12 +21,12 @@ class simple_perceptron:
             raise f'Error: specified {len(input)} inputs to a simple_perceptron with {len(self.w)} weights (there should be {len(self.w) - 1} inputs)'
         
         h = self.w[1:] @ input
-        return theta(h - self.w[0])
+        return theta(h + self.w[0])
     
     def evaluate_and_adjust(self, input, expected_output) -> float:
         output = self.evaluate(input)
         if output != expected_output:
-            self.delta_w += 2 * learning_rate * expected_output * np.concatenate(([-1], input))
+            self.delta_w += 2 * learning_rate * expected_output * np.concatenate(([1], input))
         
         return output
     
