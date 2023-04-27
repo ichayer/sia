@@ -1,9 +1,10 @@
 import numpy as np
 from src.perceptron import perceptron
 from src.theta import theta_simple, theta_lineal, theta_tanh, theta_logistic
+from src.trainer import train_perceptron, evaluate_perceptron
 
 '''
-dataset_raw = [
+dataset = [
     np.array([1.1946, 3.8427]),
     np.array([0.8788, 1.6595]),
     np.array([1.1907, 1.6117]),
@@ -18,7 +19,7 @@ dataset_raw = [
 ]
 '''
 
-dataset_raw = [
+dataset = [
     np.array([1, 1]),
     np.array([1, -1]),
     np.array([-1, 1]),
@@ -48,59 +49,25 @@ dataset_outputs = [
     -1,
 ]
 
-dataset = [np.concatenate(([1], d)) for d in dataset_raw]
 
-learning_rate = 0.1
-
-def evaluate_perceptron(perceptron: perceptron, print_output: bool) -> int:
-    amount_ok = 0
-    for i in range(len(dataset)):
-        output = perceptron.evaluate(dataset[i])
-        expected = dataset_outputs[i]
-        amount_ok += 1 if expected == output else 0
-        if print_output:
-            print(f"[{i}] {'✅' if output == expected else '❌'} expected: {expected} got: {output} data: {dataset_raw[i]}")
-    return amount_ok
-
-initial_w = np.random.random(len(dataset[0])) * 2 - 1
+initial_w = np.random.random(len(dataset[0]) + 1) * 2 - 1
 per = perceptron(initial_weights=initial_w, theta_func=theta_simple)
 
 print(f"Initialized perceptron with weights: ")
 print(per.w)
 
-evaluate_perceptron(per, True)
+evaluate_perceptron(perceptron=per, dataset=dataset, dataset_outputs=dataset_outputs, print_output=True)
 
 print("--------------------------------------------------------------------------------")
 print("--------------------------------- TRAINING TIME --------------------------------")
 print("--------------------------------------------------------------------------------")
-
-print_every = 10
-max_epochs = 50
-use_batch_increments = False
-for epoch_idx in range(1, max_epochs+1):
-    for i in range(len(dataset)):
-        per.evaluate_and_adjust(dataset[i], dataset_outputs[i], learning_rate)
-        if not use_batch_increments:
-            per.update_weights()
-
-    if epoch_idx % print_every == 0:
-        print("--------------------------------------------------")
-        print(f"RESULTS AFER EPOCH {epoch_idx} (weights {per.w})")
-    amount_ok = evaluate_perceptron(per, epoch_idx % print_every == 0)
-    if amount_ok == len(dataset):
-        break
-    
-    if use_batch_increments:
-        per.update_weights()
-
-if epoch_idx < print_every:
-    print("...")
-
+train_perceptron(perceptron=per, dataset=dataset, dataset_outputs=dataset_outputs, learning_rate=0.1, max_epochs=100, use_batch_increments=False, print_every=10)
 print("--------------------------------------------------------------------------------")
 print("-------------------------------- DONE TRAINING ---------------------------------")
 print("--------------------------------------------------------------------------------")
 
-evaluate_perceptron(per, True)
+amount_ok = evaluate_perceptron(perceptron=per, dataset=dataset, dataset_outputs=dataset_outputs, print_output=True)
 
+epoch_idx = -420
 print(f"Got {round(amount_ok * 100 / len(dataset), 2)}% accuracy after {epoch_idx} epoch{'' if epoch_idx == 1 else 's'} {'✅' if amount_ok==len(dataset) else '❌'}")
 print(f"Final weights: {per.w}")

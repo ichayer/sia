@@ -11,11 +11,11 @@ class perceptron:
         self.theta_func = theta_func
     
     def evaluate(self, input: np.ndarray[float]) -> float:
-        """Evaluates the perceptron for a given input and returns the result. The input must be prepended with a 1."""
-        if len(input) != len(self.w):
-            raise f'Error: specified {len(input)} inputs to a simple_perceptron with {len(self.w)} weights (there should be {len(self.w)} inputs)'
+        """Evaluates the perceptron for a given input and returns the result."""
+        if len(input) != len(self.w) - 1:
+            raise Exception(f'Error: specified {len(input)} inputs to a simple_perceptron with {len(self.w)} weights (there should be {len(self.w) - 1} inputs)')
         
-        h = self.w[1:] @ input[1:]
+        h = self.w[1:] @ input
         return self.theta_func(h + self.w[0])
     
     def evaluate_and_adjust(self, input: np.ndarray[float], expected_output: float, learning_rate: float) -> float:
@@ -23,7 +23,7 @@ class perceptron:
         Evaluates the perceptron for a given input, adds weight adjustments, and then returns the result. Note that weight adjustments are added to
         an internal variable and not directly to the weights. To apply these adjustments, call update_weights(). The input must be prepended with a 1.
         """
-        output = self.evaluate(input)
+        output = self.evaluate(input[1:])
         if output != expected_output:
             self.__delta_w += 2 * learning_rate * expected_output * input
         
