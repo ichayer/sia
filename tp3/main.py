@@ -64,7 +64,10 @@ print("--------------------------------- TRAINING TIME -------------------------
 print("--------------------------------------------------------------------------------")
 
 config = TrainerConfig(error_func=error_funcs.count_nonmatching, acceptable_error=0, learning_rate=0.1, max_epochs=100, use_batch_increments=False, print_every=10)
-train_perceptron(perceptron, dataset, dataset_outputs, config)
+result = train_perceptron(perceptron, dataset, dataset_outputs, config)
+
+if result.epoch_num < config.print_every:
+    print("...")
 
 print("--------------------------------------------------------------------------------")
 print("-------------------------------- DONE TRAINING ---------------------------------")
@@ -73,6 +76,5 @@ print("-------------------------------------------------------------------------
 error = evaluate_perceptron(perceptron, dataset, dataset_outputs, error_funcs.count_nonmatching, print_output=True)
 amount_ok = len(dataset) - error
 
-epoch_idx = -420
-print(f"Got {round(amount_ok * 100 / len(dataset), 2)}% accuracy after {epoch_idx} epoch{'' if epoch_idx == 1 else 's'} {'✅' if amount_ok==len(dataset) else '❌'}")
+print(f"Got {round(amount_ok * 100 / len(dataset), 2)}% accuracy after {result.epoch_num} epoch{'' if result.epoch_num == 1 else 's'} {'✅' if amount_ok==len(dataset) else '❌'}")
 print(f"Final weights: {perceptron.w}")
