@@ -1,5 +1,6 @@
 import numpy as np
 from src.perceptron import perceptron
+from src.theta import theta_simple, theta_lineal, theta_tanh, theta_logistic
 
 '''
 dataset_raw = [
@@ -48,9 +49,6 @@ dataset_outputs = [
 ]
 
 dataset = [np.concatenate(([1], d)) for d in dataset_raw]
-
-def theta_simple(h: float) -> float:
-    return 1 if h == 0 else np.sign(h)
 
 learning_rate = 0.1
 
