@@ -25,7 +25,8 @@ class Perceptron:
         """
         output = self.evaluate(input[1:])
         if output != expected_output:
-            self.__delta_w += 2 * learning_rate * expected_output * input
+            # self.__delta_w += 2 * learning_rate * expected_output * input
+            self.__delta_w += learning_rate * (expected_output - output) * input
         
         return output
     
