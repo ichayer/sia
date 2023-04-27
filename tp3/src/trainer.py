@@ -1,8 +1,8 @@
 import numpy as np
-from .perceptron import perceptron
+from .perceptron import Perceptron
 
 
-def evaluate_perceptron(perceptron: perceptron, dataset: list[np.ndarray[float]], dataset_outputs: list[float], print_output: bool) -> int:
+def evaluate_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]], dataset_outputs: list[float], print_output: bool) -> int:
     """
     Evaluates a perceptron with a given dataset.
     Returns: The amount of inputs in the dataset for which the perceptron returned the correct result.
@@ -18,7 +18,7 @@ def evaluate_perceptron(perceptron: perceptron, dataset: list[np.ndarray[float]]
     return amount_ok
 
 
-def train_perceptron(perceptron: perceptron, dataset: list[np.ndarray[float]], dataset_outputs: list[float], learning_rate: 0.1, max_epochs=100, use_batch_increments=False, print_every=None):
+def train_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]], dataset_outputs: list[float], learning_rate: 0.1, max_epochs=100, use_batch_increments=False, print_every=None):
     dataset_with_ones = [np.concatenate(([1], d)) for d in dataset]
 
     for epoch_idx in range(1, max_epochs+1):

@@ -1,5 +1,5 @@
 import numpy as np
-from src.perceptron import perceptron
+from src.perceptron import Perceptron
 import src.theta_funcs as theta_funcs
 from src.trainer import train_perceptron, evaluate_perceptron
 
@@ -51,7 +51,7 @@ dataset_outputs = [
 
 
 initial_w = np.random.random(len(dataset[0]) + 1) * 2 - 1
-per = perceptron(initial_weights=initial_w, theta_func=theta_funcs.simple)
+per = Perceptron(initial_weights=initial_w, theta_func=theta_funcs.simple)
 
 print(f"Initialized perceptron with weights: ")
 print(per.w)

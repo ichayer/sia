@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class perceptron:
+class Perceptron:
     """Represents a single perceptron, with configurable weights, input size, theta function, and learning rate."""
     
     def __init__(self, initial_weights: np.ndarray[float], theta_func) -> None:
