@@ -1,5 +1,7 @@
+import json
 import numpy as np
 from .perceptron import Perceptron
+from . import error_funcs
 
 
 class TrainerConfig:
@@ -12,6 +14,39 @@ class TrainerConfig:
         self.max_epochs = max_epochs
         self.use_batch_increments = use_batch_increments
         self.print_every = print_every
+    
+    def __init__(self, config_dict):
+        self.error_func = error_funcs.map[config_dict['error_func']]
+        self.acceptable_error = float(config_dict['acceptable_error'])
+        
+        if self.acceptable_error < 0:
+            raise Exception(f'Invalid configuration: acceptable_error must be greater than or equal to 0. Specified: {self.acceptable_error}')
+        
+        self.learning_rate = float(config_dict['learning_rate'])
+        
+        if self.learning_rate <= 0:
+            raise Exception(f'Invalid configuration: learning_rate must be greater than 0. Specified: {self.learning_rate}')
+        
+        if 'max_epochs' in config_dict:
+            self.max_epochs = int(config_dict['max_epochs'])
+            if self.max_epochs < 0:
+                raise Exception(f'Invalid configuration: max_epochs must be greater than 0. Specified: {self.max_epochs}')
+        else:
+            self.max_epochs = None
+        
+        if config_dict['weight_update_method'] == 'incremental':
+            self.use_batch_increments = False
+        elif config_dict['weight_update_method'] == 'batch':
+            self.use_batch_increments = True
+        else:
+            raise Exception(f'Invalid configuration: weight_update_method must be either incremental or batch. Specified: {self.max_epochs}')
+        
+        self.print_every = int(config_dict['print_every']) if 'print_every' in config_dict else None
+
+    def from_file(filename: str):
+        with open(filename, "r") as f:
+            config_dict = json.load(f)
+        return TrainerConfig(config_dict)
 
 
 class TrainerResult:
@@ -48,7 +83,7 @@ def train_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]], d
     weights_history = [np.copy(perceptron.w)]
     error_history = [error]
 
-    while error > config.acceptable_error and epoch_num < config.max_epochs:
+    while error > config.acceptable_error and (config.max_epochs is None or epoch_num < config.max_epochs):
         epoch_num += 1
         
         for i in range(len(dataset)):

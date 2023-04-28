@@ -1,0 +1,8 @@
+{
+    "error_func": <"count_nonmatching" | "cost">,
+    "acceptable_error": <number>,
+    "learning_rate": <float>,
+    "max_epochs": <integer>, (optional)
+    "weight_update_method": <"incremental | batch">,
+    "print_every": <int> (optional)
+}
