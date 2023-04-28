@@ -25,7 +25,7 @@ def plot2d(perceptron: Perceptron, dataset: list[np.ndarray[float]], dataset_out
     if (weights[1] < weights[2]):
         line_origin = (0, -weights[0] / weights[2])
     else:
-        line_origin = (weights[0] / weights[1], 0)
+        line_origin = (-weights[0] / weights[1], 0)
     line_advance = (line_origin[0] - weights[2], line_origin[1] + weights[1])
 
     plt.axline(line_origin, line_advance)
