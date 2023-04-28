@@ -17,39 +17,38 @@ class TrainerConfig:
         self.print_every = print_every
         self.weight_comparison_epsilon = weight_comparison_epsilon
     
-    def __init__(self, config_dict):
-        self.error_func = error_funcs.map[config_dict['error_func']]
-        self.acceptable_error = float(config_dict['acceptable_error'])
-        
-        if self.acceptable_error < 0:
-            raise Exception(f'Invalid configuration: acceptable_error must be greater than or equal to 0. Specified: {self.acceptable_error}')
-        
-        self.learning_rate = float(config_dict['learning_rate'])
-        
-        if self.learning_rate <= 0:
-            raise Exception(f'Invalid configuration: learning_rate must be greater than 0. Specified: {self.learning_rate}')
-        
-        if 'max_epochs' in config_dict:
-            self.max_epochs = int(config_dict['max_epochs'])
-            if self.max_epochs < 0:
-                raise Exception(f'Invalid configuration: max_epochs must be greater than 0. Specified: {self.max_epochs}')
-        else:
-            self.max_epochs = None
-        
-        if config_dict['weight_update_method'] == 'incremental':
-            self.use_batch_increments = False
-        elif config_dict['weight_update_method'] == 'batch':
-            self.use_batch_increments = True
-        else:
-            raise Exception(f'Invalid configuration: weight_update_method must be either incremental or batch. Specified: {self.max_epochs}')
-        
-        self.print_every = int(config_dict['print_every']) if 'print_every' in config_dict else None
-        self.weight_comparison_epsilon = float(config_dict['weight_comparison_epsilon']) if 'weight_comparison_epsilon' in config_dict else 0.00001
-
     def from_file(filename: str):
         with open(filename, "r") as f:
             config_dict = json.load(f)
-        return TrainerConfig(config_dict)
+        error_func = error_funcs.map[config_dict['error_func']]
+        acceptable_error = float(config_dict['acceptable_error'])
+        
+        if acceptable_error < 0:
+            raise Exception(f'Invalid configuration: acceptable_error must be greater than or equal to 0. Specified: {acceptable_error}')
+        
+        learning_rate = float(config_dict['learning_rate'])
+        
+        if learning_rate <= 0:
+            raise Exception(f'Invalid configuration: learning_rate must be greater than 0. Specified: {learning_rate}')
+        
+        if 'max_epochs' in config_dict:
+            max_epochs = int(config_dict['max_epochs'])
+            if max_epochs < 0:
+                raise Exception(f'Invalid configuration: max_epochs must be greater than 0. Specified: {max_epochs}')
+        else:
+            max_epochs = None
+        
+        if config_dict['weight_update_method'] == 'incremental':
+            use_batch_increments = False
+        elif config_dict['weight_update_method'] == 'batch':
+            use_batch_increments = True
+        else:
+            raise Exception(f'Invalid configuration: weight_update_method must be either incremental or batch. Specified: {max_epochs}')
+        
+        print_every = int(config_dict['print_every']) if 'print_every' in config_dict else None
+        weight_comparison_epsilon = float(config_dict['weight_comparison_epsilon']) if 'weight_comparison_epsilon' in config_dict else 0.00001
+
+        return TrainerConfig(error_func, acceptable_error, learning_rate, max_epochs, use_batch_increments, print_every, weight_comparison_epsilon)
 
 
 class EndReason(Enum):
