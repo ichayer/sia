@@ -18,15 +18,15 @@ class Perceptron:
         h = self.w[1:] @ input
         return self.theta_func(h + self.w[0])
     
-    def evaluate_and_adjust(self, input: np.ndarray[float], expected_output: float, learning_rate: float) -> float:
+    def evaluate_and_adjust(self, input_with_one: np.ndarray[float], expected_output: float, learning_rate: float) -> float:
         """
         Evaluates the perceptron for a given input, adds weight adjustments, and then returns the result. Note that weight adjustments are added to
         an internal variable and not directly to the weights. To apply these adjustments, call update_weights(). The input must be prepended with a 1.
         """
-        output = self.evaluate(input[1:])
+        output = self.evaluate(input_with_one[1:])
         if output != expected_output:
             # self.__delta_w += 2 * learning_rate * expected_output * input
-            self.__delta_w += learning_rate * (expected_output - output) * input
+            self.__delta_w += learning_rate * (expected_output - output) * input_with_one
         
         return output
     
