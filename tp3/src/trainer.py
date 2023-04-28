@@ -44,7 +44,7 @@ class TrainerConfig:
             raise Exception(f'Invalid configuration: weight_update_method must be either incremental or batch. Specified: {self.max_epochs}')
         
         self.print_every = int(config_dict['print_every']) if 'print_every' in config_dict else None
-        self.weight_comparison_epsilon = float(config_dict['weight_comparison_epsilon']) if 'weight_comparison_epsilon' in config_dict else None
+        self.weight_comparison_epsilon = float(config_dict['weight_comparison_epsilon']) if 'weight_comparison_epsilon' in config_dict else 0.00001
 
     def from_file(filename: str):
         with open(filename, "r") as f:
@@ -110,7 +110,7 @@ def train_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]], d
         
         if config.use_batch_increments:
             perceptron.update_weights()
-        if np.subtract(weights_history[-1], perceptron.w).max() < 0.00001:
+        if np.abs(np.subtract(weights_history[-1], perceptron.w)).max() < config.weight_comparison_epsilon:
             end_reason = EndReason.WEIGHTS_HAVENT_CHANGED
         weights_history.append(np.copy(perceptron.w))
         
