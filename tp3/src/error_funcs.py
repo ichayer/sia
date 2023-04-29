@@ -10,13 +10,20 @@ def count_nonmatching(expected_outputs: np.ndarray[float], outputs: np.ndarray[f
     return np.not_equal(expected_outputs, outputs).sum()
 
 
-def cost(expected_outputs: np.ndarray[float], outputs: np.ndarray[float]) -> float:
+def cost_average(expected_outputs: np.ndarray[float], outputs: np.ndarray[float]) -> float:
     """Calculates the error as the sum of the costs of each element, which is (expected - output)**2 / 2"""
     
     return np.average(np.power(expected_outputs - outputs, 2)) * 0.5
 
 
+def cost_max(expected_outputs: np.ndarray[float], outputs: np.ndarray[float]) -> float:
+    """Calculates the error as the sum of the costs of each element, which is (expected - output)**2 / 2"""
+    
+    return np.max(np.power(expected_outputs - outputs, 2)) * 0.5
+
+
 map = {
     "count_nonmatching": count_nonmatching,
-    "cost": cost
+    "cost_average": cost_average,
+    "cost_max": cost_max
 }

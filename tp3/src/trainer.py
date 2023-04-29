@@ -67,7 +67,7 @@ class TrainerResult:
         self.end_reason = end_reason
 
 
-def evaluate_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]], dataset_outputs: list[float], error_func, print_output: bool) -> int:
+def evaluate_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]], dataset_outputs: list[float], error_func, print_output: bool, acceptable_error=0) -> int:
     """
     Evaluates a perceptron with a given dataset.
     Returns: The amount of inputs in the dataset for which the perceptron returned the correct result.
@@ -79,14 +79,15 @@ def evaluate_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]]
         expected = dataset_outputs[i]
         outputs[i] = output
         if print_output:
-            print(f"[{i}] {'✅' if output == expected else '❌'} expected: {expected} got: {output} data: {dataset[i]}")
+            err = error_func(np.array([expected]), np.array([output]))
+            print(f"[{i}] {'✅' if err <= acceptable_error else '❌'} expected: {expected} got: {output} data: {dataset[i]}")
     return error_func(dataset_outputs, outputs)
 
 
 def train_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]], dataset_outputs: list[float], config: TrainerConfig) -> TrainerResult:
     dataset_with_ones = [np.concatenate(([1], d)) for d in dataset]
     
-    error = evaluate_perceptron(perceptron, dataset, dataset_outputs, config.error_func, False)
+    error = evaluate_perceptron(perceptron, dataset, dataset_outputs, config.error_func, False, config.acceptable_error)
     
     epoch_num = 0
     weights_history = [np.copy(perceptron.w)]
@@ -113,7 +114,7 @@ def train_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]], d
             end_reason = EndReason.WEIGHTS_HAVENT_CHANGED
         weights_history.append(np.copy(perceptron.w))
         
-        error = evaluate_perceptron(perceptron, dataset, dataset_outputs, config.error_func, print_now)
+        error = evaluate_perceptron(perceptron, dataset, dataset_outputs, config.error_func, print_now, config.acceptable_error)
         error_history.append(error)
 
     if end_reason is None:
