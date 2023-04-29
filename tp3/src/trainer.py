@@ -17,9 +17,7 @@ class TrainerConfig:
         self.print_every = print_every
         self.weight_comparison_epsilon = weight_comparison_epsilon
     
-    def from_file(filename: str):
-        with open(filename, "r") as f:
-            config_dict = json.load(f)
+    def from_dict(config_dict: dict):
         error_func = error_funcs.map[config_dict['error_func']]
         acceptable_error = float(config_dict['acceptable_error'])
         
@@ -49,6 +47,11 @@ class TrainerConfig:
         weight_comparison_epsilon = float(config_dict['weight_comparison_epsilon']) if 'weight_comparison_epsilon' in config_dict else 0.00001
 
         return TrainerConfig(error_func, acceptable_error, learning_rate, max_epochs, use_batch_increments, print_every, weight_comparison_epsilon)
+    
+    def from_file(filename: str):
+        with open(filename, "r") as f:
+            config_dict = json.load(f)
+        return TrainerConfig.from_dict(config_dict)
 
 
 class EndReason(Enum):
