@@ -1,8 +1,9 @@
 {
-    "error_func": <"count_nonmatching" | "cost">,
+    "error_func": <"count_nonmatching" | "cost_average" | "cost_max">,
     "acceptable_error": <number>,
     "learning_rate": <float>,
-    "max_epochs": <integer>, (optional)
+    "max_epochs": <integer>, (optional, no limit by default)
     "weight_update_method": <"incremental | batch">,
-    "print_every": <int> (optional)
+    "print_every": <int> (optional, disabled by default),
+    "weight_comparison_epsilon": <float> (optional, default 0.00001)
 }
