@@ -51,8 +51,9 @@ class TanhThetaFunction(ThetaFunction):
             range1 = float(range[1])
             if range0 >= range1:
                 raise Exception(f"Invalid range: {range}. Must be an array of two elements in ascending order.")
-            self.multiplier = range1 - range0
-            self.additive = range0
+            t = (range1 - range0) / 2
+            self.multiplier = t
+            self.additive = t + range0
         else:
             self.multiplier = 1
             self.additive = 0
