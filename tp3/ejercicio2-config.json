@@ -1,6 +1,6 @@
 {
-    "error_func": "cost_max",
-    "acceptable_error": 0.1,
+    "error_func": "cost_average",
+    "acceptable_error": 10,
     "learning_rate": 0.001,
     "max_epochs": 5000,
     "weight_update_method": "batch",
