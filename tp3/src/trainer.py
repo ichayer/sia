@@ -4,10 +4,11 @@ import numpy as np
 from .perceptron import Perceptron
 from . import error_funcs, theta_funcs
 from .scaler import Scaler
+from .perceptron import MultilayerPerceptron
 
 
 class TrainerConfig:
-    """Encapsulates a configuration on how how to train a perceptron."""
+    """Encapsulates a configuration on how to train a perceptron."""
     
     def __init__(self, theta: theta_funcs.ThetaFunction, error_func, acceptable_error, scaler: Scaler=Scaler(), learning_rate=0.1, max_epochs=100, use_batch_increments=False, print_every=None, weight_comparison_epsilon=0.00001) -> None:
         self.theta = theta
@@ -77,7 +78,6 @@ class TrainerResult:
         self.error_history = error_history
         self.end_reason = end_reason
 
-
 def evaluate_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]], dataset_outputs: list[float], error_func, print_output: bool, acceptable_error=0) -> int:
     """
     Evaluates a perceptron with a given dataset.
@@ -137,3 +137,74 @@ def train_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]], d
             end_reason = EndReason.EPOCH_LIMIT_REACHED
 
     return TrainerResult(epoch_num, weights_history, error_history, end_reason)
+
+def train_multilayerperceptron(multilayer_perceptron: MultilayerPerceptron, dataset: list[np.ndarray[float]], dataset_outputs: list[float], config: TrainerConfig) -> list[TrainerResult]:
+    dataset_with_ones = [np.concatenate(([1], d)) for d in dataset]
+    
+    epoch_num = 0
+    error_history = []
+    weights_history = [[]]
+    for (i, perceptron) in enumerate(multilayer_perceptron.last_layer):
+        weights_history[i][0] = np.copy(perceptron.w)
+    
+    end_reason = None
+    isAceptableError = True
+
+    while isAceptableError and (config.max_epochs is None or epoch_num < config.max_epochs) and end_reason is None:
+        epoch_num += 1
+        
+        for i in range(len(dataset)): # dataset_outputs = [1.2 , 2.4,  3.6]   //
+            multilayer_perceptron.evaluate_and_adjust(dataset_with_ones[i], dataset_outputs[i], config.learning_rate)
+            if not config.use_batch_increments:
+                multilayer_perceptron.update_weights()
+
+        if config.use_batch_increments:
+            multilayer_perceptron.update_weights()
+            
+        print_now = False
+        if config.print_every is not None and epoch_num % config.print_every == 0:
+            print("--------------------------------------------------")
+            for perceptron in multilayer_perceptron.last_layer:
+                print(f"RESULTS AFER EPOCH {epoch_num} (weights {perceptron.w})")
+            print_now = True
+        
+
+        
+        flag = True
+        for (i, perceptron) in enumerate(multilayer_perceptron.last_layer):
+            if np.abs(np.subtract(weights_history[i][-1], perceptron.w)).max() >= config.weight_comparison_epsilon:
+                flag = False
+            weights_history[i].append(np.copy(perceptron.w))
+            
+        if flag:
+            end_reason = EndReason.WEIGHTS_HAVENT_CHANGED
+
+        # outputs = np.zeros(len(dataset))
+        # for i in range(len(dataset)):
+        # 	output = perceptron.evaluate(dataset[i])
+        # 	expected = dataset_outputs[i]
+        # 	outputs[i] = output
+        # 	if print_output:
+        # 		err = error_func(np.array([expected]), np.array([output]))
+        # 		print(f"[{i}] {'✅' if err <= acceptable_error else '❌'} expected: {expected} got: {output} data: {dataset[i]}")
+        # return error_func(dataset_outputs, outputs)
+        
+        error = 0
+        for (i, perceptron) in enumerate(multilayer_perceptron.last_layer):
+            error += (dataset_outputs[i] - perceptron.output)
+            errors.append(error)
+            
+            isAcceptableError = error > config.acceptable_error
+
+			if error > error_history[-1]:
+				print(f"⚠⚠⚠ WARNING! Error from epoch {epoch_num} has increased relative to previous epoch!")
+			error_history.append(error)
+
+    if end_reason is None:
+        if error <= config.acceptable_error:
+            end_reason = EndReason.ACCEPTABLE_ERROR_REACHED
+        elif epoch_num == config.max_epochs:
+            end_reason = EndReason.EPOCH_LIMIT_REACHED
+
+    return TrainerResult(epoch_num, weights_history, error_history, end_reason)
+    
