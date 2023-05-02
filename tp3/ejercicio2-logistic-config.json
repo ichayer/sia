@@ -1,8 +1,8 @@
 {
     "error_func": "cost_average",
-    "acceptable_error": 0.1,
+    "acceptable_error": 0.0004,
     "learning_rate": 0.001,
-    "max_epochs": 5000,
+    "max_epochs": 4000,
     "weight_update_method": "batch",
     "print_every": 100
 }
