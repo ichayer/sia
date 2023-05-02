@@ -63,7 +63,7 @@ class MultilayerPerceptron:
         self.last_layer = perceptron_layers[-1]
 
         # After de evaluation of the Network, all the results will be stored here
-        self.results = [[0] * len(sublist) for sublist in self.perceptron_layers] 
+        self.results = [[0.0] * len(sublist) for sublist in self.perceptron_layers] 
 
         # # TODO: At this point, we must check that all the perceptrons in a particular layer have the same amount \
         # # of w's. Also, we must check that the amount of w's for a perceptron in the layer i 

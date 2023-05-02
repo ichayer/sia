@@ -77,6 +77,14 @@ class TrainerResult:
         self.weights_history = weights_history
         self.error_history = error_history
         self.end_reason = end_reason
+        
+class MultilayerTrainerResult:
+    
+    def __init__(self, epoch_num: int, weights_history, error_history, end_reason) -> None:
+        self.epoch_num = epoch_num
+        self.weights_history = weights_history
+        self.error_history = error_history
+        self.end_reason = end_reason
 
 def evaluate_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]], dataset_outputs: list[float], error_func, print_output: bool, acceptable_error=0) -> int:
     """
@@ -145,68 +153,68 @@ def train_multilayerperceptron(multilayer_perceptron: MultilayerPerceptron, data
     
     epoch_num = 0
     error_history = []
-    weights_history = [[]]
+    weights_history = [[[]]]
+    result_history = [[[]]]
     for (i, perceptron) in enumerate(multilayer_perceptron.last_layer):
         weights_history[i][0] = np.copy(perceptron.w)
     
     end_reason = None
-    isAceptableError = True
 
-    while isAceptableError and (config.max_epochs is None or epoch_num < config.max_epochs) and end_reason is None:
+    while (config.max_epochs is None or epoch_num < config.max_epochs) and end_reason is None:
         epoch_num += 1
+        error = 0
         
-        for i in range(len(dataset)): # dataset_outputs = [1.2 , 2.4,  3.6]   //
+        # Incremental
+        for i in range(len(dataset)):
             multilayer_perceptron.evaluate_and_adjust(dataset_with_ones[i], dataset_outputs[i], config.learning_rate)
             if not config.use_batch_increments:
+                for (j, perceptron) in enumerate(multilayer_perceptron.last_layer):
+                    result_history[epoch_num-1][i][j].append(multilayer_perceptron.results[-1][i][j])
+                    error += (dataset_outputs[i][j] - result_history[epoch_num-1][i][j]) * (dataset_outputs[i][j] - result_history[epoch_num-1][i][j])
                 multilayer_perceptron.update_weights()
 
+		# Batch
         if config.use_batch_increments:
             multilayer_perceptron.update_weights()
-            
-        print_now = False
+            for i in range(len(dataset)):
+                for (j, perceptron) in enumerate(multilayer_perceptron.last_layer):
+                    error += (dataset_outputs[i][j] - perceptron.output) * (dataset_outputs[i][j] - perceptron.output) 
+        
+        error = error * 0.5
+	
+		# Print weights
         if config.print_every is not None and epoch_num % config.print_every == 0:
             print("--------------------------------------------------")
             for perceptron in multilayer_perceptron.last_layer:
                 print(f"RESULTS AFER EPOCH {epoch_num} (weights {perceptron.w})")
-            print_now = True
         
-
+        
+        # Print results
+        for i in range(len(dataset)):
+            for (j, perceptron) in enumerate(multilayer_perceptron.last_layer):
+                if not config.use_batch_increments: 
+                    print(f"[{i}, {j}] {'✅' if error <= config.acceptable_error else '❌'} expected: {dataset_outputs[i][j]} got: {result_history[epoch_num-1][i][j]} data: {dataset[i]}")
+                else:
+                    print(f"[{i}, {j}] {'✅' if error <= config.acceptable_error else '❌'} expected: {dataset_outputs[i][j]} got: {perceptron.output} data: {dataset[i]}")
+                    
         
         flag = True
         for (i, perceptron) in enumerate(multilayer_perceptron.last_layer):
             if np.abs(np.subtract(weights_history[i][-1], perceptron.w)).max() >= config.weight_comparison_epsilon:
                 flag = False
-            weights_history[i].append(np.copy(perceptron.w))
-            
+            weights_history[epoch_num-1][i].append(np.copy(perceptron.w))
         if flag:
             end_reason = EndReason.WEIGHTS_HAVENT_CHANGED
 
-        # outputs = np.zeros(len(dataset))
-        # for i in range(len(dataset)):
-        # 	output = perceptron.evaluate(dataset[i])
-        # 	expected = dataset_outputs[i]
-        # 	outputs[i] = output
-        # 	if print_output:
-        # 		err = error_func(np.array([expected]), np.array([output]))
-        # 		print(f"[{i}] {'✅' if err <= acceptable_error else '❌'} expected: {expected} got: {output} data: {dataset[i]}")
-        # return error_func(dataset_outputs, outputs)
-        
-        error = 0
-        for (i, perceptron) in enumerate(multilayer_perceptron.last_layer):
-            error += (dataset_outputs[i] - perceptron.output)
-            errors.append(error)
-            
-            isAcceptableError = error > config.acceptable_error
+        if len(error_history) != 0 and error > error_history[-1]:
+            print(f"⚠⚠⚠ WARNING! Error from epoch {epoch_num} has increased relative to previous epoch!")
+            error_history.append(error)
 
-			if error > error_history[-1]:
-				print(f"⚠⚠⚠ WARNING! Error from epoch {epoch_num} has increased relative to previous epoch!")
-			error_history.append(error)
+        if end_reason is None:
+            if error <= config.acceptable_error:
+                end_reason = EndReason.ACCEPTABLE_ERROR_REACHED
+            elif epoch_num == config.max_epochs:
+                end_reason = EndReason.EPOCH_LIMIT_REACHED
 
-    if end_reason is None:
-        if error <= config.acceptable_error:
-            end_reason = EndReason.ACCEPTABLE_ERROR_REACHED
-        elif epoch_num == config.max_epochs:
-            end_reason = EndReason.EPOCH_LIMIT_REACHED
-
-    return TrainerResult(epoch_num, weights_history, error_history, end_reason)
+    return MultilayerTrainerResult(epoch_num, weights_history, error_history, end_reason)
     
