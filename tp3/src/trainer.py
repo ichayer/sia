@@ -86,7 +86,7 @@ def evaluate_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]]
     
     outputs = np.zeros(len(dataset))
     for i in range(len(dataset)):
-        output = perceptron.evaluate(dataset[i])
+        output = perceptron.evaluate(dataset[i]) #TODO: en incremental el output se debe guardar por cada entrada, ya que no es el mismo que evaluarlo al finalizar la epoca cuando se incremento n veces (n entradas)
         expected = dataset_outputs[i]
         outputs[i] = output
         if print_output:
@@ -111,16 +111,18 @@ def train_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]], d
         for i in range(len(dataset)):
             perceptron.evaluate_and_adjust(dataset_with_ones[i], dataset_outputs[i], config.learning_rate)
             if not config.use_batch_increments:
+                #TODO: Results history
                 perceptron.update_weights()
 
+        if config.use_batch_increments:
+            perceptron.update_weights()
+            
         print_now = False
         if config.print_every is not None and epoch_num % config.print_every == 0:
             print("--------------------------------------------------")
             print(f"RESULTS AFER EPOCH {epoch_num} (weights {perceptron.w})")
             print_now = True
-        
-        if config.use_batch_increments:
-            perceptron.update_weights()
+
         if np.abs(np.subtract(weights_history[-1], perceptron.w)).max() < config.weight_comparison_epsilon:
             end_reason = EndReason.WEIGHTS_HAVENT_CHANGED
         weights_history.append(np.copy(perceptron.w))
