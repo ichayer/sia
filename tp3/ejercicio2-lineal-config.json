@@ -1,4 +1,5 @@
 {
+    "theta": "lineal",
     "error_func": "cost_average",
     "acceptable_error": 8,
     "learning_rate": 0.001,

@@ -1,4 +1,7 @@
 {
+    "theta": "logistic",
+    "theta_config": {"beta": 1},
+    "scaler": {"from": [0.320, 88.184], "to": "theta_range"},
     "error_func": "cost_average",
     "acceptable_error": 0.0004,
     "learning_rate": 0.001,

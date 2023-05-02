@@ -1,4 +1,5 @@
 {
+    "theta": "simple",
     "error_func": "count_nonmatching",
     "acceptable_error": 0,
     "learning_rate": 0.1,

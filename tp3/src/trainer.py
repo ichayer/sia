@@ -2,14 +2,16 @@ import json
 from enum import Enum
 import numpy as np
 from .perceptron import Perceptron
-from . import error_funcs
+from . import error_funcs, theta_funcs
 from .scaler import Scaler
 
 
 class TrainerConfig:
     """Encapsulates a configuration on how how to train a perceptron."""
     
-    def __init__(self, error_func, acceptable_error, learning_rate=0.1, max_epochs=100, use_batch_increments=False, print_every=None, weight_comparison_epsilon=0.00001, scaler: Scaler=Scaler()) -> None:
+    def __init__(self, theta: theta_funcs.ThetaFunction, error_func, acceptable_error, scaler: Scaler=Scaler(), learning_rate=0.1, max_epochs=100, use_batch_increments=False, print_every=None, weight_comparison_epsilon=0.00001) -> None:
+        self.theta = theta
+        self.scaler = scaler
         self.error_func = error_func
         self.acceptable_error = acceptable_error
         self.learning_rate = learning_rate
@@ -17,9 +19,13 @@ class TrainerConfig:
         self.use_batch_increments = use_batch_increments
         self.print_every = print_every
         self.weight_comparison_epsilon = weight_comparison_epsilon
-        self.scaler = scaler
     
     def from_dict(config_dict: dict):
+        theta_config = config_dict['theta_config'] if 'theta_config' in config_dict else None
+        theta = theta_funcs.map[config_dict['theta']](theta_config)
+        
+        scaler = Scaler.from_dict(config_dict['scaler'], theta) if 'scaler' in config_dict else Scaler()
+        
         error_func = error_funcs.map[config_dict['error_func']]
         acceptable_error = float(config_dict['acceptable_error'])
         
@@ -47,10 +53,8 @@ class TrainerConfig:
         
         print_every = int(config_dict['print_every']) if 'print_every' in config_dict else None
         weight_comparison_epsilon = float(config_dict['weight_comparison_epsilon']) if 'weight_comparison_epsilon' in config_dict else 0.00001
-        
-        scaler = Scaler() if not 'scaler' in config_dict else Scaler.from_dict(config_dict['scaler'])
 
-        return TrainerConfig(error_func, acceptable_error, learning_rate, max_epochs, use_batch_increments, print_every, weight_comparison_epsilon, scaler)
+        return TrainerConfig(theta, error_func, acceptable_error, scaler, learning_rate, max_epochs, use_batch_increments, print_every, weight_comparison_epsilon)
     
     def from_file(filename: str):
         with open(filename, "r") as f:

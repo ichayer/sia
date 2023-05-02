@@ -1,10 +1,12 @@
 {
+    "theta": <"simple" | "lineal" | "tanh" | "logistic">,
+    "theta_config": {"beta": <float>} (optional, none by default),
+    "scaler": { "from": <[<float>, <float>] | "theta_range">, "to": <[<float>, <float>] | "theta_range">} (optional, defaults to no scaling),
     "error_func": <"count_nonmatching" | "cost_average" | "cost_max">,
     "acceptable_error": <number>,
     "learning_rate": <float>,
     "max_epochs": <integer>, (optional, no limit by default)
     "weight_update_method": <"incremental | batch">,
     "print_every": <int> (optional, disabled by default),
-    "weight_comparison_epsilon": <float> (optional, default 0.00001),
-    scaler: { from: [<float>, <float>], to: [<float>, <float>]} (optional, defaults to no scaling)
+    "weight_comparison_epsilon": <float> (optional, default 0.00001)
 }
