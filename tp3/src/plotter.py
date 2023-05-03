@@ -51,3 +51,23 @@ def plot_arrays(arrays, arrays_labels, title, xlabel, ylabel) -> plt:
     plt.legend()
 
     return plt
+
+def plot_bars(values_array, stdevs_array, labels, title, xlabel, ylabel)-> plt:
+    values = np.array(values_array) 
+    stdev = np.array(stdevs_array)
+
+    fig, ax = plt.subplots()
+
+    x_pos = np.arange(len(values))
+    ax.bar(x_pos, values, yerr=stdev, align='center', alpha=0.5, ecolor='black', capsize=10)
+
+    ax.set_ylabel(ylabel)
+    ax.set_xticks(x_pos)
+    ax.set_xticklabels(labels) 
+    ax.set_title(title)
+    ax.yaxis.grid(True)
+    ax.set_xlabel(xlabel)
+    ax.set_ylim(bottom=0)
+
+    plt.tight_layout()
+    return plt
