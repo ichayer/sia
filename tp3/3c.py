@@ -60,7 +60,7 @@ for i in range(len(perceptrons_by_layer)):
                 theta_func=config.theta
             )
 
-multilayer_perceptron_number = MultilayerPerceptron(perceptrons, Momentum())
+multilayer_perceptron_number = MultilayerPerceptron(perceptrons, Adam())
 
 n_train_items = 10
 
@@ -75,7 +75,7 @@ print(f"\nEpoch: {result_number.epoch_num}, End Reason: {result_number.end_reaso
 # Generalization
 
 print(f"-------Evaluating after training-------\n")
-avg_error = evaluate_multilayer_perceptron(
+avg = evaluate_multilayer_perceptron(
     multilayer_perceptron=multilayer_perceptron_number,
     dataset=dataset_input[:n_train_items],
     dataset_outputs=dataset_outputs[:n_train_items],
@@ -85,7 +85,7 @@ avg_error = evaluate_multilayer_perceptron(
 )
 
 print(f"\nMultilayer perceptron after training for {result_number.epoch_num} epoch{''if result_number.epoch_num == 1 else 's'} has "
-      f"an average error of {avg_error} {'✅' if avg_error <=config.acceptable_error else '❌'}\n")
+      f"an average error of {avg} {'✅' if avg <=config.acceptable_error else '❌'}\n")
 
 
 

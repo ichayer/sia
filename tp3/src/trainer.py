@@ -164,19 +164,20 @@ def train_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]], d
 
 def evaluate_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dataset: list[list[int]],
                                    dataset_outputs: list[list[int]], error_func, print_output: bool, acceptable_error=0.1
-                                   ) -> int:
+                                   ) -> float:
     """
     Evaluates a multilayer perceptron with a given dataset.
     Returns: The amount of inputs in the dataset for which the perceptron returned the correct result.
     """
-    err = 0
+    err = err_global = 0
     for (i, data) in enumerate(dataset):
         last_layer_result = np.array(multilayer_perceptron.feed_forward(data))
         expected = np.array(dataset_outputs[i])
-        err = error_func(expected, last_layer_result)
+        err = np.power(expected - last_layer_result, 2).sum() * 0.5
+        err_global += err
         if print_output:
-                print(f"[Data {i+1}] {'✅' if err <= acceptable_error else '❌'} expected: {dataset_outputs[i]} got: {last_layer_result} data: {dataset[i]}")
-    return err
+                print(f"[Data {i+1}] error: {err} {'✅' if err <= acceptable_error else '❌'} expected: {dataset_outputs[i]} got: {last_layer_result} data: {dataset[i]}")
+    return err_global/len(dataset)
 
 def train_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dataset: list[np.ndarray[float]],
                                 dataset_outputs: list[list[float]], config: TrainerConfig) -> MultilayerTrainerResult:
