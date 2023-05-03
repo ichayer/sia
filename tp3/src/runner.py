@@ -58,6 +58,7 @@ def run_n_times(
             train_dataset_outputs,
             test_dataset,
             test_dataset_outputs,
+            name
         ) = get_datasets()
         training_error, test_error = run_iteration(
             train_dataset,
@@ -73,4 +74,5 @@ def run_n_times(
         np.std(training_errors),
         np.mean(test_errors),
         np.std(test_errors),
+        name
     )

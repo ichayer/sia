@@ -68,6 +68,7 @@ def plot_bars(values_array, stdevs_array, labels, title, xlabel, ylabel)-> plt:
     ax.yaxis.grid(True)
     ax.set_xlabel(xlabel)
     ax.set_ylim(bottom=0)
-
+    
+    plt.xticks(rotation=45)
     plt.tight_layout()
     return plt
