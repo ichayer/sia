@@ -184,19 +184,16 @@ def train_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dat
         result_history.append([])
         for i in range(len(dataset)):
             multilayer_perceptron.evaluate_and_adjust(dataset[i], dataset_outputs[i], config.learning_rate)
+            result_history[-1].append([])
+            for (j, perceptron) in enumerate(multilayer_perceptron.last_layer):
+                result_history[-1][-1].append(None)
+                result_history[-1][i][j] = multilayer_perceptron.results[-1][j]
+                error += np.power(dataset_outputs[i][j] - result_history[epoch_num - 1][i][j], 2)
             if not config.use_batch_increments:
-                result_history[-1].append([])
-                for (j, perceptron) in enumerate(multilayer_perceptron.last_layer):
-                    result_history[-1][-1].append(None)
-                    result_history[-1][i][j] = multilayer_perceptron.results[-1][j]
-                    error += np.power(dataset_outputs[i][j] - result_history[epoch_num - 1][i][j], 2)
                 multilayer_perceptron.update_weights()
 
         if config.use_batch_increments:
             multilayer_perceptron.update_weights()
-            for i in range(len(dataset)):
-                for (j, perceptron) in enumerate(multilayer_perceptron.last_layer):
-                    error += (dataset_outputs[i][j] - perceptron.output) * (dataset_outputs[i][j] - perceptron.output)
 
         error = error * 0.5
 
@@ -209,12 +206,9 @@ def train_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dat
         # Print results
         for i in range(len(dataset)):
             for (j, perceptron) in enumerate(multilayer_perceptron.last_layer):
-                if not config.use_batch_increments:
-                    print(
-                        f"[Data {i}, Neuron Output {j}] {'✅' if error <= config.acceptable_error else '❌'} expected: {dataset_outputs[i][j]} got: {result_history[epoch_num - 1][i][j]} data: {dataset[i]}")
-                else:
-                    print(
-                        f"[Data {i}, Neuron Output {j}] {'✅' if error <= config.acceptable_error else '❌'} expected: {dataset_outputs[i][j]} got: {perceptron.output} data: {dataset[i]}")
+                print(
+                    f"[Data {i}, Neuron Output {j}] {'✅' if error <= config.acceptable_error else '❌'} expected: {dataset_outputs[i][j]} got: {result_history[epoch_num - 1][i][j]} data: {dataset[i]}")
+
 
         flag = True
         for (i, perceptron) in enumerate(multilayer_perceptron.last_layer):

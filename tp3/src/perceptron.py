@@ -98,7 +98,7 @@ class MultilayerPerceptron:
         #         else:
         #             self.delta_w[i][j] = gradient_desc(self.perceptron_weights[i][j], self.delta_w[i][j], perceptron.theta_func, input, learning_rate)
 
-        for (i, perceptron) in enumerate(self.perceptron_layers[-1]):
+        for (i, perceptron) in enumerate(self.last_layer):
             delta_lc_w = (expected_output[i] - perceptron.output) * perceptron.theta_func.derivative(perceptron.output, perceptron.h)
             perceptron.adjust(self.results[-2], delta_lc_w, learning_rate)
 
@@ -107,7 +107,7 @@ class MultilayerPerceptron:
                 delta_lc_w = 0
                 for perceptron_parent in self.perceptron_layers[i + 1]:
                     delta_lc_w += perceptron_parent.delta_lc_w * perceptron_parent.w[j]
-                delta_lc_w * perceptron.theta_func.derivative(perceptron.output, perceptron.h)
+                delta_lc_w *= perceptron.theta_func.derivative(perceptron.output, perceptron.h) # :eyes: esto antes no tenía un *=
 
                 if i != 0:
                     perceptron.adjust(self.results[i - 1], delta_lc_w, learning_rate)
