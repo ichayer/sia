@@ -1,6 +1,8 @@
 from typing import List
 
 import numpy as np
+
+from tp3.src.optimizers import Optimizer
 from tp3.src.theta_funcs import ThetaFunction
 
 
@@ -44,12 +46,11 @@ class Perceptron:
             self.__delta_w += learning_rate * (expected_output - self.output) * self.theta_func.derivative(self.output, self.h) * input_with_one
         return self.output
 
-    def adjust(self, input_data: np.ndarray[float], delta_lc_w: float, learning_rate: float) -> None:
+    def adjust(self, input_data: np.ndarray[float], delta_lc_w: float, learning_rate: float, optimizer: Optimizer) -> None:
         self.delta_lc_w = delta_lc_w
         input_data = np.insert(input_data, 0, 1)
         gt = delta_lc_w * input_data
-        for i in range(len(self.__delta_w)):
-            self.__delta_w[i] += learning_rate * gt[i]
+        self.__delta_w += optimizer.adjust(self, self.__delta_w, gt, learning_rate)
 
     def update_weights(self) -> None:
         """
@@ -63,8 +64,9 @@ class Perceptron:
 
 class MultilayerPerceptron:
 
-    def __init__(self, perceptron_layers: list[list[Perceptron]]) -> None:
+    def __init__(self, perceptron_layers: list[list[Perceptron]], optimizer: Optimizer) -> None:
         self._validate_structure(perceptron_layers)
+        self.optimizer = optimizer
         self.perceptron_layers = perceptron_layers
         self.total_layers = len(perceptron_layers)
         self.last_layer = perceptron_layers[-1]
@@ -94,7 +96,7 @@ class MultilayerPerceptron:
 
         for (i, perceptron) in enumerate(self.perceptron_layers[-1]):
             delta_lc_w = (expected_output[i] - perceptron.output) * perceptron.theta_func.derivative(perceptron.output, perceptron.h)
-            perceptron.adjust(self.results[-2], delta_lc_w, learning_rate)
+            perceptron.adjust(self.results[-2], delta_lc_w, learning_rate, self.optimizer)
 
         for i in range(len(self.perceptron_layers) - 2, -1, -1):
             for j, perceptron in enumerate(self.perceptron_layers[i]):
@@ -104,9 +106,9 @@ class MultilayerPerceptron:
                 delta_lc_w *= perceptron.theta_func.derivative(perceptron.output, perceptron.h)
 
                 if i != 0:
-                    perceptron.adjust(self.results[i - 1], delta_lc_w, learning_rate)
+                    perceptron.adjust(self.results[i - 1], delta_lc_w, learning_rate, self.optimizer)
                 else:
-                    perceptron.adjust(input_data, delta_lc_w, learning_rate)
+                    perceptron.adjust(input_data, delta_lc_w, learning_rate, self.optimizer)
 
     def update_weights(self):
         for sublist in self.perceptron_layers:

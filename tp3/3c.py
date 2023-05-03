@@ -1,4 +1,6 @@
 import numpy as np
+
+from tp3.src.optimizers import GradientDescent
 from tp3.src.perceptron import *
 from tp3.src.trainer import train_multilayer_perceptron, TrainerConfig, evaluate_multilayer_perceptron
 from functools import reduce
@@ -58,7 +60,7 @@ for i in range(len(perceptrons_by_layer)):
                 theta_func=config.theta
             )
 
-multilayer_perceptron_number = MultilayerPerceptron(perceptrons)
+multilayer_perceptron_number = MultilayerPerceptron(perceptrons, GradientDescent())
 
 n_train_items = 10
 
