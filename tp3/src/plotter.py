@@ -30,3 +30,24 @@ def plot2d(perceptron: Perceptron, dataset: list[np.ndarray[float]], dataset_out
 
     plt.axline(line_origin, line_advance)
     return plt
+
+def plot_arrays(arrays, arrays_labels, title, xlabel, ylabel) -> plt:
+    colors = ['r', 'g', 'b']
+
+    for i in range(len(arrays)):
+        values = arrays[i]
+        label = arrays_labels[i]
+        # Create an array of numbers
+        numbers = np.array(values)
+        # Create a corresponding array for the x-axis (indices of the numbers)
+        x_axis = np.arange(len(numbers))
+        # Plot the numbers
+        plt.plot(x_axis, numbers, linestyle='-', color=colors[i], label=label, linewidth=0.8)
+
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.yscale('log')
+    plt.legend()
+
+    return plt
