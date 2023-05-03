@@ -1,6 +1,6 @@
 {
     "theta": "tanh",
-    "error_func": "count_nonmatching",
+    "error_func": "cost_average",
     "acceptable_error": 0.02,
     "learning_rate": 0.20,
     "max_epochs": 500,

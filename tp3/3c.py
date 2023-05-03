@@ -58,25 +58,32 @@ for i in range(len(perceptrons_by_layer)):
                 theta_func=config.theta
             )
 
-multilayer_perceptron_parity = MultilayerPerceptron(perceptrons)
+multilayer_perceptron_number = MultilayerPerceptron(perceptrons)
 
 n_train_items = 10
 
-result_parity = train_multilayer_perceptron(
-    multilayer_perceptron=multilayer_perceptron_parity,
+result_number = train_multilayer_perceptron(
+    multilayer_perceptron=multilayer_perceptron_number,
     dataset=dataset_input[:n_train_items],
     dataset_outputs=dataset_outputs[:n_train_items],
     config=config
 )
 
-print(f"\n\n Epoch: {result_parity.epoch_num}, End Reason: {result_parity.end_reason}, Error: {result_parity.error_history[-1]:.4f}")
-
+print(f"\nEpoch: {result_number.epoch_num}, End Reason: {result_number.end_reason}, Error: {result_number.error_history[-1]:.4f}\n")
 # Generalization
 
-evaluate_multilayer_perceptron(
-    multilayer_perceptron=multilayer_perceptron_parity,
+print(f"-------Evaluating after training-------\n")
+avg_error = evaluate_multilayer_perceptron(
+    multilayer_perceptron=multilayer_perceptron_number,
     dataset=dataset_input[:n_train_items],
     dataset_outputs=dataset_outputs[:n_train_items],
+    print_output=True,
+    acceptable_error=0.1,
+    error_func=config.error_func
 )
+
+print(f"\nMultilayer perceptron after training for {result_number.epoch_num} epoch{''if result_number.epoch_num == 1 else 's'} has "
+      f"an average error of {avg_error} {'✅' if avg_error <=config.acceptable_error else '❌'}\n")
+
 
 

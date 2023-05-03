@@ -162,25 +162,21 @@ def train_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]], d
     return TrainerResult(epoch_num, weights_history, error_history, end_reason)
 
 
-def evaluate_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dataset: list[np.ndarray[float]],
-                                   dataset_outputs: list[list[float]]) -> None:
+def evaluate_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dataset: list[list[int]],
+                                   dataset_outputs: list[list[int]], error_func, print_output: bool, acceptable_error=0.1
+                                   ) -> int:
     """
     Evaluates a multilayer perceptron with a given dataset.
     Returns: The amount of inputs in the dataset for which the perceptron returned the correct result.
     """
-    # outputs = np.zeros(len(dataset))
+    err = 0
     for (i, data) in enumerate(dataset):
-        last_layer_result = multilayer_perceptron.feed_forward(data)
-        # expected = dataset_outputs[i][j]
-        err = 0
-        for (j, perceptron_result) in enumerate(last_layer_result):
-            err += np.power(perceptron_result - dataset_outputs[i][j], 2)
-        print(f" Data[{i}] expected: {dataset_outputs[i]} got: {last_layer_result}")
-        err *= 0.5
-        print(err)
-        # if print_output:
-        #     print(f"[Data {i}] {'✅' if err <= acceptable_error else '❌'} expected: {expected} got: {output} data: {dataset[i]}")
-
+        last_layer_result = np.array(multilayer_perceptron.feed_forward(data))
+        expected = np.array(dataset_outputs[i])
+        err = error_func(expected, last_layer_result)
+        if print_output:
+                print(f"[Data {i+1}] {'✅' if err <= acceptable_error else '❌'} expected: {dataset_outputs[i]} got: {last_layer_result} data: {dataset[i]}")
+    return err
 
 def train_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dataset: list[np.ndarray[float]],
                                 dataset_outputs: list[list[float]], config: TrainerConfig) -> MultilayerTrainerResult:

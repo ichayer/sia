@@ -47,10 +47,10 @@ result_parity = train_multilayer_perceptron(
     config=config
 )
 
-print(f"\n\n Epoch: {result_parity.epoch_num}, End Reason: {result_parity.end_reason}, Error: {result_parity.error_history[-1]:.4f}")
+print(f"\nEpoch: {result_parity.epoch_num}, End Reason: {result_parity.end_reason}, Error: {result_parity.error_history[-1]:.4f}\n")
 
-
-evaluate_multilayer_perceptron(
+print(f"-------Evaluating after training-------\n")
+avg_err = evaluate_multilayer_perceptron(
     multilayer_perceptron=multilayer_perceptron_parity,
     dataset=dataset_input[8:],
     dataset_outputs=dataset_outputs[8:],
@@ -59,5 +59,5 @@ evaluate_multilayer_perceptron(
     acceptable_error=config.acceptable_error
 )
 
-
-
+print(f"\nMultilayer perceptron after training for {result_parity.epoch_num} epoch{''if result_parity.epoch_num == 1 else 's'} has "
+      f"an average error of {avg_err} {'✅' if avg_err <=config.acceptable_error else '❌'}\n")
