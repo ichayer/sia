@@ -1,0 +1,10 @@
+{
+    "theta": "tanh",
+    "error_func": "count_nonmatching",
+    "acceptable_error": 0.1,
+    "learning_rate": 0.05,
+    "max_epochs": 500,
+    "weight_update_method": "incremental",
+    "print_every": 4,
+    "theta_config": {"beta": 0.90}
+}

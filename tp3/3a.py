@@ -58,4 +58,5 @@ result_xor = train_multilayer_perceptron(
     config=config
 )
 
-print(f"\n\n Epoch: {result_xor.epoch_num} End Reason: {result_xor.end_reason}")
+print(f"\n\n Epoch: {result_xor.epoch_num}, End Reason: {result_xor.end_reason}, Error: {result_xor.error_history[-1]:.4f}")
+

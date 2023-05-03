@@ -112,7 +112,6 @@ def evaluate_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]]
                 f"[{i}] {'✅' if err <= acceptable_error else '❌'} expected: {expected} got: {output} data: {dataset[i]}")
     return error_func(dataset_outputs, outputs)
 
-
 def train_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]], dataset_outputs: list[float],
                      config: TrainerConfig) -> TrainerResult:
     dataset_with_ones = [np.concatenate(([1], d)) for d in dataset]
@@ -160,10 +159,29 @@ def train_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]], d
 
     return TrainerResult(epoch_num, weights_history, error_history, end_reason)
 
+# TODO
+def evaluate_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dataset: list[np.ndarray[float]], dataset_outputs: list[list[float]],
+                        error_func, print_output: bool, acceptable_error=0) -> None:
+    """
+    Evaluates a multilayer perceptron with a given dataset.
+    Returns: The amount of inputs in the dataset for which the perceptron returned the correct result.
+    """
+    # outputs = np.zeros(len(dataset))
+    for (i, data) in enumerate(dataset):
+        last_layer_result = multilayer_perceptron.feed_forward(data)
+        # expected = dataset_outputs[i][j]
+        err = 0
+        for (j, perceptron_result) in enumerate(last_layer_result):
+            err += np.power(perceptron_result - dataset_outputs[i][j], 2)
+        print(f" Data[{i}] expected: {dataset_outputs[i]} got: {last_layer_result}")
+        err *= 0.5
+        print(err)
+            # if print_output:
+            #     print(f"[Data {i}] {'✅' if err <= acceptable_error else '❌'} expected: {expected} got: {output} data: {dataset[i]}")
+
 
 def train_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dataset: list[np.ndarray[float]],
                                 dataset_outputs: list[list[float]], config: TrainerConfig) -> MultilayerTrainerResult:
-    dataset_with_ones = [np.concatenate(([1], d)) for d in dataset]
 
     epoch_num = 0
     error_history = []
@@ -182,6 +200,7 @@ def train_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dat
         error = 0
 
         result_history.append([])
+        weights_history.append([])
         for i in range(len(dataset)):
             multilayer_perceptron.evaluate_and_adjust(dataset[i], dataset_outputs[i], config.learning_rate)
             result_history[-1].append([])
@@ -209,20 +228,19 @@ def train_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dat
                 print(
                     f"[Data {i}, Neuron Output {j}] {'✅' if error <= config.acceptable_error else '❌'} expected: {dataset_outputs[i][j]} got: {result_history[epoch_num - 1][i][j]} data: {dataset[i]}")
 
-
         flag = True
         for (i, perceptron) in enumerate(multilayer_perceptron.last_layer):
-            if np.abs(np.subtract(weights_history[-1][i], perceptron.w)).max() >= config.weight_comparison_epsilon:
-                flag = False
-            weights_history.append([])
             weights_history[-1].append(None)
             weights_history[-1][i] = np.copy(perceptron.w)
+            if np.abs(np.subtract(weights_history[-2][i], perceptron.w)).max() >= config.weight_comparison_epsilon:
+                flag = False
         if flag:
             end_reason = EndReason.WEIGHTS_HAVENT_CHANGED
 
         if len(error_history) != 0 and error > error_history[-1]:
             print(f"⚠⚠⚠ WARNING! Error from epoch {epoch_num} has increased relative to previous epoch!")
-            error_history.append(error)
+
+        error_history.append(error)
 
         if end_reason is None:
             if error <= config.acceptable_error:

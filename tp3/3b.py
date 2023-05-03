@@ -1,6 +1,6 @@
 import numpy as np
 from tp3.src.perceptron import *
-from tp3.src.trainer import train_multilayer_perceptron, TrainerConfig
+from tp3.src.trainer import train_multilayer_perceptron, TrainerConfig, evaluate_multilayer_perceptron
 from functools import reduce
 
 # Abrir el archivo
@@ -47,10 +47,17 @@ result_parity = train_multilayer_perceptron(
     config=config
 )
 
-print(f"\n\n Epoch: {result_parity.epoch_num} End Reason: {result_parity.end_reason}")
+print(f"\n\n Epoch: {result_parity.epoch_num}, End Reason: {result_parity.end_reason}, Error: {result_parity.error_history[-1]:.4f}")
 
 
-# evaluate
+evaluate_multilayer_perceptron(
+    multilayer_perceptron=multilayer_perceptron_parity,
+    dataset=dataset_input[8:],
+    dataset_outputs=dataset_outputs[8:],
+    error_func=config.error_func,
+    print_output=True,
+    acceptable_error=config.acceptable_error
+)
 
-multilayer_perceptron_parity
+
 

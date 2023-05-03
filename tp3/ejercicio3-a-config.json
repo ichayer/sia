@@ -1,9 +1,9 @@
 {
     "theta": "tanh",
     "error_func": "count_nonmatching",
-    "acceptable_error": 0.02,
-    "learning_rate": 0.20,
-    "max_epochs": 500,
+    "acceptable_error": 0.01,
+    "learning_rate": 0.10,
+    "max_epochs": 5000,
     "weight_update_method": "batch",
     "print_every": 4,
     "theta_config": {"beta": 0.90}

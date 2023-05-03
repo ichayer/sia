@@ -1,3 +1,5 @@
+from typing import List
+
 import numpy as np
 from tp3.src.theta_funcs import ThetaFunction
 
@@ -77,7 +79,7 @@ class MultilayerPerceptron:
         self.last_layer = perceptron_layers[-1]
         self.results = [[0.0] * len(sublist) for sublist in self.perceptron_layers]
 
-    def __feed_forward(self, input_data: np.ndarray[float]) -> None:
+    def feed_forward(self, input_data: np.ndarray[float]) -> list[float]:
         for (i, perceptron) in enumerate(self.perceptron_layers[0]):
             self.results[0][i] = perceptron.evaluate(input_data)
 
@@ -85,10 +87,12 @@ class MultilayerPerceptron:
             for j, perceptron in enumerate(sublist):
                 self.results[i][j] = perceptron.evaluate(self.results[i - 1])
 
+        return self.results[-1]
+
     def evaluate_and_adjust(self, input_data: np.ndarray[float], expected_output: list[float],
                             learning_rate: float) -> None:
 
-        self.__feed_forward(input_data)
+        self.feed_forward(input_data)
         # Backpropagation
         # for i in range(len(self.perceptron_layers)-1, -1, -1):
         #     for (j, perceptron) in enumerate(self.perceptron_layers[i]):
@@ -98,7 +102,10 @@ class MultilayerPerceptron:
         #         else:
         #             self.delta_w[i][j] = gradient_desc(self.perceptron_weights[i][j], self.delta_w[i][j], perceptron.theta_func, input, learning_rate)
 
-        for (i, perceptron) in enumerate(self.last_layer):
+
+
+
+        for (i, perceptron) in enumerate(self.perceptron_layers[-1]):
             delta_lc_w = (expected_output[i] - perceptron.output) * perceptron.theta_func.derivative(perceptron.output, perceptron.h)
             perceptron.adjust(self.results[-2], delta_lc_w, learning_rate)
 
