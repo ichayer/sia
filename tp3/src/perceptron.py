@@ -16,6 +16,7 @@ class Perceptron:
         self.delta_lc_w = None
         self.w = initial_weights
         self.__delta_w = np.zeros(len(initial_weights))
+        self.previous_delta_w = np.zeros(len(initial_weights))
         self.theta_func = theta_func
 
     def evaluate(self, input_data: np.ndarray[float]) -> float:
@@ -50,6 +51,7 @@ class Perceptron:
         self.delta_lc_w = delta_lc_w
         input_data = np.insert(input_data, 0, 1)
         gt = delta_lc_w * input_data
+        self.previous_delta_w = self.__delta_w
         self.__delta_w += optimizer.adjust(self, self.__delta_w, gt, learning_rate)
 
     def update_weights(self) -> None:

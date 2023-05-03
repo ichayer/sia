@@ -1,6 +1,6 @@
 import numpy as np
 
-from tp3.src.optimizers import GradientDescent
+from tp3.src.optimizers import *
 from tp3.src.perceptron import *
 from tp3.src.trainer import train_multilayer_perceptron, TrainerConfig, evaluate_multilayer_perceptron
 from functools import reduce
@@ -40,7 +40,7 @@ for i in range(len(perceptrons_by_layer)):
                 theta_func=config.theta
             )
 
-multilayer_perceptron_parity = MultilayerPerceptron(perceptrons, GradientDescent())
+multilayer_perceptron_parity = MultilayerPerceptron(perceptrons, Momentum())
 
 result_parity = train_multilayer_perceptron(
     multilayer_perceptron=multilayer_perceptron_parity,

@@ -4,7 +4,6 @@
     "acceptable_error": 0.5,
     "learning_rate": 0.05,
     "max_epochs": 500,
-    "weight_update_method": "batch",
-    "print_every": 4,
+    "weight_update_method": "incremental",
     "theta_config": {"beta": 0.90}
 }
