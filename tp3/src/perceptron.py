@@ -46,11 +46,10 @@ class Perceptron:
 
     def adjust(self, input_data: np.ndarray[float], delta_lc_w: float, learning_rate: float) -> None:
         self.delta_lc_w = delta_lc_w
+        input_data = np.insert(input_data, 0, 1)
+        gt = delta_lc_w * input_data
         for i in range(len(self.__delta_w)):
-            if i == 0:
-                self.__delta_w[i] += learning_rate * delta_lc_w
-            else:
-                self.__delta_w[i] += learning_rate * delta_lc_w * input_data[i - 1]
+            self.__delta_w[i] += learning_rate * gt[i]
 
     def update_weights(self) -> None:
         """
