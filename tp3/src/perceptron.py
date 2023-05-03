@@ -65,19 +65,20 @@ class Perceptron:
 class MultilayerPerceptron:
 
     def __init__(self, perceptron_layers: list[list[Perceptron]]) -> None:
+        self._validate_structure(perceptron_layers)
+        self.perceptron_layers = perceptron_layers
+        self.total_layers = len(perceptron_layers)
+        self.last_layer = perceptron_layers[-1]
+        self.results = [[0.0] * len(sublist) for sublist in self.perceptron_layers]
 
-        if perceptron_layers is None or len(perceptron_layers) < 2:
-            raise ValueError("Multilayer perceptron must have at least 2 layers")
+    def _validate_structure(self, perceptron_layers):
+        if perceptron_layers is None or len(perceptron_layers) <= 2:
+            raise ValueError("Multilayer perceptron must have at least 3 layers")
 
         for i in range(len(perceptron_layers) - 1):
             for perceptron in perceptron_layers[i + 1]:
                 if (len(perceptron.w) - 1) != len(perceptron_layers[i]):
                     raise ValueError("Invalid perceptron structure")
-
-        self.perceptron_layers = perceptron_layers
-        self.total_layers = len(perceptron_layers)
-        self.last_layer = perceptron_layers[-1]
-        self.results = [[0.0] * len(sublist) for sublist in self.perceptron_layers]
 
     def feed_forward(self, input_data: np.ndarray[float]) -> list[float]:
         for (i, perceptron) in enumerate(self.perceptron_layers[0]):
@@ -89,21 +90,8 @@ class MultilayerPerceptron:
 
         return self.results[-1]
 
-    def evaluate_and_adjust(self, input_data: np.ndarray[float], expected_output: list[float],
-                            learning_rate: float) -> None:
-
+    def evaluate_and_adjust(self, input_data: np.ndarray[float], expected_output: list[float], learning_rate: float) -> None:
         self.feed_forward(input_data)
-        # Backpropagation
-        # for i in range(len(self.perceptron_layers)-1, -1, -1):
-        #     for (j, perceptron) in enumerate(self.perceptron_layers[i]):
-        #         # TODO: cambiar a optimizer
-        #         if i!=0:
-        #             self.delta_w[i][j] = gradient_desc(self.perceptron_weights[i][j], self.delta_w[i][j], perceptron.theta_func, self.results[i-1], learning_rate)
-        #         else:
-        #             self.delta_w[i][j] = gradient_desc(self.perceptron_weights[i][j], self.delta_w[i][j], perceptron.theta_func, input, learning_rate)
-
-
-
 
         for (i, perceptron) in enumerate(self.perceptron_layers[-1]):
             delta_lc_w = (expected_output[i] - perceptron.output) * perceptron.theta_func.derivative(perceptron.output, perceptron.h)
@@ -114,7 +102,7 @@ class MultilayerPerceptron:
                 delta_lc_w = 0
                 for perceptron_parent in self.perceptron_layers[i + 1]:
                     delta_lc_w += perceptron_parent.delta_lc_w * perceptron_parent.w[j]
-                delta_lc_w *= perceptron.theta_func.derivative(perceptron.output, perceptron.h) # :eyes: esto antes no tenía un *=
+                delta_lc_w *= perceptron.theta_func.derivative(perceptron.output, perceptron.h)
 
                 if i != 0:
                     perceptron.adjust(self.results[i - 1], delta_lc_w, learning_rate)
@@ -125,3 +113,5 @@ class MultilayerPerceptron:
         for sublist in self.perceptron_layers:
             for perceptron in sublist:
                 perceptron.update_weights()
+
+
