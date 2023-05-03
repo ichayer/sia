@@ -112,6 +112,7 @@ def evaluate_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]]
                 f"[{i}] {'✅' if err <= acceptable_error else '❌'} expected: {expected} got: {output} data: {dataset[i]}")
     return error_func(dataset_outputs, outputs)
 
+
 def train_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]], dataset_outputs: list[float],
                      config: TrainerConfig) -> TrainerResult:
     dataset_with_ones = [np.concatenate(([1], d)) for d in dataset]
@@ -123,7 +124,8 @@ def train_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]], d
     error_history = [error]
     end_reason = None
 
-    while error > config.acceptable_error and (config.max_epochs is None or epoch_num < config.max_epochs) and end_reason is None:
+    while error > config.acceptable_error and (
+            config.max_epochs is None or epoch_num < config.max_epochs) and end_reason is None:
         epoch_num += 1
 
         for i in range(len(dataset)):
@@ -159,9 +161,9 @@ def train_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]], d
 
     return TrainerResult(epoch_num, weights_history, error_history, end_reason)
 
-# TODO
-def evaluate_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dataset: list[np.ndarray[float]], dataset_outputs: list[list[float]],
-                        error_func, print_output: bool, acceptable_error=0) -> None:
+
+def evaluate_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dataset: list[np.ndarray[float]],
+                                   dataset_outputs: list[list[float]]) -> None:
     """
     Evaluates a multilayer perceptron with a given dataset.
     Returns: The amount of inputs in the dataset for which the perceptron returned the correct result.
@@ -176,13 +178,12 @@ def evaluate_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, 
         print(f" Data[{i}] expected: {dataset_outputs[i]} got: {last_layer_result}")
         err *= 0.5
         print(err)
-            # if print_output:
-            #     print(f"[Data {i}] {'✅' if err <= acceptable_error else '❌'} expected: {expected} got: {output} data: {dataset[i]}")
+        # if print_output:
+        #     print(f"[Data {i}] {'✅' if err <= acceptable_error else '❌'} expected: {expected} got: {output} data: {dataset[i]}")
 
 
 def train_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dataset: list[np.ndarray[float]],
                                 dataset_outputs: list[list[float]], config: TrainerConfig) -> MultilayerTrainerResult:
-
     epoch_num = 0
     error_history = []
     weights_history = []
