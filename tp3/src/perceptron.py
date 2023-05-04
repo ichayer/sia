@@ -2,8 +2,8 @@ from typing import List
 
 import numpy as np
 
-from tp3.src.optimizers import Optimizer
-from tp3.src.theta_funcs import ThetaFunction
+from optimizers import Optimizer
+from theta_funcs import ThetaFunction
 
 
 class Perceptron:
@@ -52,7 +52,7 @@ class Perceptron:
         input_data = np.insert(input_data, 0, 1)
         gt = delta_lc_w * input_data
         self.previous_delta_w = self.__delta_w
-        self.__delta_w += optimizer.adjust(self, self.__delta_w, gt, learning_rate)
+        self.__delta_w += optimizer.adjust(self, gt, learning_rate)
 
     def update_weights(self) -> None:
         """

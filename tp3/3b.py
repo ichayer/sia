@@ -1,8 +1,8 @@
 import numpy as np
 
-from tp3.src.optimizers import *
-from tp3.src.perceptron import *
-from tp3.src.trainer import train_multilayer_perceptron, TrainerConfig, evaluate_multilayer_perceptron
+from src.optimizers import *
+from src.perceptron import *
+from src.trainer import train_multilayer_perceptron, TrainerConfig, evaluate_multilayer_perceptron
 from functools import reduce
 
 # Abrir el archivo

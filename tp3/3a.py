@@ -1,6 +1,6 @@
 import numpy as np
-from tp3.src.perceptron import *
-from tp3.src.trainer import train_multilayer_perceptron, TrainerConfig
+from src.perceptron import *
+from src.trainer import train_multilayer_perceptron, TrainerConfig
 from functools import reduce
 
 dataset = [
