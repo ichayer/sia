@@ -1,6 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from .perceptron import Perceptron
+from tp3.src.perceptron import Perceptron
 
 
 def plot_points2d(perceptron: Perceptron, dataset: list[np.ndarray[float]], dataset_outputs: list[float]) -> plt:

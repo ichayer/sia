@@ -60,7 +60,7 @@ for i in range(len(perceptrons_by_layer)):
                 theta_func=config.theta
             )
 
-multilayer_perceptron_number = MultilayerPerceptron(perceptrons, Adam())
+multilayer_perceptron_number = MultilayerPerceptron(perceptrons, Momentum())
 
 n_train_items = 10
 

@@ -52,7 +52,7 @@ class Perceptron:
         input_data = np.insert(input_data, 0, 1)
         gt = delta_lc_w * input_data
         self.previous_delta_w = self.__delta_w
-        self.__delta_w += optimizer.adjust(self, self.__delta_w, gt, learning_rate)
+        self.__delta_w += optimizer.adjust(self, gt, learning_rate)
 
     def update_weights(self) -> None:
         """

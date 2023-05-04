@@ -40,7 +40,7 @@ for i in range(len(perceptrons_by_layer)):
                 theta_func=config.theta
             )
 
-multilayer_perceptron_parity = MultilayerPerceptron(perceptrons, Adam())
+multilayer_perceptron_parity = MultilayerPerceptron(perceptrons, Momentum())
 
 result_parity = train_multilayer_perceptron(
     multilayer_perceptron=multilayer_perceptron_parity,
