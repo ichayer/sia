@@ -1,5 +1,5 @@
 import numpy as np
-from .theta_funcs import ThetaFunction
+from tp3.src.theta_funcs import ThetaFunction
 
 class Scaler:
     def __init__(self, range_from: (tuple[float, float] | None)=None, range_to: (tuple[float, float] | None)=None) -> None:

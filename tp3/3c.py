@@ -1,8 +1,8 @@
 import numpy as np
 
-from src.optimizers import *
-from src.perceptron import *
-from src.trainer import train_multilayer_perceptron, TrainerConfig, evaluate_multilayer_perceptron
+from tp3.src.optimizers import *
+from tp3.src.perceptron import *
+from tp3.src.trainer import train_multilayer_perceptron, TrainerConfig, evaluate_multilayer_perceptron
 from functools import reduce
 
 # Input
@@ -60,7 +60,7 @@ for i in range(len(perceptrons_by_layer)):
                 theta_func=config.theta
             )
 
-multilayer_perceptron_number = MultilayerPerceptron(perceptrons, Adam())
+multilayer_perceptron_number = MultilayerPerceptron(perceptrons, Momentum())
 
 n_train_items = 10
 

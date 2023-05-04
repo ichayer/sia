@@ -1,9 +1,9 @@
 import json
 from enum import Enum
 import numpy as np
-from perceptron import Perceptron, MultilayerPerceptron
-from src import error_funcs, theta_funcs
-from scaler import Scaler
+from tp3.src.perceptron import Perceptron, MultilayerPerceptron
+from tp3.src import error_funcs, theta_funcs
+from tp3.src.scaler import Scaler
 
 
 class TrainerConfig:

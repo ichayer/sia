@@ -1,8 +1,8 @@
 import numpy as np
 
-from src.optimizers import *
-from src.perceptron import *
-from src.trainer import train_multilayer_perceptron, TrainerConfig, evaluate_multilayer_perceptron
+from tp3.src.optimizers import *
+from tp3.src.perceptron import *
+from tp3.src.trainer import train_multilayer_perceptron, TrainerConfig, evaluate_multilayer_perceptron
 from functools import reduce
 
 # Abrir el archivo
@@ -40,7 +40,7 @@ for i in range(len(perceptrons_by_layer)):
                 theta_func=config.theta
             )
 
-multilayer_perceptron_parity = MultilayerPerceptron(perceptrons, Adam())
+multilayer_perceptron_parity = MultilayerPerceptron(perceptrons, Momentum())
 
 result_parity = train_multilayer_perceptron(
     multilayer_perceptron=multilayer_perceptron_parity,
