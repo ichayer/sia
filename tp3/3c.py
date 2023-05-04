@@ -1,9 +1,8 @@
 import numpy as np
 
-from tp3.src.optimizers import *
-from tp3.src.perceptron import *
-from tp3.src.trainer import train_multilayer_perceptron, TrainerConfig, evaluate_multilayer_perceptron
-from functools import reduce
+from src.optimizers import *
+from src.perceptron import *
+from src.trainer import train_multilayer_perceptron, TrainerConfig, evaluate_multilayer_perceptron
 
 # Input
 with open('digits.txt', "r") as file:
@@ -38,6 +37,7 @@ for i in range(len(dataset_outputs)):
             dataset_outputs[i][j] = -1
 
 config = TrainerConfig.from_file("ejercicio3-c-config.json")
+config.print_every = None
 
 perceptrons_by_layer = [35, 10, 10, 10]
 perceptrons = []

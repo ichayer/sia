@@ -1,9 +1,8 @@
 import numpy as np
-
-from tp3.src.optimizers import *
-from tp3.src.perceptron import *
-from tp3.src.trainer import train_multilayer_perceptron, TrainerConfig
+from src.perceptron import *
+from src.trainer import train_multilayer_perceptron, TrainerConfig
 from functools import reduce
+from src.optimizers import *
 
 dataset = [
     np.array([1, 1]),
@@ -37,19 +36,6 @@ for i in range(len(perceptrons_by_layer)):
                 initial_weights=np.random.random(perceptrons_by_layer[i - 1] + 1) * 0.8 - 0.4,
                 theta_func=config.theta
             )
-
-# for i in range(len(perceptrons_by_layer)):
-#     if i == 0:
-#         weights = np.random.rand(len(dataset[0]) + 1, perceptrons_by_layer[i] + 1) * 2 - 1
-#     else:
-#         weights = np.random.rand(perceptrons_by_layer[i - 1] + 1, perceptrons_by_layer[i] + 1) * 2 - 1
-#
-#     weights_symmetric = (weights + np.flip(weights, axis=0)) / 2
-#
-#     for j in range(perceptrons_by_layer[i]):
-#         perceptrons[i][j] = Perceptron(
-#             initial_weights=weights_symmetric[:, j],
-#             theta_func=config.theta)
 
 multilayer_perceptron_xor = MultilayerPerceptron(perceptrons, GradientDescent())
 

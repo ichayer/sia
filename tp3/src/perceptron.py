@@ -2,8 +2,8 @@ from typing import List
 
 import numpy as np
 
-from tp3.src.optimizers import Optimizer
-from tp3.src.theta_funcs import ThetaFunction
+from src.optimizers import Optimizer
+from src.theta_funcs import ThetaFunction
 
 
 class Perceptron:
