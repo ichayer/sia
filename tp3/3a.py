@@ -1,4 +1,6 @@
 import numpy as np
+
+from tp3.src.optimizers import *
 from tp3.src.perceptron import *
 from tp3.src.trainer import train_multilayer_perceptron, TrainerConfig
 from functools import reduce
@@ -49,7 +51,7 @@ for i in range(len(perceptrons_by_layer)):
 #             initial_weights=weights_symmetric[:, j],
 #             theta_func=config.theta)
 
-multilayer_perceptron_xor = MultilayerPerceptron(perceptrons)
+multilayer_perceptron_xor = MultilayerPerceptron(perceptrons, GradientDescent())
 
 result_xor = train_multilayer_perceptron(
     multilayer_perceptron=multilayer_perceptron_xor,
