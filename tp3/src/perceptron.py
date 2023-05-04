@@ -75,8 +75,8 @@ class MultilayerPerceptron:
         self.results = [[0.0] * len(sublist) for sublist in self.perceptron_layers]
 
     def _validate_structure(self, perceptron_layers):
-        if perceptron_layers is None or len(perceptron_layers) <= 2:
-            raise ValueError("Multilayer perceptron must have at least 3 layers")
+        if perceptron_layers is None or len(perceptron_layers) < 2:
+            raise ValueError("Multilayer perceptron must have at least 2 layers")
 
         for i in range(len(perceptron_layers) - 1):
             for perceptron in perceptron_layers[i + 1]:
