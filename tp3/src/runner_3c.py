@@ -6,6 +6,7 @@ from src.trainer import (
     train_multilayer_perceptron,
     TrainerConfig,
     evaluate_multilayer_perceptron,
+    EndReason,
 )
 
 
@@ -93,4 +94,9 @@ def run_by_optimizer(
     )
 
     print(f"Run {run_id} finished")
-    return {"name": run_id, "data": result_number, "mean_gen": avg}
+    return {
+        "name": run_id,
+        "data": result_number,
+        "mean_gen": avg,
+        "has_converged": result_number.end_reason == EndReason.ACCEPTABLE_ERROR_REACHED,
+    }
