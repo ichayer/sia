@@ -1,8 +1,8 @@
 import numpy as np
 
-from src.optimizers import *
-from src.perceptron import *
-from src.trainer import train_multilayer_perceptron, TrainerConfig, evaluate_multilayer_perceptron
+from .src.optimizers import *
+from .src.perceptron import *
+from .src.trainer import train_multilayer_perceptron, TrainerConfig, evaluate_multilayer_perceptron
 
 # Input
 with open('digits.txt', "r") as file:

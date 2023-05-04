@@ -1,8 +1,8 @@
 import numpy as np
-from src.perceptron import *
-from src.trainer import train_multilayer_perceptron, TrainerConfig
+from .src.perceptron import *
+from .src.trainer import train_multilayer_perceptron, TrainerConfig
 from functools import reduce
-from src.optimizers import *
+from .src.optimizers import *
 
 dataset = [
     np.array([1, 1]),

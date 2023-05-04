@@ -1,8 +1,8 @@
 import numpy as np
-from src.perceptron import *
-from src.trainer import train_multilayer_perceptron, TrainerConfig, EndReason
+from .perceptron import *
+from .trainer import train_multilayer_perceptron, TrainerConfig, EndReason
 from functools import reduce
-from src.optimizers import *
+from .optimizers import *
 
 def run_by_layers(run_id ,perceptrons_by_layer, config: TrainerConfig):
     print(f"Run {run_id} started")

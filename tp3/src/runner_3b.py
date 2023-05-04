@@ -1,7 +1,7 @@
 import numpy as np
-from src.optimizers import *
-from src.perceptron import *
-from src.trainer import (
+from .optimizers import *
+from .perceptron import *
+from .trainer import (
     train_multilayer_perceptron,
     TrainerConfig,
     evaluate_multilayer_perceptron,

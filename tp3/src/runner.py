@@ -1,6 +1,6 @@
 import numpy as np
-from tp3.src.perceptron import Perceptron
-from tp3.src.trainer import TrainerConfig, train_perceptron, evaluate_perceptron
+from .perceptron import Perceptron
+from .trainer import TrainerConfig, train_perceptron, evaluate_perceptron
 
 
 def run_iteration(
