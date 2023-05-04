@@ -2,8 +2,9 @@
     "theta": "tanh",
     "error_func": "cost_average",
     "acceptable_error": 0.5,
-    "learning_rate": 0.02,
-    "max_epochs": 1000,
+    "learning_rate": 0.01,
+    "max_epochs": 3000,
     "weight_update_method": "incremental",
-    "theta_config": {"beta": 0.90}
+    "theta_config": {"beta": 0.90},
+    "print_every": 3001
 }

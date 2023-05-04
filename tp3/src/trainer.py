@@ -1,9 +1,9 @@
 import json
 from enum import Enum
 import numpy as np
-from tp3.src.perceptron import Perceptron, MultilayerPerceptron
-from tp3.src import error_funcs, theta_funcs
-from tp3.src.scaler import Scaler
+from src.perceptron import Perceptron, MultilayerPerceptron
+from src import error_funcs, theta_funcs
+from src.scaler import Scaler
 
 
 class TrainerConfig:
@@ -214,17 +214,17 @@ def train_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dat
 
         error = error * 0.5
 
+        should_print = config.print_every is not None and epoch_num % config.print_every == 0
         # Print weights
-        if config.print_every is not None and epoch_num % config.print_every == 0:
+        if should_print:
             print("--------------------------------------------------")
             for perceptron in multilayer_perceptron.last_layer:
                 print(f"RESULTS AFTER EPOCH {epoch_num} (weights {perceptron.w})")
-
-        # Print results
-        for i in range(len(dataset)):
-            for (j, perceptron) in enumerate(multilayer_perceptron.last_layer):
-                print(
-                    f"[Data {i}, Neuron Output {j}] {'✅' if error <= config.acceptable_error else '❌'} expected: {dataset_outputs[i][j]} got: {result_history[epoch_num - 1][i][j]} data: {dataset[i]}")
+            # Print results
+            for i in range(len(dataset)):
+                for (j, perceptron) in enumerate(multilayer_perceptron.last_layer):
+                    print(
+                        f"[Data {i}, Neuron Output {j}] {'✅' if error <= config.acceptable_error else '❌'} expected: {dataset_outputs[i][j]} got: {result_history[epoch_num - 1][i][j]} data: {dataset[i]}")
 
         flag = True
         for (i, perceptron) in enumerate(multilayer_perceptron.last_layer):
@@ -235,7 +235,7 @@ def train_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dat
         if flag:
             end_reason = EndReason.WEIGHTS_HAVENT_CHANGED
 
-        if len(error_history) != 0 and error > error_history[-1]:
+        if should_print and len(error_history) != 0 and error > error_history[-1]:
             print(f"⚠⚠⚠ WARNING! Error from epoch {epoch_num} has increased relative to previous epoch!")
 
         error_history.append(error)

@@ -1,6 +1,6 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from tp3.src.perceptron import Perceptron
+from src.perceptron import Perceptron
 
 
 def plot_points2d(perceptron: Perceptron, dataset: list[np.ndarray[float]], dataset_outputs: list[float]) -> plt:
@@ -59,7 +59,11 @@ def plot_bars(values_array, stdevs_array, labels, title, xlabel, ylabel)-> plt:
     fig, ax = plt.subplots()
 
     x_pos = np.arange(len(values))
-    ax.bar(x_pos, values, yerr=stdev, align='center', alpha=0.5, ecolor='black', capsize=10)
+
+    if(stdevs_array is None):
+        ax.bar(x_pos, values, align='center', alpha=0.5, ecolor='black', capsize=10)
+    else:
+        ax.bar(x_pos, values, yerr=stdev, align='center', alpha=0.5, ecolor='black', capsize=10)
 
     ax.set_ylabel(ylabel)
     ax.set_xticks(x_pos)
