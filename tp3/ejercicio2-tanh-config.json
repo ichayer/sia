@@ -3,9 +3,9 @@
     "theta_config": {"beta": 1},
     "scaler": {"from": [0.320, 88.184], "to": "theta_range"},
     "error_func": "cost_average",
-    "acceptable_error": 0.0002,
+    "acceptable_error": 1,
     "learning_rate": 0.001,
-    "max_epochs": 4000,
+    "max_epochs": 2500,
     "weight_update_method": "batch",
     "print_every": 100
 }

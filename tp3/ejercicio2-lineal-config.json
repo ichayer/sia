@@ -3,8 +3,8 @@
     "error_func": "cost_average",
     "acceptable_error": 8,
     "learning_rate": 0.001,
-    "max_epochs": 2000,
+    "max_epochs": 1000,
     "weight_update_method": "batch",
     "print_every": 100,
-    "weight_comparison_epsilon": 0.01
+    "weight_comparison_epsilon": 0.001
 }

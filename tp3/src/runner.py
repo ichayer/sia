@@ -28,6 +28,7 @@ def run_iteration(
         dataset=train_dataset,
         dataset_outputs=train_dataset_outputs,
         error_func=config.error_func,
+        scaler=config.scaler,
         print_output=False,
         acceptable_error=config.acceptable_error,
     )
@@ -37,6 +38,7 @@ def run_iteration(
         dataset=test_dataset,
         dataset_outputs=test_dataset_outputs,
         error_func=config.error_func,
+        scaler=config.scaler,
         print_output=False,
         acceptable_error=config.acceptable_error,
     )
