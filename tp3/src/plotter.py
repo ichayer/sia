@@ -33,6 +33,8 @@ def plot2d(perceptron: Perceptron, dataset: list[np.ndarray[float]], dataset_out
 
 def plot_arrays(arrays, arrays_labels, title, xlabel, ylabel) -> plt:
     colors = ['r', 'g', 'b']
+    plt.tight_layout()
+    fig, ax = plt.subplots()
 
     for i in range(len(arrays)):
         values = arrays[i]
@@ -42,15 +44,15 @@ def plot_arrays(arrays, arrays_labels, title, xlabel, ylabel) -> plt:
         # Create a corresponding array for the x-axis (indices of the numbers)
         x_axis = np.arange(len(numbers))
         # Plot the numbers
-        plt.plot(x_axis, numbers, linestyle='-', color=colors[i], label=label, linewidth=0.8)
+        ax.plot(x_axis, numbers, linestyle='-', color=colors[i], label=label, linewidth=0.8)
 
-    plt.title(title)
-    plt.xlabel(xlabel)
-    plt.ylabel(ylabel)
-    plt.yscale('log')
-    plt.legend()
+    ax.set_title(title)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.set_yscale('log')
+    ax.legend()
 
-    return plt
+    return ax
 
 def plot_bars(values_array, stdevs_array, labels, title, xlabel, ylabel)-> plt:
     values = np.array(values_array) 

@@ -1,5 +1,6 @@
 import json
 from enum import Enum
+from typing import Optional
 import numpy as np
 from .perceptron import Perceptron, MultilayerPerceptron
 from . import error_funcs, theta_funcs
@@ -78,11 +79,12 @@ class TrainerResult:
     """Encapsulates the result of training a single perceptron."""
 
     def __init__(self, epoch_num: int, weights_history: list[np.ndarray[float]], error_history: list[float],
-                 end_reason: EndReason) -> None:
+                 end_reason: EndReason, test_error_history: Optional[list[float]] = None) -> None:
         self.epoch_num = epoch_num
         self.weights_history = weights_history
         self.error_history = error_history
         self.end_reason = end_reason
+        self.test_error_history = test_error_history
 
 
 class MultilayerTrainerResult:
@@ -112,15 +114,21 @@ def evaluate_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]]
     return error_func(scaler.reverse(dataset_outputs), scaler.reverse(outputs))
 
 
-def train_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]], dataset_outputs: list[float],
-                     config: TrainerConfig) -> TrainerResult:
+def train_perceptron(perceptron: Perceptron,
+                    dataset: list[np.ndarray[float]],
+                    dataset_outputs: list[float],
+                    config: TrainerConfig,
+                    test_dataset: Optional[list[np.ndarray[float]]] = None,
+                    test_dataset_outputs: Optional[list[float]] = None) -> TrainerResult:
     dataset_with_ones = [np.concatenate(([1], d)) for d in dataset]
 
     error = evaluate_perceptron(perceptron, dataset, dataset_outputs, config.error_func, config.scaler, False, config.acceptable_error)
+    test_error = evaluate_perceptron(perceptron, test_dataset, test_dataset_outputs, config.error_func, config.scaler, False, config.acceptable_error) if test_dataset is not None else None
 
     epoch_num = 0
     weights_history = [np.copy(perceptron.w)]
     error_history = [error]
+    test_error_history = [test_error] if test_error is not None else None
     end_reason = None
 
     while error > config.acceptable_error and (
@@ -147,6 +155,11 @@ def train_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]], d
         weights_history.append(np.copy(perceptron.w))
 
         error = evaluate_perceptron(perceptron, dataset, dataset_outputs, config.error_func, config.scaler, print_now, config.acceptable_error)
+
+        if test_dataset is not None:
+            test_error = evaluate_perceptron(perceptron, test_dataset, test_dataset_outputs, config.error_func, config.scaler, print_now, config.acceptable_error)
+            test_error_history.append(test_error)
+
         if error > error_history[-1]:
             print(f"⚠⚠⚠ WARNING! Error from epoch {epoch_num} has increased relative to previous epoch!")
         error_history.append(error)
@@ -157,7 +170,7 @@ def train_perceptron(perceptron: Perceptron, dataset: list[np.ndarray[float]], d
         elif epoch_num == config.max_epochs:
             end_reason = EndReason.EPOCH_LIMIT_REACHED
 
-    return TrainerResult(epoch_num, weights_history, error_history, end_reason)
+    return TrainerResult(epoch_num, weights_history, error_history, end_reason, test_error_history)
 
 
 def evaluate_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dataset: list[list[int]],
