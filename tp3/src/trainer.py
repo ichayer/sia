@@ -222,7 +222,7 @@ def train_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dat
             for i in range(len(dataset)):
                 for (j, perceptron) in enumerate(multilayer_perceptron.last_layer):
                     print(
-                        f"[Data {i}, Neuron Output {j}] {'✅' if error <= config.acceptable_error else '❌'} expected: {dataset_outputs[i][j]} got: {result_history[epoch_num - 1][i][j]} data: {dataset[i]}")
+                        f"[Data {i}, Neuron Output {j}] expected: {dataset_outputs[i][j]} got: {result_history[epoch_num - 1][i][j]} data: {dataset[i]}")
 
         flag = True
         for (i, perceptron) in enumerate(multilayer_perceptron.last_layer):

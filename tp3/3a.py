@@ -1,8 +1,8 @@
 import numpy as np
-from .src.perceptron import *
-from .src.trainer import train_multilayer_perceptron, TrainerConfig
+from src.perceptron import *
+from src.trainer import train_multilayer_perceptron, TrainerConfig
 from functools import reduce
-from .src.optimizers import *
+from src.optimizers import *
 
 dataset = [
     np.array([1, 1]),
@@ -15,7 +15,7 @@ dataset_outputs_xor = [[-1], [1], [1], [-1]]
 
 config = TrainerConfig.from_file("ejercicio3-a-config.json")
 
-perceptrons_by_layer = [2, 5,  1]
+perceptrons_by_layer = [2, 1]
 perceptrons = []
 
 for p in perceptrons_by_layer:
