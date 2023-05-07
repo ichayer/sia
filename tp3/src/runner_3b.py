@@ -1,16 +1,14 @@
 import numpy as np
-from .optimizers import *
-from .perceptron import *
-from .trainer import (
-    train_multilayer_perceptron,
-    TrainerConfig,
-    evaluate_multilayer_perceptron,
-)
+
+from tp3.src.optimizers import Optimizer
+from tp3.src.perceptron import Perceptron, MultilayerPerceptron
+from tp3.src.trainer import TrainerConfig, train_multilayer_perceptron, evaluate_multilayer_perceptron
+
 
 def runner_3b(run_id: str, optimizer: Optimizer, config: TrainerConfig):
     print(f"Run {run_id} started")
     # Abrir el archivo
-    with open("digits.txt", "r") as file:
+    with open("../digits.txt", "r") as file:
         # Leer cada línea del archivo y convertirla en una lista de enteros
         numbers = [[int(num) for num in line.split()] for line in file]
 
@@ -21,7 +19,7 @@ def runner_3b(run_id: str, optimizer: Optimizer, config: TrainerConfig):
 
     dataset_outputs = [[1], [-1], [1], [-1], [1], [-1], [1], [-1], [1], [-1]]
 
-    perceptrons_by_layer = [35, 10, 10, 1]
+    perceptrons_by_layer = [35, 15, 15, 1]
     perceptrons = []
 
     for p in perceptrons_by_layer:
@@ -46,21 +44,21 @@ def runner_3b(run_id: str, optimizer: Optimizer, config: TrainerConfig):
 
     multilayer_perceptron_parity = MultilayerPerceptron(perceptrons, optimizer)
 
-    result_parity = train_multilayer_perceptron(
+    training_results = train_multilayer_perceptron(
         multilayer_perceptron=multilayer_perceptron_parity,
-        dataset=dataset_input[:8],
-        dataset_outputs=dataset_outputs[:8],
+        dataset=dataset_input[:2],
+        dataset_outputs=dataset_outputs[:2],
         config=config,
     )
 
-    avg_err = evaluate_multilayer_perceptron(
+    evaluation_results = evaluate_multilayer_perceptron(
         multilayer_perceptron=multilayer_perceptron_parity,
-        dataset=dataset_input[8:],
-        dataset_outputs=dataset_outputs[8:],
+        dataset=dataset_input[2:],
+        dataset_outputs=dataset_outputs[2:],
         error_func=config.error_func,
         print_output=True,
         acceptable_error=config.acceptable_error,
     )
 
     print(f"Run {run_id} finished")
-    return {"name": run_id, "data": result_parity, "mean_gen": avg_err}
+    return {"name": run_id, "training_results": training_results, "evaluation_results": evaluation_results}

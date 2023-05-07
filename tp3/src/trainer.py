@@ -1,7 +1,9 @@
 import json
 from enum import Enum
-from typing import Optional
+from typing import Optional, Dict, List
 import numpy as np
+from numpy import ndarray
+
 from .perceptron import Perceptron, MultilayerPerceptron
 from . import error_funcs, theta_funcs
 from .scaler import Scaler
@@ -175,20 +177,21 @@ def train_perceptron(perceptron: Perceptron,
 
 def evaluate_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dataset: list[list[int]],
                                    dataset_outputs: list[list[int]], error_func, print_output: bool, acceptable_error=0.1
-                                   ) -> float:
+                                   ) -> dict[str, float | ndarray | list[list[int]]]:
     """
     Evaluates a multilayer perceptron with a given dataset.
     Returns: The amount of inputs in the dataset for which the perceptron returned the correct result.
     """
-    err = err_global = 0
+    err = 0
+    last_layer_results = []
     for (i, data) in enumerate(dataset):
         last_layer_result = np.array(multilayer_perceptron.feed_forward(data))
+        last_layer_results.append(last_layer_result)
         expected = np.array(dataset_outputs[i])
-        err = np.power(expected - last_layer_result, 2).sum() * 0.5
-        err_global += err
+        err += np.power(expected - last_layer_result, 2)
         if print_output:
-                print(f"[Data {i+1}] error: {err} {'✅' if err <= acceptable_error else '❌'} expected: {dataset_outputs[i]} got: {last_layer_result} data: {dataset[i]}")
-    return err_global/len(dataset)
+                print(f"[Data {i+1}] expected: {dataset_outputs[i]} got: {last_layer_result} data: {dataset[i]}")
+    return {"err": err*0.5, "expected_output": dataset_outputs, "network_output": last_layer_results}
 
 def train_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dataset: list[np.ndarray[float]],
                                 dataset_outputs: list[list[float]], config: TrainerConfig) -> MultilayerTrainerResult:

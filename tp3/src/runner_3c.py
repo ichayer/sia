@@ -1,8 +1,8 @@
 import numpy as np
 
-from .optimizers import *
-from .perceptron import *
-from .trainer import (
+from tp3.src.optimizers import *
+from tp3.src.perceptron import *
+from tp3.src.trainer import (
     train_multilayer_perceptron,
     TrainerConfig,
     evaluate_multilayer_perceptron,
@@ -17,14 +17,14 @@ def run_by_optimizer(
 ):
     print(f"Run {run_id} started")
     # Input
-    with open("digits.txt", "r") as file:
+    with open("../digits.txt", "r") as file:
         numbers = [[int(num) for num in line.split()] for line in file]
 
     vector = [num for sublist in numbers for num in sublist]
     dataset_input = [vector[i : i + 35] for i in range(0, len(vector), 35)]
 
     # Input with noise
-    with open("digits_noise.txt", "r") as file:
+    with open("../digits_noise.txt", "r") as file:
         numbers = [[int(num) for num in line.split()] for line in file]
 
     vector = [num for sublist in numbers for num in sublist]
