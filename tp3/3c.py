@@ -1,91 +1,104 @@
 import numpy as np
+from colr import color
+import random
 
-from .src.optimizers import *
-from .src.perceptron import *
-from .src.trainer import train_multilayer_perceptron, TrainerConfig, evaluate_multilayer_perceptron
+from src.optimizers import *
+from src.perceptron import *
+from src.noise_funcs import *
+from src.trainer import train_multilayer_perceptron, TrainerConfig, evaluate_multilayer_perceptron
 
 # Input
 with open('digits.txt', "r") as file:
     numbers = [[int(num) for num in line.split()] for line in file]
+images = []
+image = []
+for i, sublist in enumerate(numbers):
+    if i % 7 == 0 and i != 0:
+        images.append(image)
+        image = []
+    if sublist:
+        image.append(sublist)
+images.append(image)
 
-vector = [num for sublist in numbers for num in sublist]
-dataset_input = [vector[i:i+35] for i in range(0, len(vector), 35)]
-
-# Input with noise
-with open('digits_noise.txt', "r") as file:
-    numbers = [[int(num) for num in line.split()] for line in file]
-
-vector = [num for sublist in numbers for num in sublist]
-dataset_input_noise = [vector[i:i+35] for i in range(0, len(vector), 35)]
+flat_dataset_input = []
+for lista in images:
+    flat_dataset_input.append([elem for sublista in lista for elem in sublista])
 
 # Output
-dataset_outputs = [[1,0,0,0,0,0,0,0,0,0],
-                   [0,1,0,0,0,0,0,0,0,0],
-                   [0,0,1,0,0,0,0,0,0,0],
-                   [0,0,0,1,0,0,0,0,0,0],
-                   [0,0,0,0,1,0,0,0,0,0],
-                   [0,0,0,0,0,1,0,0,0,0],
-                   [0,0,0,0,0,0,1,0,0,0],
-                   [0,0,0,0,0,0,0,1,0,0],
-                   [0,0,0,0,0,0,0,0,1,0],
-                   [0,0,0,0,0,0,0,0,0,1]
-                   ]
+dataset_outputs = []
+for i in range(10):
+    l = [-1] * 10
+    l[i] = 1
+    dataset_outputs.append(l)
 
-for i in range(len(dataset_outputs)):
-    for j in range(len(dataset_outputs[i])):
-        if dataset_outputs[i][j] == 0:
-            dataset_outputs[i][j] = -1
-
+# Config
 config = TrainerConfig.from_file("ejercicio3-c-config.json")
-config.print_every = None
+train_items = 10
+weight_extreme = 0.4,
+layers = [35, 10, 10, 10]
 
-perceptrons_by_layer = [35, 10, 10, 10]
 perceptrons = []
-
-for p in perceptrons_by_layer:
+for p in layers:
     nl = [0] * p
     perceptrons.append(nl)
 
-for i in range(len(perceptrons_by_layer)):
-    for j in range(perceptrons_by_layer[i]):
+for i in range(len(layers)):
+    for j in range(layers[i]):
 
         if i == 0:
             perceptrons[i][j] = Perceptron(
-                initial_weights=np.random.random(len(dataset_input[0]) + 1) * 0.8 - 0.4,
+                initial_weights=np.random.random(len(flat_dataset_input[0]) + 1) * 2 * weight_extreme - weight_extreme,
                 theta_func=config.theta
             )
         else:
             perceptrons[i][j] = Perceptron(
-                initial_weights=np.random.random(perceptrons_by_layer[i - 1] + 1) * 0.8 - 0.4,
+                initial_weights=np.random.random(layers[i - 1] + 1) * 2 * weight_extreme - weight_extreme,
                 theta_func=config.theta
             )
 
 multilayer_perceptron_number = MultilayerPerceptron(perceptrons, Momentum())
 
-n_train_items = 10
 
 result_number = train_multilayer_perceptron(
     multilayer_perceptron=multilayer_perceptron_number,
-    dataset=dataset_input[:n_train_items],
-    dataset_outputs=dataset_outputs[:n_train_items],
+    dataset=flat_dataset_input[:train_items],
+    dataset_outputs=dataset_outputs[:train_items],
     config=config
 )
 
 print(f"\nEpoch: {result_number.epoch_num}, End Reason: {result_number.end_reason}, Error: {result_number.error_history[-1]:.4f}\n")
+
 # Generalization
 
-print(f"-------Evaluating after training-------\n")
-avg = evaluate_multilayer_perceptron(
+print("----- Original Images -----\n")
+print_images(images)
+
+# Salt and Pepper
+noisy_images = []
+for image in images:
+    noisy_images.append(salt_and_pepper_noise(np.array(image), 0.2, 0.2))
+    
+flat_dataset_input = []
+for lista in noisy_images:
+    flat_dataset_input.append([elem for sublista in lista for elem in sublista])
+
+print("----- Salt and Pepper Images -----\n")
+print_images(noisy_images)
+
+print(f"----- Evaluating after training -----\n")
+evaluation_results = evaluate_multilayer_perceptron(
     multilayer_perceptron=multilayer_perceptron_number,
-    dataset=dataset_input[:n_train_items],
-    dataset_outputs=dataset_outputs[:n_train_items],
+    dataset=flat_dataset_input[:train_items],
+    dataset_outputs=dataset_outputs[:train_items],
     print_output=True,
     acceptable_error=0.1,
     error_func=config.error_func
 )
 
-print(f"\nMultilayer perceptron after training for {result_number.epoch_num} epoch{''if result_number.epoch_num == 1 else 's'} has "
-      f"an average error of {avg} {'✅' if avg <=config.acceptable_error else '❌'}\n")
+network_errors = evaluation_results["err"]
+network_expected = evaluation_results["expected_output"]
+network_output = evaluation_results["network_output"]
 
-
-
+for (i, neuron_output) in enumerate(network_output):
+	max_ind = np.argmax(neuron_output)
+	print(f"Para la imagen del {i}, el perceptrón interpretó un {max_ind}")

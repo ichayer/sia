@@ -6,5 +6,5 @@
     "max_epochs": 3000,
     "weight_update_method": "incremental",
     "theta_config": {"beta": 0.90},
-    "print_every": 3001
+    "print_every": 100
 }
