@@ -55,9 +55,7 @@ avg_err = evaluate_multilayer_perceptron(
     multilayer_perceptron=multilayer_perceptron_parity,
     dataset=dataset_input[8:],
     dataset_outputs=dataset_outputs[8:],
-    error_func=config.error_func,
     print_output=True,
-    acceptable_error=config.acceptable_error
 )
 
 print(f"\nMultilayer perceptron after training for {result_parity.epoch_num} epoch{''if result_parity.epoch_num == 1 else 's'} has "

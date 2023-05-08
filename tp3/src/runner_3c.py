@@ -89,8 +89,6 @@ def run_by_optimizer(
         dataset=dataset_input[:n_train_items],
         dataset_outputs=dataset_outputs[:n_train_items],
         print_output=False,
-        acceptable_error=0.1,
-        error_func=config.error_func,
     )
 
     print(f"Run {run_id} finished")

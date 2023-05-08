@@ -55,9 +55,7 @@ def runner_3b(run_id: str, optimizer: Optimizer, config: TrainerConfig):
         multilayer_perceptron=multilayer_perceptron_parity,
         dataset=dataset_input[2:],
         dataset_outputs=dataset_outputs[2:],
-        error_func=config.error_func,
         print_output=True,
-        acceptable_error=config.acceptable_error,
     )
 
     print(f"Run {run_id} finished")
