@@ -1,0 +1,9 @@
+{
+  "k": 5,
+  "initial_radius": 3.5,
+  "initial_eta": 0.9,
+  "print_neighborhood": false,
+  "print_iteration_results": false,
+  "initialize_weights_method": "random",
+  "max_iterations": 1000
+}
