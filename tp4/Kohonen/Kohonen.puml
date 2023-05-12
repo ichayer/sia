@@ -1,0 +1,34 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class Kohonen {
+- k: int
+- grid: [k, k, n]
+- winners: [k, k, float]
+- initial_radius: float
+- radius: float
+- initial_eta: float
+- eta: float
+- decay_factor: float
+- threshold: float
+- iteration: int
+- max_iterations: int
+- print_neighborhood: bool
+- print_iteration_results: bool
+- print_final_results: bool
+
+- init(...config_data)
+- initialize_weights_random()
+- initialize_weights_input()
+- tuple[int, int] find_winner_neuron(np.ndarray input_data)
+- update_weights(np.ndarray input_data, tuple winner_indexes)
+- bool has_converged()
+- print_iteration_results()
+- print_final_results()
++ plot_heatmap_u_matrix()
++ plot_heatmap_final_entries()
++ plot_heatmap_variable()
++ start()
+}
+
+@enduml

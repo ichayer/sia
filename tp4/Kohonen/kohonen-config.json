@@ -4,6 +4,9 @@
   "initial_eta": 0.9,
   "print_neighborhood": false,
   "print_iteration_results": false,
+  "print_final_results": true,
   "initialize_weights_method": "random",
-  "max_iterations": 1000
+  "max_iterations": 3000,
+  "threshold": 1e-5,
+  "decay_factor": 0.96
 }

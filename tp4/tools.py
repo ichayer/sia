@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 
-def csv_to_dict(filename: str) -> dict:
+def csv_to_dict(filename: str) -> {list, dict}:
     """Convierte un archivo CSV en un diccionario.
 
     Lee un archivo CSV con las columnas "Country", "Area", "GDP", "Inflation", "Life.expect", "Military",
@@ -17,6 +17,7 @@ def csv_to_dict(filename: str) -> dict:
               de las columnas restantes.
     """
     data = pd.read_csv(filename)
+    titles = data.columns.tolist()
     country_data = {}
 
     for _, row in data.iterrows():
@@ -24,7 +25,7 @@ def csv_to_dict(filename: str) -> dict:
         values = row[['Area', 'GDP', 'Inflation', 'Life.expect', 'Military', 'Pop.growth', 'Unemployment']].to_numpy()
         country_data[country] = values
 
-    return country_data
+    return titles, country_data
 
 
 def standardize_data(country_data: dict) -> dict:
