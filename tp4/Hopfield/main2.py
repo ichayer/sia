@@ -21,12 +21,10 @@ query = letter_patterns[letter_query]
 print(f"Hopfeld network learned {len(patterns)} patterns: letters {letters}")
 print(f"Querying for letter: {letter_query}")
 
-def printer(s, converged, epochs):
-    print(f"Epoch {epochs}.")
+def printer(s_history, h_history, converged, epochs):
+    print(f"Epoch {epochs}: energy {h_history[-1]}")
 
-s, converged, epochs = net.evaluate(query=query, max_epochs=20, printer=printer)
+s_history, h_history, converged, epochs = net.evaluate(query=query, max_epochs=20, printer=printer)
 
-if converged:
-    print(f"Done! Converged after {epochs} epochs: (letter {map_reverse_search(letter_patterns, s[-1])}) {s[-1]}")
-else:
-    print(f"Failed to converge after {epochs} epochs: (letter {map_reverse_search(letter_patterns, s[-1])}) {s[-1]}")
+result_letter = map_reverse_search(letter_patterns, s_history[-1])
+print(f"{'Done! Converged' if converged else 'Failed to converge'} after {epochs} epochs: (letter {result_letter}) {s_history[-1]}")

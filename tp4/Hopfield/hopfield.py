@@ -16,13 +16,22 @@ class Hopfield:
         if len(query) != self.N:
             raise ValueError(f'Length of query vector {len(query)} must be equal to self.N {self.N}')
         
-        s = [query]
+        s_history = [query]
+        h_history = [self.energy_at(query)]
         converged = False
         epochs = 0
+        
+        if printer is not None:
+            printer(s_history, h_history, converged, epochs)
+                
         while not converged and epochs < max_epochs:
-            s.append(np.sign(self.weights @ s[-1]))
+            s_history.append(np.sign(self.weights @ s_history[-1]))
+            h_history.append(self.energy_at(s_history[-1]))
             epochs += 1
-            converged = np.array_equal(s[-2], s[-1])
+            converged = np.array_equal(s_history[-2], s_history[-1])
             if printer is not None:
-                printer(s, converged, epochs)
-        return s, converged, epochs
+                printer(s_history, h_history, converged, epochs)
+        return s_history, h_history, converged, epochs
+    
+    def energy_at(self, s):
+        return (self.weights @ s @ s) / -2.0
