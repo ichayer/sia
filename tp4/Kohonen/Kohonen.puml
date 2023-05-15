@@ -26,8 +26,9 @@ class Kohonen {
 - print_iteration_results()
 - print_final_results()
 + plot_heatmap_u_matrix()
-+ plot_heatmap_final_entries()
-+ plot_heatmap_variable()
++ plot_heatmap_final_entries(bool delete_smalls)
++ plot_heatmap_variable(int variable_index, str variable_name)
++ create_neighborhood_gif()
 + start()
 }
 

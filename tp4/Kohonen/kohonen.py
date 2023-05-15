@@ -1,27 +1,21 @@
 import numpy as np
-from colr import color
-from typing import Callable
+
 import warnings
 import matplotlib.pyplot as plt
+import colr
+import os
+import imageio
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
 class Kohonen:
     def __init__(self, data: dict, k: int, initial_radius: float, initial_eta: float, max_iterations: int,
-                 initialize_weights_method: Callable, print_neighborhood: bool, print_iteration_results: bool,
+                 initialize_weights_random: bool, print_neighborhood: bool, print_iteration_results: bool,
                  print_final_results: bool, threshold: float, decay_factor: float) -> None:
         self.winner_indexes = None
         self.grid = np.random.rand(k, k, len(next(iter(data.values()))))
         self.grid = self.grid.astype('float64')
-        self.winners = np.zeros((k, k))
-        self.winners_data = np.empty((k, k), dtype=np.ndarray)
-        for i in range(k):
-            for j in range(k):
-                self.winners_data[i][j] = np.array([])
-        self.data = data
-
-        self.__initialize_weights_random()
 
         self.k = k
         self.initial_radius = initial_radius
@@ -35,6 +29,20 @@ class Kohonen:
         self.print_neighborhood = print_neighborhood
         self.print_iteration_results = print_iteration_results
         self.print_final_results = print_final_results
+        self.data = data
+        self.winners = np.zeros((k, k))
+        self.winners_data = np.empty((k, k), dtype=np.ndarray)
+        for i in range(k):
+            for j in range(k):
+                self.winners_data[i][j] = np.array([])
+
+        if initialize_weights_random:
+            self.__initialize_weights_random()
+        else:
+            self.__initialize_weights_input()
+
+        self.neighborhood_history = np.empty((0, k, k))
+        self.error_history = np.array([])
 
     # Primer metodo para inicializar los weights, random entre el minimo y el máximo de cada posición
     # contando todas las entradas
@@ -49,6 +57,12 @@ class Kohonen:
         for i in range(self.k):
             for j in range(self.k):
                 self.grid[i][j] = np.random.uniform(min_values, max_values)
+
+    def __initialize_weights_input(self):
+        for i in range(self.k):
+            for j in range(self.k):
+                random_key = np.random.choice(list(self.data.keys()))
+                self.grid[i][j] = self.data[random_key]
 
     # Recibe el input random elegido y encuentra la neurona que tiene los weights más parecidos
     def __find_winner_neuron(self, input_data: np.ndarray) -> tuple[int, int]:
@@ -68,7 +82,6 @@ class Kohonen:
         rows, cols, weights = self.grid.shape
         neighborhood = np.zeros((rows, cols))
         neighborhood[winner_indexes[0]][winner_indexes[1]] = 2
-        line = "-----" * cols
 
         for i in range(rows):
             for j in range(cols):
@@ -77,7 +90,10 @@ class Kohonen:
                     self.grid[i][j] += self.eta * (input_data - self.grid[i][j])
                     neighborhood[i][j] = 1
 
+        self.neighborhood_history = np.concatenate((self.neighborhood_history, [neighborhood]), axis=0)
+
         if self.print_neighborhood:
+            line = "-----" * cols
             print("--- Neighborhood ---")
             print(f"{line}")
             for i in range(rows):
@@ -85,18 +101,22 @@ class Kohonen:
                     if j == 0:
                         print("|", end='')
                     if neighborhood[i][j] == 1:
-                        print(f"{color('  ', fore=(0, 0, 0), back=(255, 255, 255))} | ", end='')
+                        print(f"{colr.color('  ', fore=(0, 0, 0), back=(255, 255, 255))} | ", end='')
                     if neighborhood[i][j] == 0:
-                        print(f"{color('  ', fore=(0, 0, 0), back=(0, 0, 0))} | ", end='')
+                        print(f"{colr.color('  ', fore=(0, 0, 0), back=(0, 0, 0))} | ", end='')
                     if neighborhood[i][j] == 2:
-                        print(f"{color('  ', fore=(0, 0, 0), back=(0, 0, 255))} | ", end='')
+                        print(f"{colr.color('  ', fore=(0, 0, 0), back=(0, 0, 255))} | ", end='')
                 print(f"\n{line}")
 
     def __has_converged(self) -> bool:
         if self.iteration == 0:
             return False
 
-        return np.allclose(self.grid, self.previous_grid, atol=self.threshold)
+        diff = np.abs(self.grid - self.previous_grid)
+        max_diff = np.max(diff)
+        self.error_history = np.append(self.error_history, max_diff)
+
+        return max_diff < self.threshold
 
     # Empezar el algoritmo
     def start(self) -> dict[np.ndarray | int]:
@@ -110,7 +130,6 @@ class Kohonen:
             self.winner_indexes = self.__find_winner_neuron(input_data)
             self.winners[self.winner_indexes[0]][self.winner_indexes[1]] += 1
 
-            # if not np.any(self.winners_data[self.winner_indexes[0]][self.winner_indexes[1]] == random_key):
             self.winners_data[self.winner_indexes[0]][self.winner_indexes[1]] = np.append(
                 self.winners_data[self.winner_indexes[0]][self.winner_indexes[1]], random_key)
 
@@ -121,12 +140,13 @@ class Kohonen:
 
             self.radius = max(self.initial_radius * (self.decay_factor ** self.iteration), 1)
             self.eta = max(self.initial_eta * (self.decay_factor ** self.iteration), 0.001)
-            # self.eta = self.initial_eta/self.iteration
 
         if self.print_final_results:
             self.__print_final_results()
 
-        return {"matrix_winners": self.winners, "matrix_winners_data": self.winners_data, "iteration": self.iteration}
+        return {"matrix_winners": self.winners, "matrix_winners_data": self.winners_data, "grid": self.grid,
+                "error_history": self.error_history, "neighborhood_history": self.neighborhood_history,
+                "iteration": self.iteration}
 
     def __print_iteration_results(self):
         print(f"Iteration {self.iteration}")
@@ -186,7 +206,7 @@ class Kohonen:
         fig, ax = plt.subplots(figsize=(10, 10))
         heatmap = ax.imshow(u, cmap="gray_r")
         cbar = ax.figure.colorbar(heatmap, ax=ax, shrink=0.5)
-        plt.title('Average error between neighbours', fontsize=24)
+        plt.title('Average distance between neighbours', fontsize=24)
 
         # Mostrar el heatmap
         plt.show()
@@ -241,3 +261,50 @@ class Kohonen:
         plt.title(f'Variable {variable_name}', fontsize=24)
 
         plt.show()
+
+    def create_neighborhood_gif(self):
+        output_folder = "temp_images"
+
+        # Crear carpeta temporal para almacenar las imágenes
+        os.makedirs(output_folder, exist_ok=True)
+
+        for (m, neighborhood) in enumerate(self.neighborhood_history):
+            # Crear una figura y un eje para la imagen
+            fig, ax = plt.subplots()
+            ax.set_aspect("equal")
+            ax.set_xlim(0, self.k)
+            ax.set_ylim(0, self.k)
+            ax.axis("off")
+
+            # Asignar colores a los valores de la matriz
+            cmap = plt.cm.colors.ListedColormap(["black", "white", "blue"])
+            norm = plt.cm.colors.Normalize(vmin=0, vmax=2)
+
+            # Dibujar los cuadrados de colores correspondientes a cada valor en la matriz
+            for i in range(self.k):
+                for j in range(self.k):
+                    color = cmap(norm(neighborhood[i, j]))
+                    rect = plt.Rectangle((j, i), 1, 1, facecolor=color, edgecolor="black")
+                    ax.add_patch(rect)
+
+            # Guardar la imagen generada en la carpeta temporal
+            filename = f"{output_folder}/neighborhood_{m}.png"
+            plt.savefig(filename)
+            plt.close()
+
+        output_gif = "neighborhood_evolution.gif"
+        interval = 0.5  # Intervalo de tiempo entre cada imagen en segundos
+        images = []
+
+        for m in range(len(self.neighborhood_history)):
+            filename = f"{output_folder}/neighborhood_{m}.png"
+            images.append(imageio.imread(filename))
+
+        imageio.mimsave(output_gif, images, duration=interval)
+
+        # Eliminar las imágenes guardadas en la carpeta temporal
+        for file in os.listdir(output_folder):
+            os.remove(os.path.join(output_folder, file))
+        os.rmdir(output_folder)
+
+        print(f"GIF generado: {output_gif}")

@@ -38,7 +38,7 @@ train_items = 10
 weight_extreme = 0.4,
 layers = [35, 15, 10]
 methods = ["10^-1", "10^-2", "10^-3"]
-num_runs = 5
+num_runs = 2
 average_errors = []
 errors = []
 
