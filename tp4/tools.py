@@ -18,6 +18,7 @@ def csv_to_dict(filename: str) -> {list, dict}:
     """
     data = pd.read_csv(filename)
     titles = data.columns.tolist()
+    countries = data['Country'].tolist()
     country_data = {}
 
     for _, row in data.iterrows():
@@ -25,7 +26,7 @@ def csv_to_dict(filename: str) -> {list, dict}:
         values = row[['Area', 'GDP', 'Inflation', 'Life.expect', 'Military', 'Pop.growth', 'Unemployment']].to_numpy()
         country_data[country] = values
 
-    return titles, country_data
+    return countries, titles, country_data
 
 
 def standardize_data(country_data: dict) -> dict:

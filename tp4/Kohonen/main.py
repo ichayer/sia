@@ -5,7 +5,7 @@ import json
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-titles, country_data = csv_to_dict("../europe.csv")
+countries, titles, country_data = csv_to_dict("../europe.csv")
 standardized_country_data = standardize_data(country_data)
 
 with open('kohonen-config.json') as f:
