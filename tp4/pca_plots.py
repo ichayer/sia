@@ -1,5 +1,7 @@
 import numpy as np
+import plotly.express as px
 from matplotlib import pyplot as plt
+from sklearn.decomposition import PCA
 
 def plot_biplot(standardized_country_data, countries, labels):
 
@@ -38,3 +40,21 @@ def plot_biplot(standardized_country_data, countries, labels):
     plt.grid(True)
     plt.tight_layout()
     plt.show()
+
+def plot_biplot_with_sklearn(data_standarized, countries, labels):
+    pca = PCA()
+    principal_components = pca.fit_transform(data_standarized)
+
+    loadings = pca.components_.T * np.sqrt(pca.explained_variance_)
+
+    fig = px.scatter(principal_components, x=0, y=1, text=countries, color=countries)
+    fig.update_traces(textposition='top center')
+
+    for i, label in enumerate(np.array(list(labels))):
+        fig.add_shape(type='line', x0=0, y0=0, x1=loadings[i, 0], y1=loadings[i, 1])
+        fig.add_annotation(x=loadings[i, 0], y=loadings[i, 1], ax=0, ay=0,
+                           xanchor="center", yanchor="bottom", text=label)
+
+    fig.update_xaxes(dict(title=f'PCA 1 - variance {pca.explained_variance_ratio_[0] * 100:.2f}%', ))
+    fig.update_yaxes(dict(title=f'PCA 2 - variance {pca.explained_variance_ratio_[1] * 100:.2f}%'))
+    fig.show()
