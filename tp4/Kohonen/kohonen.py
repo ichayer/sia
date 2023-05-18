@@ -243,7 +243,7 @@ class Kohonen:
                     str_annotate += f'{key[:3]}: {value}\n'
 
                 value = self.winners[i, j]
-                color_bg = 'white' if value > self.max_iterations / 10 else 'black'
+                color_bg = 'white' if value > self.iteration / 10 else 'black'
                 plt.annotate(str_annotate.rstrip("\n"), (j, i), color=color_bg, ha='center', va='center')
 
         # Mostrar el heatmap

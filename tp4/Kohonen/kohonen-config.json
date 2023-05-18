@@ -8,5 +8,5 @@
   "initialize_weights_random": false,
   "max_iterations": 3000,
   "threshold": 1e-4,
-  "decay_factor": 0.96
+  "decay_factor": 0.97
 }
