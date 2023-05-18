@@ -29,7 +29,7 @@ def csv_to_dict(filename: str) -> {list, dict}:
     return countries, titles, country_data
 
 
-def standardize_data(country_data: dict) -> dict:
+def standardize_data(data: dict) -> dict:
     """Estandariza los datos en el diccionario country_data.
 
     Calcula la media y la desviación estándar de cada columna en el diccionario country_data
@@ -42,13 +42,19 @@ def standardize_data(country_data: dict) -> dict:
         dict: Diccionario estandarizado con los datos de los países.
     """
     standardized_data = {}
+    standardized_values = []
 
-    for country, values in country_data.items():
-        mean = np.mean(values, axis=0)
-        std = np.std(values, axis=0)
-        standardized_values = (values - mean) / std
-        standardized_data[country] = standardized_values
+    lengths = [len(arr) for arr in data.values()]
+
+    for i in range(max(lengths)):
+        values = [arr[i] for arr in data.values()]
+        mean = np.mean(values)
+        std = np.std(values)
+        standardized_values.append((values - mean) / std)
+
+    i = 0
+    for country, values in data.items():
+        standardized_data[country] = [arr[i] for arr in standardized_values]
+        i += 1
 
     return standardized_data
-
-
