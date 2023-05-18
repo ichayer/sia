@@ -36,7 +36,7 @@ def standardize_data(data: dict) -> dict:
     y estandariza los datos restando la media y dividiendo por la desviación estándar.
 
     Args:
-        country_data (dict): Diccionario con los datos de los países.
+        data (dict): Diccionario con los datos de los países.
 
     Returns:
         dict: Diccionario estandarizado con los datos de los países.
@@ -54,7 +54,7 @@ def standardize_data(data: dict) -> dict:
 
     i = 0
     for country, values in data.items():
-        standardized_data[country] = [arr[i] for arr in standardized_values]
+        standardized_data[country] = np.array([arr[i] for arr in standardized_values])
         i += 1
 
     return standardized_data
