@@ -1,5 +1,4 @@
 import numpy as np
-import plotly.express as px
 from matplotlib import pyplot as plt
 from sklearn.decomposition import PCA
 
@@ -43,45 +42,28 @@ def plot_biplot(standardized_country_data, countries, labels):
 
 def plot_biplot_with_sklearn(data_standarized, countries, labels):
     pca = PCA()
-    principal_components = pca.fit_transform(data_standarized)
-
-    loadings = pca.components_.T * np.sqrt(pca.explained_variance_)
-
-    fig = px.scatter(principal_components, x=0, y=1, text=countries, color=countries)
-    fig.update_traces(textposition='top center')
-
-    for i, label in enumerate(np.array(list(labels))):
-        fig.add_shape(type='line', x0=0, y0=0, x1=loadings[i, 0], y1=loadings[i, 1])
-        fig.add_annotation(x=loadings[i, 0], y=loadings[i, 1], ax=0, ay=0,
-                           xanchor="center", yanchor="bottom", text=label)
-
-    fig.update_xaxes(dict(title=f'PCA 1 - variance {pca.explained_variance_ratio_[0] * 100:.2f}%', ))
-    fig.update_yaxes(dict(title=f'PCA 2 - variance {pca.explained_variance_ratio_[1] * 100:.2f}%'))
-    fig.show()
-
-def plot_biplot_with_sklearn2(data_standarized, countries, labels):
-    pca = PCA(n_components=2)
-    principal_components = pca.fit_transform(data_standarized)
-
-    # Represents the directions and magnitudes of the original variables in the transformed space (arrows).
-    loadings = pca.components_.T * np.sqrt(pca.explained_variance_)
-
+    data_pca = pca.fit_transform(data_standarized)
+    pca_components = pca.components_
     fig, ax = plt.subplots()
-    ax.scatter(principal_components[:, 0], principal_components[:, 1])
 
+    # Graficar las proyecciones de los datos
+    ax.scatter(data_pca[:, 0], data_pca[:, 1])
+
+    # Graficar las direcciones de los vectores de carga
+    scale_factor = 2
+    text_scale_factor = scale_factor * 1.2
     for i, label in enumerate(labels):
-        ax.arrow(0, 0, loadings[i, 0], loadings[i, 1], head_width=0.01, head_length=0.2, fc='r', ec='r')
-        ax.annotate(label, (loadings[i, 0], loadings[i, 1]), xytext=(loadings[i, 0] * 1.2, loadings[i, 1] * 1.2),
-                    textcoords='offset points', ha='center', va='bottom')
+        ax.arrow(0, 0, pca_components[0, i] * scale_factor, pca_components[1, i] * scale_factor, color='r', alpha=0.5, head_width=0.2, head_length=0.2)
+        ax.text(pca_components[0, i] * text_scale_factor, pca_components[1, i] * text_scale_factor, label, color='r', ha='center', va='center', fontsize=8)
 
-    ax.set_xlabel('PCA 1')
-    ax.set_ylabel('PCA 2')
-    ax.set_title('Biplot')
+    # Etiquetar los países
+    for country, x, y in zip(countries, data_pca[:, 0], data_pca[:, 1]):
+        ax.text(x, y, country)
 
-    # Add country names as labels for the data points
-    for i, country in enumerate(countries):
-        ax.text(principal_components[i, 0], principal_components[i, 1], country, ha='center', va='bottom')
-
+    ax.set_xlabel("PC1")
+    ax.set_ylabel("PC2")
+    plt.title('Biplot de países con PCA')
+    plt.grid(True)
     plt.show()
 
 def plot_PCA1_barchart_with_sklearn(data_standarized, countries):
@@ -92,7 +74,7 @@ def plot_PCA1_barchart_with_sklearn(data_standarized, countries):
     ax.set_xticks(np.arange(len(countries)))
     ax.set_xticklabels(countries, rotation='vertical')
     ax.set_xlabel('Countries')
-    ax.set_ylabel('Principal Component 1')
-    ax.set_title('PCA1 Bar Chart per countries')
+    ax.set_ylabel('Componente principal 1')
+    ax.set_title('PCA1 Bar Chart por pais')
     plt.tight_layout()
     plt.show()
