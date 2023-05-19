@@ -4,6 +4,9 @@ from matplotlib import pyplot as plt
 from sklearn.decomposition import PCA
 
 def plot_biplot(standardized_country_data, countries, labels):
+    """
+    Plotea un biplot de las dos primeras componentes principales de los datos sin usar sklearn.
+    """
 
     # Calculamos la matriz de correlaciones
     corr_matrix = np.corrcoef(standardized_country_data, rowvar=False)
@@ -42,6 +45,10 @@ def plot_biplot(standardized_country_data, countries, labels):
     plt.show()
 
 def plot_biplot_with_sklearn(data_standarized, countries, labels):
+    """
+    Plotea un biplot de las dos primeras componentes principales de los datos usando sklearn.
+    """
+
     pca = PCA()
     data_pca = pca.fit_transform(data_standarized)
     pca_components = pca.components_
@@ -74,6 +81,10 @@ def plot_biplot_with_sklearn(data_standarized, countries, labels):
     plt.show()
 
 def plot_PCA1_barchart_with_sklearn(data_standarized, countries):
+    """
+    Plotea un bar chart de la primera componente principal de los datos usando sklearn.
+    """
+
     pca = PCA(n_components=1)
     principal_components = pca.fit_transform(data_standarized)
     fig, ax = plt.subplots()
@@ -87,6 +98,9 @@ def plot_PCA1_barchart_with_sklearn(data_standarized, countries):
     plt.show()
 
 def plot_boxplot(data, box_plot_title, labels):
+    """
+    Plotea un boxplot de los datos.
+    """
     plt.title(box_plot_title)
     plt.boxplot(data, labels=labels, widths=0.5, boxprops=dict(color='black'), whiskerprops=dict(color='black'), medianprops=dict(color='red', linewidth=2))
     plt.xticks(fontsize=8, horizontalalignment='center')

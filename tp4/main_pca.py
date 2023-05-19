@@ -1,4 +1,4 @@
-from tp4.pca_plots import *
+from tp4.Oja.pca_plots import *
 from tp4.tools import csv_to_dict, standardize_data
 
 def main():
@@ -10,7 +10,6 @@ def main():
     standardized_matrix = np.array(list(standardized_country_data.values()), dtype=np.float64)
     not_standardized_matrix = np.array(list(country_data.values()), dtype=np.float64)
 
-    # plot_biplot(standardized_matrix, countries, labels)
     plot_biplot_with_sklearn(standardized_matrix, countries, labels)
     plot_PCA1_barchart_with_sklearn(standardized_matrix, countries)
     plot_boxplot(standardized_matrix, 'Boxplot con datos estandarizados', labels)
