@@ -1,12 +1,12 @@
 {
-  "k": 5,
+  "k": 4,
   "initial_radius": 3.5,
-  "initial_eta": 0.9,
+  "initial_eta": 0.7,
   "print_neighborhood": false,
   "print_iteration_results": false,
   "print_final_results": false,
   "initialize_weights_random": false,
   "max_iterations": 3000,
   "threshold": 1e-4,
-  "decay_factor": 0.97
+  "decay_factor": 0.965
 }

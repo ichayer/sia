@@ -31,6 +31,10 @@ class Kohonen:
         self.print_final_results = print_final_results
         self.data = data
         self.winners = np.zeros((k, k))
+        self.last_winners_data = np.empty((k, k), dtype=np.ndarray)
+        for i in range(k):
+            for j in range(k):
+                self.last_winners_data[i][j] = np.array([])
         self.winners_data = np.empty((k, k), dtype=np.ndarray)
         for i in range(k):
             for j in range(k):
@@ -126,12 +130,20 @@ class Kohonen:
             random_key = np.random.choice(list(self.data.keys()))
             input_data = self.data[random_key]
             input_data = input_data.astype('float64')
+            random_key = random_key.astype('str')
 
             self.winner_indexes = self.__find_winner_neuron(input_data)
             self.winners[self.winner_indexes[0]][self.winner_indexes[1]] += 1
 
             self.winners_data[self.winner_indexes[0]][self.winner_indexes[1]] = np.append(
                 self.winners_data[self.winner_indexes[0]][self.winner_indexes[1]], random_key)
+
+            for i in range(self.k):
+                for j in range(self.k):
+                    if self.last_winners_data[i][j] is not None:
+                        self.last_winners_data[i][j] = np.setdiff1d(self.last_winners_data[i][j], random_key)
+
+            self.last_winners_data[self.winner_indexes[0]][self.winner_indexes[1]] = np.append(self.last_winners_data[self.winner_indexes[0]][self.winner_indexes[1]], random_key)
 
             self.__update_weights(input_data, self.winner_indexes)
 
@@ -211,6 +223,22 @@ class Kohonen:
         # Mostrar el heatmap
         plt.show()
 
+        fig, ax = plt.subplots(figsize=(10, 10))
+        heatmap = ax.imshow(u, cmap="gray_r")
+        cbar = ax.figure.colorbar(heatmap, ax=ax, shrink=0.5)
+        plt.title('Last entry per neuron with neighborhood distance', fontsize=24)
+
+        for i in range(self.k):
+            for j in range(self.k):
+                str_annotate = ""
+                for country in self.last_winners_data[i][j]:
+                    str_annotate += f'{country[:3]}\n'
+                value = u[i, j]
+                color_bg = 'white' if value > 1 else 'black'
+                plt.annotate(str_annotate.rstrip("\n"), (j, i), color=color_bg, ha='center', va='center')
+
+        plt.show()
+
     def plot_heatmap_final_entries(self, delete_smalls: bool) -> None:
         countries_no_dup = np.empty((self.k, self.k), dtype=np.ndarray)
 
@@ -246,8 +274,6 @@ class Kohonen:
                 color_bg = 'white' if value > self.iteration / 10 else 'black'
                 plt.annotate(str_annotate.rstrip("\n"), (j, i), color=color_bg, ha='center', va='center')
 
-        # Mostrar el heatmap
-        plt.show()
 
     def plot_heatmap_variable(self, variable_index: int, variable_name: str):
         if variable_index < 0 or variable_index > len(next(iter(self.data.values()))):

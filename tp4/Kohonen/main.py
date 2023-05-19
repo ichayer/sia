@@ -29,6 +29,10 @@ result = kohonen.start()
 
 # kohonen.create_neighborhood_gif()
 
+print(standardized_country_data)
+
 kohonen.plot_heatmap_u_matrix()
 kohonen.plot_heatmap_final_entries(False)
 kohonen.plot_heatmap_final_entries(True)
+for k in range(len(next(iter(country_data.values())))):
+    kohonen.plot_heatmap_variable(k, titles[k + 1])
