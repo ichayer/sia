@@ -78,3 +78,10 @@ def plot_PCA1_barchart_with_sklearn(data_standarized, countries):
     ax.set_title('PCA1 Bar Chart por pais')
     plt.tight_layout()
     plt.show()
+
+def plot_boxplot(data, box_plot_title, labels):
+    plt.title(box_plot_title)
+    plt.boxplot(data, labels=labels, widths=0.5, boxprops=dict(color='black'), whiskerprops=dict(color='black'), medianprops=dict(color='red', linewidth=2))
+    plt.xticks(fontsize=8, horizontalalignment='center')
+    plt.tight_layout()
+    plt.show()
