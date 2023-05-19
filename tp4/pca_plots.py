@@ -1,4 +1,5 @@
 import numpy as np
+from adjustText import adjust_text
 from matplotlib import pyplot as plt
 from sklearn.decomposition import PCA
 
@@ -44,7 +45,8 @@ def plot_biplot_with_sklearn(data_standarized, countries, labels):
     pca = PCA()
     data_pca = pca.fit_transform(data_standarized)
     pca_components = pca.components_
-    fig, ax = plt.subplots()
+    fig = plt.figure(figsize=(12, 10))
+    ax = fig.add_subplot(111)
 
     # Graficar las proyecciones de los datos
     ax.scatter(data_pca[:, 0], data_pca[:, 1])
@@ -53,17 +55,22 @@ def plot_biplot_with_sklearn(data_standarized, countries, labels):
     scale_factor = 2
     text_scale_factor = scale_factor * 1.2
     for i, label in enumerate(labels):
-        ax.arrow(0, 0, pca_components[0, i] * scale_factor, pca_components[1, i] * scale_factor, color='r', alpha=0.5, head_width=0.2, head_length=0.2)
-        ax.text(pca_components[0, i] * text_scale_factor, pca_components[1, i] * text_scale_factor, label, color='r', ha='center', va='center', fontsize=8)
+        ax.arrow(0, 0, pca_components[0, i] * scale_factor, pca_components[1, i] * scale_factor, color='r', alpha=0.5, head_width=0.12, head_length=0.08)
+        ax.text(pca_components[0, i] * text_scale_factor, pca_components[1, i] * text_scale_factor, label, color='r', ha='center', va='center', fontsize=11)
 
-    # Etiquetar los países
+    # Etiquetar los países con adjust_text
+    texts = []
     for country, x, y in zip(countries, data_pca[:, 0], data_pca[:, 1]):
-        ax.text(x, y, country)
+        texts.append(ax.text(x, y, country, color='b', fontsize=11))
+
+    # Ajustar automáticamente la posición de las etiquetas para evitar superposiciones
+    adjust_text(texts)
 
     ax.set_xlabel("PC1")
     ax.set_ylabel("PC2")
     plt.title('Biplot de países con PCA')
     plt.grid(True)
+    plt.tight_layout()
     plt.show()
 
 def plot_PCA1_barchart_with_sklearn(data_standarized, countries):
