@@ -12,3 +12,15 @@ def plot_image(s: np.ndarray, size: tuple[int, int]):
             img[y].append(1 if s[x + y*size[0]] < 0.5 else 0)
     plt.imshow(img, cmap='gray')
     return plt
+
+def plot_image_diff(s: np.ndarray, expected: np.ndarray, size: tuple[int, int]):
+    img = [[] for _ in range(size[1])]
+    for y in range(size[1]):
+        for x in range(size[0]):
+            i = x + y*size[0]
+            if s[i] == expected[i]:
+                img[y].append((255, 255, 255) if s[i] < 0.5 else (0, 0, 0))
+            else:
+                img[y].append((255, 176, 176) if s[i] < 0.5 else (84, 0, 0))
+    plt.imshow(img, cmap='gray')
+    return plt
