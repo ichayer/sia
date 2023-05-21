@@ -11,7 +11,7 @@ def main():
     not_standardized_matrix = np.array(list(country_data.values()), dtype=np.float64)
 
     plot_biplot_with_sklearn(standardized_matrix, countries, labels)
-    plot_PCA1_barchart_with_sklearn(standardized_matrix, countries)
+    plot_PCA1_barchart_with_sklearn(standardized_matrix, countries, labels)
     plot_boxplot(standardized_matrix, 'Boxplot con datos estandarizados', labels)
     plot_boxplot(not_standardized_matrix, 'Boxplot con datos no estandarizados', labels)
 

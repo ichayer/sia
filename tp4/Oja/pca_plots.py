@@ -80,13 +80,19 @@ def plot_biplot_with_sklearn(data_standarized, countries, labels):
     plt.tight_layout()
     plt.show()
 
-def plot_PCA1_barchart_with_sklearn(data_standarized, countries):
+def plot_PCA1_barchart_with_sklearn(data_standarized, countries, labels):
     """
     Plotea un bar chart de la primera componente principal de los datos usando sklearn.
     """
 
     pca = PCA(n_components=1)
     principal_components = pca.fit_transform(data_standarized)
+
+    print("Printing eigenvalues for the first component:")
+    print(pca.components_[0])
+    print("Printing labels for the first component:")
+    print(labels)
+
     fig, ax = plt.subplots()
     ax.bar(np.arange(len(countries)), principal_components[:, 0], align='center')
     ax.set_xticks(np.arange(len(countries)))
