@@ -2,7 +2,7 @@ from tp4.Oja.pca_plots import *
 from tp4.tools import csv_to_dict, standardize_data
 
 def main():
-    countries, labels, country_data = csv_to_dict("./europe.csv")
+    countries, labels, country_data = csv_to_dict("../europe.csv")
     standardized_country_data = standardize_data(country_data)
 
     labels.pop(0) # Drop country label
