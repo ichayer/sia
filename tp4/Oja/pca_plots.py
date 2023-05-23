@@ -49,11 +49,19 @@ def plot_biplot_with_sklearn(data_standarized, countries, labels):
     Plotea un biplot de las dos primeras componentes principales de los datos usando sklearn.
     """
 
-    pca = PCA()
+    pca = PCA(n_components=2)
     data_pca = pca.fit_transform(data_standarized)
     pca_components = pca.components_
     fig = plt.figure(figsize=(12, 10))
+
+    #  Una cuadrícula de subplots de 1 fila y 1 columna en la posición 1 de esa cuadrícula.
     ax = fig.add_subplot(111)
+
+    print("Vectores de carga:")
+    print(pca_components[0])
+    print(pca_components[1])
+    print("Labels:")
+    print(labels)
 
     # Graficar las proyecciones de los datos
     ax.scatter(data_pca[:, 0], data_pca[:, 1])
@@ -68,7 +76,7 @@ def plot_biplot_with_sklearn(data_standarized, countries, labels):
     # Etiquetar los países con adjust_text
     texts = []
     for country, x, y in zip(countries, data_pca[:, 0], data_pca[:, 1]):
-        texts.append(ax.text(x, y, country, color='b', fontsize=11))
+        texts.append(ax.text(x, y, country, color="orange", fontsize=11))
 
     # Ajustar automáticamente la posición de las etiquetas para evitar superposiciones
     adjust_text(texts)
@@ -86,15 +94,17 @@ def plot_PCA1_barchart_with_sklearn(data_standarized, countries, labels):
     """
 
     pca = PCA(n_components=1)
-    principal_components = pca.fit_transform(data_standarized)
 
-    print("Printing eigenvalues for the first component:")
+    # Matriz de 28 filas (paises) y 1 columna (n_components = 1)
+    data_pca = pca.fit_transform(data_standarized)
+
+    print("Vector de carga:")
     print(pca.components_[0])
-    print("Printing labels for the first component:")
+    print("Labels:")
     print(labels)
 
     fig, ax = plt.subplots()
-    ax.bar(np.arange(len(countries)), principal_components[:, 0], align='center')
+    ax.bar(np.arange(len(countries)), data_pca[:, 0], align='center')
     ax.set_xticks(np.arange(len(countries)))
     ax.set_xticklabels(countries, rotation='vertical')
     ax.set_xlabel('Countries')
