@@ -2,6 +2,8 @@ import numpy as np
 from adjustText import adjust_text
 from matplotlib import pyplot as plt
 from sklearn.decomposition import PCA
+from typing import List
+
 
 def plot_biplot(standardized_country_data, countries, labels):
     """
@@ -20,7 +22,7 @@ def plot_biplot(standardized_country_data, countries, labels):
     eigenvectors_sorted = eigenvectors[:, index]
 
     # Construimos la matriz R tomando los autovectores correspondientes a los mayores autovalores
-    R = eigenvectors_sorted[:, :2] # Número de componentes principales deseados
+    R = eigenvectors_sorted[:, :2]  # Número de componentes principales deseados
 
     # Calculamos Y como combinacion lineal de las originales
     Y = np.dot(standardized_country_data, R)
@@ -43,6 +45,7 @@ def plot_biplot(standardized_country_data, countries, labels):
     plt.grid(True)
     plt.tight_layout()
     plt.show()
+
 
 def plot_biplot_with_sklearn(data_standarized, countries, labels):
     """
@@ -70,8 +73,10 @@ def plot_biplot_with_sklearn(data_standarized, countries, labels):
     scale_factor = 2
     text_scale_factor = scale_factor * 1.2
     for i, label in enumerate(labels):
-        ax.arrow(0, 0, pca_components[0, i] * scale_factor, pca_components[1, i] * scale_factor, color='r', alpha=0.5, head_width=0.12, head_length=0.08)
-        ax.text(pca_components[0, i] * text_scale_factor, pca_components[1, i] * text_scale_factor, label, color='r', ha='center', va='center', fontsize=11)
+        ax.arrow(0, 0, pca_components[0, i] * scale_factor, pca_components[1, i] * scale_factor, color='r', alpha=0.5,
+                 head_width=0.12, head_length=0.08)
+        ax.text(pca_components[0, i] * text_scale_factor, pca_components[1, i] * text_scale_factor, label, color='r',
+                ha='center', va='center', fontsize=11)
 
     # Etiquetar los países con adjust_text
     texts = []
@@ -88,6 +93,7 @@ def plot_biplot_with_sklearn(data_standarized, countries, labels):
     plt.tight_layout()
     plt.show()
 
+
 def plot_PCA1_barchart_with_sklearn(data_standarized, countries, labels):
     """
     Plotea un bar chart de la primera componente principal de los datos usando sklearn.
@@ -103,22 +109,43 @@ def plot_PCA1_barchart_with_sklearn(data_standarized, countries, labels):
     print("Labels:")
     print(labels)
 
+    pc1_values = data_pca[:, 0]
+    bar_colors = ['r' if value >= 0 else 'b' for value in pc1_values]
+    plt.figure(figsize=(10, 5))
     fig, ax = plt.subplots()
-    ax.bar(np.arange(len(countries)), data_pca[:, 0], align='center')
+    ax.bar(np.arange(len(countries)), pc1_values, align='center', color=bar_colors)
     ax.set_xticks(np.arange(len(countries)))
     ax.set_xticklabels(countries, rotation='vertical')
-    ax.set_xlabel('Countries')
-    ax.set_ylabel('Componente principal 1')
-    ax.set_title('PCA1 Bar Chart por pais')
+    ax.set_xlabel('Paises')
+    ax.set_ylabel('PC1')
+    ax.set_title('PC1 con PCA')
     plt.tight_layout()
     plt.show()
+
 
 def plot_boxplot(data, box_plot_title, labels):
     """
     Plotea un boxplot de los datos.
     """
     plt.title(box_plot_title)
-    plt.boxplot(data, labels=labels, widths=0.5, boxprops=dict(color='black'), whiskerprops=dict(color='black'), medianprops=dict(color='red', linewidth=2))
+    plt.boxplot(data, labels=labels, widths=0.5, boxprops=dict(color='black'), whiskerprops=dict(color='black'),
+                medianprops=dict(color='red', linewidth=2))
     plt.xticks(fontsize=8, horizontalalignment='center')
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_pca1(countries: List[str], pca1_values: List[float]):
+    # Generate a bar plot
+    plt.figure(figsize=(10, 5))
+
+    # Determine colors for each bar
+    bar_colors = ['r' if value >= 0 else 'b' for value in pca1_values]
+
+    plt.bar(countries, pca1_values, color=bar_colors)
+    plt.xlabel('Paises')
+    plt.ylabel('PC1')
+    plt.title('PC1 con Oja')
+    plt.xticks(rotation=90)  # Rotate x-axis labels for readability
     plt.tight_layout()
     plt.show()
