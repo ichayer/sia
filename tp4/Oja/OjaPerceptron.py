@@ -22,17 +22,11 @@ class OjaPerceptron:
     def evaluate_and_adjust(self, input_data: np.ndarray[float], learning_rate: float) -> float:
         """
         Evaluates the perceptron for a given input, adds weight adjustments, and then returns the result.
-        Note that weight adjustments are added to an internal variable and not directly to the weights.
-        To apply these adjustments, call update_weights().
+        :param input_data:
+        :param learning_rate:
+        :return:
         """
-
-        if len(input_data) != len(self.w):
-            raise Exception(
-                f'Error: during training specified {len(input_data)} inputs to a perceptron with {len(self.w)} '
-                f'weights (there should be {len(self.w)} inputs)')
-
-        self.h = self.w @ input_data
-        self.output = self.theta_func.primary(self.h)
+        self.evaluate(input_data)
 
         # Apply Oja's learning rule
         self.__delta_w += learning_rate * (self.output * input_data - (self.output ** 2) * self.w)
@@ -47,3 +41,20 @@ class OjaPerceptron:
         """
         self.w = self.w + self.__delta_w
         self.__delta_w.fill(0)
+
+    # Extract evaluate function
+    def evaluate(self, input_data: np.ndarray[float]) -> float:
+        """
+        Evaluates the perceptron for a given input, adds weight adjustments, and then returns the result.
+        Note that weight adjustments are added to an internal variable and not directly to the weights.
+        To apply these adjustments, call update_weights().
+        """
+
+        if len(input_data) != len(self.w):
+            raise Exception(
+                f'Error: during training specified {len(input_data)} inputs to a perceptron with {len(self.w)} '
+                f'weights (there should be {len(self.w)} inputs)')
+
+        self.h = self.w @ input_data
+        self.output = self.theta_func.primary(self.h)
+        return self.output
