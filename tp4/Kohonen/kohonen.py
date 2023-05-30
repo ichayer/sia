@@ -176,6 +176,7 @@ class Kohonen:
         print(f"Iteration {self.iteration}")
         print(f"Radius: {self.radius}")
         print(f"Eta: {self.eta}")
+        print(f"Error: {self.error_history[-1]}")
 
         print("---- Grid ----")
         print(self.grid)
@@ -283,8 +284,8 @@ class Kohonen:
 
         fig, ax = plt.subplots(figsize=(10, 10))
         heatmap = ax.imshow(extracted_variables, cmap="PuBu")
-        cbar = ax.figure.colorbar(heatmap, ax=ax).set_label(label='Entries Amount', size=20)
-        plt.title(f'Variable {variable_name}', fontsize=24)
+        cbar = ax.figure.colorbar(heatmap, ax=ax)
+        plt.title(f'Variable {variable_name} per neuron', fontsize=24)
 
         plt.show()
 
