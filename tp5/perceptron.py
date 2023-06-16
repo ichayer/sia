@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 
 import numpy as np
 from typing import Callable
@@ -91,7 +91,7 @@ class MultilayerPerceptron:
                 if (len(perceptron.w) - 1) != len(perceptron_layers[i]):
                     raise ValueError("Invalid perceptron structure")
 
-    def feed_forward(self, input_data: np.ndarray[float]) -> list[float]:
+    def feed_forward(self, input_data: np.ndarray[float]) -> tuple[list[float], list[float]]:
         for (i, perceptron) in enumerate(self.perceptron_layers[0]):
             self.results[0][i] = perceptron.evaluate(input_data)
 
@@ -99,14 +99,17 @@ class MultilayerPerceptron:
             for j, perceptron in enumerate(sublist):
                 self.results[i][j] = perceptron.evaluate(self.results[i - 1])
 
-        return self.results[-1]
+        encoder_output = self.results[self.total_layers // 2]
+        decoder_output = self.results[self.total_layers - 1]
 
-    def evaluate_and_adjust(self, input_data: np.ndarray[float], expected_output: list[float],
+        return encoder_output, decoder_output
+
+    def evaluate_and_adjust(self, input_data: np.ndarray[float],
                             learning_rate: float) -> None:
         self.feed_forward(input_data)
 
         for (i, perceptron) in enumerate(self.perceptron_layers[-1]):
-            delta_lc_w = (expected_output[i] - perceptron.output) * perceptron.theta_func.derivative(perceptron.output,
+            delta_lc_w = (input_data[i] - perceptron.output) * perceptron.theta_func.derivative(perceptron.output,
                                                                                                      perceptron.h)
             perceptron.adjust(self.results[-2], delta_lc_w, learning_rate)
 

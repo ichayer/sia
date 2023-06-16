@@ -198,8 +198,7 @@ def evaluate_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, 
     return {"err": err * 0.5, "expected_output": dataset_outputs, "network_output": last_layer_results}
 
 
-def train_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dataset: list[np.ndarray[float]],
-                                dataset_outputs: list[list[float]], config: TrainerConfig) -> MultilayerTrainerResult:
+def train_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dataset: list[np.ndarray[float]], config: TrainerConfig) -> MultilayerTrainerResult:
     epoch_num = 0
     error_history = []
     weights_history = []
@@ -219,12 +218,12 @@ def train_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dat
         result_history.append([])
         weights_history.append([])
         for i in range(len(dataset)):
-            multilayer_perceptron.evaluate_and_adjust(dataset[i], dataset_outputs[i], config.learning_rate)
+            multilayer_perceptron.evaluate_and_adjust(dataset[i], config.learning_rate)
             result_history[-1].append([])
             for (j, perceptron) in enumerate(multilayer_perceptron.last_layer):
                 result_history[-1][-1].append(None)
                 result_history[-1][i][j] = multilayer_perceptron.results[-1][j]
-                error += np.power(dataset_outputs[i][j] - result_history[epoch_num - 1][i][j], 2)
+                error += np.power(dataset[i][j] - result_history[epoch_num - 1][i][j], 2)
             if not config.use_batch_increments:
                 multilayer_perceptron.update_weights()
 
@@ -243,7 +242,7 @@ def train_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dat
             for i in range(len(dataset)):
                 for (j, perceptron) in enumerate(multilayer_perceptron.last_layer):
                     print(
-                        f"[Data {i}, Neuron Output {j}] expected: {dataset_outputs[i][j]} got: {result_history[epoch_num - 1][i][j]} data: {dataset[i]}")
+                        f"[Data {i}, Neuron Output {j}] expected: {dataset[i][j]} got: {result_history[epoch_num - 1][i][j]} data: {dataset[i]}")
 
         flag = True
         for (i, perceptron) in enumerate(multilayer_perceptron.last_layer):
