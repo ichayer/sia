@@ -9,6 +9,16 @@ fonts_headers = np.array(
      "t", "u", "v", "w", "x", "y", "z", "{", "|", "}", "~", "DEL"]
 )
 
+new_pattern = np.concatenate([
+    ['.','.','X','.','.'],
+    ['.','X','X','.','.'],
+    ['.','.','X','.','.'],
+    ['.','.','X','.','.'],
+    ['.','.','X','.','.'],
+    ['.','.','X','.','.'],
+    ['.','.','X','.','.']
+])
+
 def graph_fonts(original, decoded):
     fig, (ax1, ax2) = plt.subplots(1, 2)
     ax1.set_title('Original')
@@ -58,6 +68,14 @@ def create_multilayer_perceptron(perceptrons_by_layer : list[int], config : Trai
                 )
     return MultilayerPerceptron(perceptrons, lambda: Adam())
 
+
+def predict_new_pattern(mp: MultilayerPerceptron):
+    to_predict = np.array([1 if x == 'X' else 0 for x in new_pattern])
+    print("Input: ", to_predict)
+    _, decoder_output = mp.feed_forward(to_predict)
+    graph_fonts(to_predict, decoder_output)
+
+
 def exercise_a(perceptrons_by_layer: list[int], limit = fonts_headers.size - 1):
 
     if not perceptrons_by_layer:
@@ -95,5 +113,8 @@ def exercise_a(perceptrons_by_layer: list[int], limit = fonts_headers.size - 1):
     # 1.3)
     graph_latent_space(dots)
 
+    #1.4)
+    predict_new_pattern(mp)
+
 if __name__ == "__main__":
-    exercise_a([35, 10, 2, 10, 35], 2)
+    exercise_a([35, 10, 2, 10, 35], 4)
