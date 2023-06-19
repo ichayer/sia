@@ -91,7 +91,7 @@ def predict_new_pattern(mp: MultilayerPerceptron):
     graph_fonts(to_predict, decoder_output)
 
 
-def exercise_a(perceptrons_by_layer: list[int], limit=fonts_headers.size):
+def exercise_a(perceptrons_by_layer: list[int], amount_recognized, amount_characters=fonts_headers.size, ):
     if not perceptrons_by_layer:
         raise Exception("Perceptrons by layer is null")
 
@@ -102,7 +102,7 @@ def exercise_a(perceptrons_by_layer: list[int], limit=fonts_headers.size):
 
     result = train_multilayer_perceptron(
         multilayer_perceptron=mp,
-        dataset=list(dataset_input.values())[0:limit],
+        dataset=list(dataset_input.values())[0:amount_characters],
         config=config
     )
 
@@ -113,7 +113,7 @@ def exercise_a(perceptrons_by_layer: list[int], limit=fonts_headers.size):
     decoder_outputs = []
     amount_correct_characters = 0
 
-    for i in range(limit):
+    for i in range(amount_characters):
         to_predict = list(dataset_input.values())[i]
         latent_space_output, decoder_output = mp.feed_forward(to_predict)
 
@@ -140,9 +140,9 @@ def exercise_a(perceptrons_by_layer: list[int], limit=fonts_headers.size):
 
     print(f"Recognized characters: {amount_correct_characters}")
 
-    if amount_correct_characters > 25:
+    if amount_correct_characters > amount_recognized:
         # 1.2)
-        for j in range(limit):
+        for j in range(amount_characters):
             graph_fonts(list(dataset_input.values())[j], decoder_outputs[j])
         # 1.3)
         graph_latent_space(dots)
@@ -155,5 +155,5 @@ def exercise_a(perceptrons_by_layer: list[int], limit=fonts_headers.size):
 
 if __name__ == "__main__":
 
-    while exercise_a([35, 20, 10, 2, 10, 20, 35]):
+    while exercise_a([35, 20, 10, 2, 10, 20, 35], 25):
         pass
