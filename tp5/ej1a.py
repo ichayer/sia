@@ -78,11 +78,11 @@ def predict_new_pattern(mp: MultilayerPerceptron):
     print("Input: ", to_predict)
     _, decoder_output = mp.feed_forward(to_predict)
 
-    for _ in range(len(decoder_output)):
-        if decoder_output <= 0:
-            decoder_output = -1
+    for i in range(len(decoder_output)):
+        if decoder_output[i] <= 0:
+            decoder_output[i] = -1
         else:
-            decoder_output = 1
+            decoder_output[i] = 1
 
     graph_fonts(to_predict, decoder_output)
 
@@ -114,13 +114,13 @@ def exercise_a(perceptrons_by_layer: list[int], limit=fonts_headers.size):
 
         print(f"{i}): {fonts_headers[i]}")
 
-        for _ in range(len(decoder_output)):
-            if decoder_output[i] <= 0:
-                decoder_output[i] = -1
+        for j in range(len(decoder_output)):
+            if decoder_output[j] <= 0:
+                decoder_output[j] = -1
             else:
-                decoder_output[i] = 1
+                decoder_output[j] = 1
 
-        different_pixels = np.where(decoder_output[i] != to_predict)
+        different_pixels = np.where(decoder_output != to_predict)
         amount_different_pixels = len(different_pixels[0])
 
         if amount_different_pixels <= 1:
@@ -144,4 +144,4 @@ def exercise_a(perceptrons_by_layer: list[int], limit=fonts_headers.size):
 
 
 if __name__ == "__main__":
-    exercise_a([35, 20, 15, 10, 2, 10, 15, 20, 35])
+    exercise_a([35, 15, 2, 15, 35])
