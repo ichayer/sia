@@ -3,6 +3,7 @@ from enum import Enum
 from typing import Optional, Dict, List
 import numpy as np
 from numpy import ndarray
+import time
 
 from .perceptron import Perceptron, MultilayerPerceptron
 from . import error_funcs, theta_funcs
@@ -180,7 +181,8 @@ def train_perceptron(perceptron: Perceptron,
     return TrainerResult(epoch_num, weights_history, error_history, end_reason, test_error_history)
 
 
-def evaluate_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dataset: list[list[int]], dataset_outputs: list[list[int]],
+def evaluate_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dataset: list[list[int]],
+                                   dataset_outputs: list[list[int]],
                                    print_output: bool) -> dict[str, float | ndarray | list[list[int]]]:
     """
     Evaluates a multilayer perceptron with a given dataset.
@@ -198,7 +200,8 @@ def evaluate_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, 
     return {"err": err * 0.5, "expected_output": dataset_outputs, "network_output": last_layer_results}
 
 
-def train_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dataset: list[np.ndarray[float]], config: TrainerConfig) -> MultilayerTrainerResult:
+def train_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dataset: list[np.ndarray[float]],
+                                config: TrainerConfig) -> MultilayerTrainerResult:
     epoch_num = 0
     error_history = []
     weights_history = []
@@ -210,8 +213,10 @@ def train_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dat
         weights_history[-1][i] = np.copy(perceptron.w)
 
     end_reason = None
+    average_epoch_elapsed_time = 0
 
     while (config.max_epochs is None or epoch_num < config.max_epochs) and end_reason is None:
+        start_time = time.time()
         epoch_num += 1
         error = 0
 
@@ -235,22 +240,18 @@ def train_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dat
         should_print = config.print_every is not None and epoch_num % config.print_every == 0
         # Print weights
         if should_print:
-            print("--------------------------------------------------")
-            for perceptron in multilayer_perceptron.last_layer:
-                print(f"RESULTS AFTER EPOCH {epoch_num} (weights {perceptron.w})")
-            # Print results
-            for i in range(len(dataset)):
-                for (j, perceptron) in enumerate(multilayer_perceptron.last_layer):
-                    print(
-                        f"[Data {i}, Neuron Output {j}] expected: {dataset[i][j]} got: {result_history[epoch_num - 1][i][j]} data: {dataset[i]}")
+            print(f"Epoch {epoch_num}")
+            print(f"Average elapsed time {average_epoch_elapsed_time * 1000}ms")
+            print(f"Error: {error}")
+            # print_epoch(dataset, epoch_num, multilayer_perceptron, result_history)
 
-        flag = True
+        weights_not_changed = True
         for (i, perceptron) in enumerate(multilayer_perceptron.last_layer):
             weights_history[-1].append(None)
             weights_history[-1][i] = np.copy(perceptron.w)
             if np.abs(np.subtract(weights_history[-2][i], perceptron.w)).max() >= config.weight_comparison_epsilon:
-                flag = False
-        if flag:
+                weights_not_changed = False
+        if weights_not_changed:
             end_reason = EndReason.WEIGHTS_HAVENT_CHANGED
 
         if should_print and len(error_history) != 0 and error > error_history[-1]:
@@ -263,5 +264,19 @@ def train_multilayer_perceptron(multilayer_perceptron: MultilayerPerceptron, dat
                 end_reason = EndReason.ACCEPTABLE_ERROR_REACHED
             elif epoch_num == config.max_epochs:
                 end_reason = EndReason.EPOCH_LIMIT_REACHED
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        average_epoch_elapsed_time = (average_epoch_elapsed_time + elapsed_time) / 2
 
     return MultilayerTrainerResult(epoch_num, weights_history, error_history, end_reason)
+
+
+def print_epoch(dataset, epoch_num, multilayer_perceptron, result_history):
+    print("--------------------------------------------------")
+    for perceptron in multilayer_perceptron.last_layer:
+        print(f"RESULTS AFTER EPOCH {epoch_num} (weights {perceptron.w})")
+    # Print results
+    for i in range(len(dataset)):
+        for (j, perceptron) in enumerate(multilayer_perceptron.last_layer):
+            print(
+                f"[Data {i}, Neuron Output {j}] expected: {dataset[i][j]} got: {result_history[epoch_num - 1][i][j]} data: {dataset[i]}")
