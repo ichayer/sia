@@ -75,7 +75,7 @@ def create_multilayer_perceptron(perceptrons_by_layer: list[int], config: Traine
 
 def predict_new_pattern(mp: MultilayerPerceptron):
     to_predict = np.array([1 if x == 'X' else 0 for x in new_pattern])
-    print("\nNuevo patron: ", to_predict)
+    print("\nNew Pattern: ", to_predict)
     _, decoder_output = mp.feed_forward(to_predict)
 
     for i in range(len(decoder_output)):
