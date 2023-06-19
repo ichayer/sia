@@ -10,14 +10,15 @@ fonts_headers = np.array(
 )
 
 new_pattern = np.concatenate([
-    ['.','.','X','.','.'],
-    ['.','X','X','.','.'],
-    ['.','.','X','.','.'],
-    ['.','.','X','.','.'],
-    ['.','.','X','.','.'],
-    ['.','.','X','.','.'],
-    ['.','.','X','.','.']
+    ['.', '.', 'X', '.', '.'],
+    ['.', 'X', 'X', '.', '.'],
+    ['.', '.', 'X', '.', '.'],
+    ['.', '.', 'X', '.', '.'],
+    ['.', '.', 'X', '.', '.'],
+    ['.', '.', 'X', '.', '.'],
+    ['.', '.', 'X', '.', '.']
 ])
+
 
 def graph_fonts(original, decoded):
     fig, (ax1, ax2) = plt.subplots(1, 2)
@@ -38,6 +39,7 @@ def graph_fonts(original, decoded):
 
     fig.show()
 
+
 def graph_latent_space(dots):
     plt.xlim([-1.5, 1.5])
     plt.ylim([-1.5, 1.5])
@@ -46,7 +48,9 @@ def graph_latent_space(dots):
         plt.annotate(fonts_headers[j], xy=dots[j], xytext=(dots[j][0] + 0.05, dots[j][1] + 0.05), fontsize=12)
     plt.show()
 
-def create_multilayer_perceptron(perceptrons_by_layer : list[int], config : TrainerConfig, dataset_input : dict[str, ndarray]):
+
+def create_multilayer_perceptron(perceptrons_by_layer: list[int], config: TrainerConfig,
+                                 dataset_input: dict[str, ndarray]):
     perceptrons = []
 
     for i in range(len(perceptrons_by_layer)):
@@ -73,11 +77,17 @@ def predict_new_pattern(mp: MultilayerPerceptron):
     to_predict = np.array([1 if x == 'X' else 0 for x in new_pattern])
     print("Input: ", to_predict)
     _, decoder_output = mp.feed_forward(to_predict)
+
+    for _ in range(len(decoder_output)):
+        if decoder_output <= 0:
+            decoder_output = -1
+        else:
+            decoder_output = 1
+
     graph_fonts(to_predict, decoder_output)
 
 
-def exercise_a(perceptrons_by_layer: list[int], limit = fonts_headers.size - 1):
-
+def exercise_a(perceptrons_by_layer: list[int], limit=fonts_headers.size):
     if not perceptrons_by_layer:
         raise Exception("Perceptrons by layer is null")
 
@@ -92,29 +102,46 @@ def exercise_a(perceptrons_by_layer: list[int], limit = fonts_headers.size - 1):
         config=config
     )
 
+    print(
+        f"\nEpoch: {result.epoch_num}, End Reason: {result.end_reason}, Error: {result.error_history[-1]:.4f}\n")
+
     dots = []
+    amount_correct_characters = 0
 
     for i in range(limit):
         to_predict = list(dataset_input.values())[i]
-        encoder_output, decoder_output = mp.feed_forward(to_predict)
+        latent_space_output, decoder_output = mp.feed_forward(to_predict)
 
-        print("Input: ", to_predict)
-        print("Encoded: ", encoder_output)
-        print("Decoded: ", decoder_output)
-        print("Error: ", np.mean(np.abs(to_predict - decoder_output)))
-        print("=====================================")
+        print(f"{i}): {fonts_headers[i]}")
+
+        for _ in range(len(decoder_output)):
+            if decoder_output[i] <= 0:
+                decoder_output[i] = -1
+            else:
+                decoder_output[i] = 1
+
+        different_pixels = np.where(decoder_output[i] != to_predict)
+        amount_different_pixels = len(different_pixels[0])
+
+        if amount_different_pixels <= 1:
+            amount_different_pixels += 1
+
+        print(f"Error: {amount_different_pixels}")
 
         # 1.2)
-        graph_fonts(to_predict, decoder_output)
+        if i < 10:
+            graph_fonts(to_predict, decoder_output)
 
-        dot = (encoder_output[0], encoder_output[1])
+        dot = (latent_space_output[0], latent_space_output[1])
         dots.append(dot)
 
+    print(f"Recognized characters: {amount_correct_characters}")
     # 1.3)
     graph_latent_space(dots)
 
-    #1.4)
+    # 1.4)
     predict_new_pattern(mp)
 
+
 if __name__ == "__main__":
-    exercise_a([35, 10, 2, 10, 35], 4)
+    exercise_a([35, 20, 15, 10, 2, 10, 15, 20, 35])

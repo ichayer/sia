@@ -99,10 +99,10 @@ class MultilayerPerceptron:
             for j, perceptron in enumerate(sublist):
                 self.results[i][j] = perceptron.evaluate(self.results[i - 1])
 
-        encoder_output = self.results[self.total_layers // 2]
+        latent_space_output = self.results[self.total_layers // 2]
         decoder_output = self.results[self.total_layers - 1]
 
-        return encoder_output, decoder_output
+        return latent_space_output, decoder_output
 
     def evaluate_and_adjust(self, input_data: np.ndarray[float],
                             learning_rate: float) -> None:
