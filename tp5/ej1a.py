@@ -110,6 +110,7 @@ def exercise_a(perceptrons_by_layer: list[int], limit=fonts_headers.size):
         f"\nEpoch: {result.epoch_num}, End Reason: {result.end_reason}, Error: {result.error_history[-1]:.4f}\n")
 
     dots = []
+    decoder_outputs = []
     amount_correct_characters = 0
 
     for i in range(limit):
@@ -124,6 +125,8 @@ def exercise_a(perceptrons_by_layer: list[int], limit=fonts_headers.size):
             else:
                 decoder_output[j] = 1
 
+        decoder_outputs.append(decoder_output)
+
         different_pixels = np.where(decoder_output != to_predict)
         amount_different_pixels = len(different_pixels[0])
 
@@ -132,20 +135,25 @@ def exercise_a(perceptrons_by_layer: list[int], limit=fonts_headers.size):
 
         print(f"Error: {amount_different_pixels}")
 
-        # 1.2)
-        if i < 10:
-            graph_fonts(to_predict, decoder_output)
-
         dot = (latent_space_output[0], latent_space_output[1])
         dots.append(dot)
 
     print(f"Recognized characters: {amount_correct_characters}")
-    # 1.3)
-    graph_latent_space(dots)
 
-    # 1.4)
-    predict_new_pattern(mp)
+    if amount_correct_characters > 25:
+        # 1.2)
+        for j in range(limit):
+            graph_fonts(list(dataset_input.values())[j], decoder_outputs[j])
+        # 1.3)
+        graph_latent_space(dots)
+        # 1.4)
+        predict_new_pattern(mp)
+        return 0
+
+    return 1
 
 
 if __name__ == "__main__":
-    exercise_a([35, 15, 2, 15, 35])
+
+    while exercise_a([35, 20, 10, 2, 10, 20, 35]):
+        pass
