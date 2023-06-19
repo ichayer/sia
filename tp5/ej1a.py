@@ -75,7 +75,7 @@ def create_multilayer_perceptron(perceptrons_by_layer: list[int], config: Traine
 
 def predict_new_pattern(mp: MultilayerPerceptron):
     to_predict = np.array([1 if x == 'X' else 0 for x in new_pattern])
-    print("Input: ", to_predict)
+    print("\nNuevo patron: ", to_predict)
     _, decoder_output = mp.feed_forward(to_predict)
 
     for i in range(len(decoder_output)):
@@ -83,6 +83,10 @@ def predict_new_pattern(mp: MultilayerPerceptron):
             decoder_output[i] = -1
         else:
             decoder_output[i] = 1
+
+    different_pixels = np.where(decoder_output != to_predict)
+    amount_different_pixels = len(different_pixels[0])
+    print(f"Error: {amount_different_pixels}")
 
     graph_fonts(to_predict, decoder_output)
 
