@@ -70,7 +70,7 @@ def create_multilayer_perceptron(perceptrons_by_layer: list[int], config: Traine
                     initial_weights=np.random.random(perceptrons_by_layer[i - 1] + 1) * 0.8 - 0.4,
                     theta_func=config.theta
                 )
-    return MultilayerPerceptron(perceptrons, lambda: Adam())
+    return MultilayerPerceptron(perceptrons, Momentum())
 
 
 def predict_new_pattern(mp: MultilayerPerceptron):
@@ -103,6 +103,7 @@ def exercise_a(perceptrons_by_layer: list[int], amount_recognized, amount_charac
     result = train_multilayer_perceptron(
         multilayer_perceptron=mp,
         dataset=list(dataset_input.values())[0:amount_characters],
+        dataset_outputs=list(dataset_input.values())[0:amount_characters],
         config=config
     )
 
@@ -155,5 +156,5 @@ def exercise_a(perceptrons_by_layer: list[int], amount_recognized, amount_charac
 
 if __name__ == "__main__":
 
-    while exercise_a([35, 20, 10, 2, 10, 20, 35], 25):
+    while exercise_a([35, 15, 2, 15, 35], 25):
         pass
