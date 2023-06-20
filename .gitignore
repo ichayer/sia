@@ -16,3 +16,5 @@ __pycache__/
 
 # Jupyter notebook files
 *.ipynb_checkpoints/
+tp5/train_loss.txt
+tp5/test_loss.txt
