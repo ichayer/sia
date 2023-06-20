@@ -149,3 +149,5 @@ if __name__ == "__main__":
     plt.title(f"New Character, similar to '{letter}'")
     plt.imshow(output.reshape(7, 5), cmap='gray')
     plt.show()
+
+    # 1.b) TODO: Denoising autoencoder

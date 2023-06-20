@@ -52,11 +52,11 @@ class MLP():
     def addLayer(self, layer):
         self.layers.append(layer)
 
-    def feedforward(self, input_data, input_history=None):
+    def feedforward(self, input_data, output_history=None):
         for layer in self.layers:
             input_data = layer.feedforward(input_data)
-            if input_history is not None:
-                input_history.append(input_data)
+            if output_history is not None:
+                output_history.append(input_data)
 
         return input_data
 
