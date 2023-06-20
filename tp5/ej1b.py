@@ -6,6 +6,7 @@ from tp5.autoencoder import Autoencoder
 from tp5.loss import MSE
 from tp4.Hopfield.pattern_loader import *
 import matplotlib.pyplot as plt
+import numpy as np
 
 INPUT_SIZE = 35
 LATENT_SIZE = 2
@@ -13,8 +14,6 @@ HIDDEN_SIZE = 15
 
 # Using ReLU here causes overflow in next hidden layer Sigmoid function
 LATENT_FUNCTION = Sigmoid()
-
-NOISE = None
 
 fonts_headers = np.array(
     ["`", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
@@ -42,23 +41,26 @@ def graph_fonts(original, decoded):
     fig.show()
 
 
-def graph_latent_space(dots):
-    minimum = LATENT_FUNCTION.range[0]
-    if minimum is None:
-        minimum = min(dots, key=lambda x: x[0])[0]
+def salt_and_pepper_noise(input: np.ndarray, salt_prob=0.1, pepper_prob=0.1) -> np.ndarray:
+    noisy_image = input.copy()
+    total_pixels = input.size
 
-    maximum = LATENT_FUNCTION.range[1]
-    if maximum is None:
-        maximum = max(dots, key=lambda y: y[1])[0]
+    # Number of 'salt' and 'pepper' pixels to add
+    num_salt = np.ceil(total_pixels * salt_prob)
+    num_pepper = np.ceil(total_pixels * pepper_prob)
 
-    plt.xlim([minimum - 0.2, maximum + 0.2])
-    plt.ylim([minimum - 0.2, maximum + 0.2])
-    for j in range(dots.__len__()):
-        plt.scatter(dots[j][0], dots[j][1])
-        plt.annotate(fonts_headers[j], xy=dots[j], xytext=(dots[j][0] + 0.01, dots[j][1] + 0.01), fontsize=12)
-    plt.show()
+    # Add 'salt' noise
+    salt_coords = [np.random.randint(0, i, int(num_salt)) for i in input.shape]
+    noisy_image[tuple(salt_coords)] = 1
+
+    # Add 'pepper' noise
+    pepper_coords = [np.random.randint(0, i, int(num_pepper)) for i in input.shape]
+    noisy_image[tuple(pepper_coords)] = -1
+
+    return noisy_image
 
 
+# The code below will run a denoising autoencoder on the character's dataset.
 if __name__ == "__main__":
     dataset_input = load_pattern_map('characters.txt')
 
@@ -66,22 +68,24 @@ if __name__ == "__main__":
     optimizer = Adam(1e-2)
 
     encoder = MLP()
+    # 35 -> 15 -> 2
     encoder.addLayer(Dense(inputDim=INPUT_SIZE, outputDim=HIDDEN_SIZE, activation=Sigmoid(), optimizer=optimizer))
     encoder.addLayer(
         Dense(inputDim=HIDDEN_SIZE, outputDim=LATENT_SIZE, activation=LATENT_FUNCTION, optimizer=optimizer))
 
     decoder = MLP()
+    # 2 -> 15 -> 35
     decoder.addLayer(Dense(inputDim=LATENT_SIZE, outputDim=HIDDEN_SIZE, activation=Sigmoid(), optimizer=optimizer))
     decoder.addLayer(Dense(inputDim=HIDDEN_SIZE, outputDim=INPUT_SIZE, activation=Tanh(), optimizer=optimizer))
 
-    autoencoder = Autoencoder(encoder, decoder, noise=NOISE)
+    autoencoder = Autoencoder(encoder, decoder, noise=salt_and_pepper_noise)
 
     print(autoencoder)
 
     my_callbacks = {}  # {"loss": loss_callback}
 
     autoencoder.train(dataset_input=list(dataset_input.values()), loss=MSE(), metrics=["train_loss", "test_loss"],
-                      tensorboard=False, epochs=5000,
+                      tensorboard=False, epochs=10000,
                       callbacks=my_callbacks)
 
     dataset_input_list = list(dataset_input.values())
@@ -126,9 +130,6 @@ if __name__ == "__main__":
     # Top 10 because SciView has limit of 29 graphs
     for j in range(10):
         graph_fonts(list(dataset_input.values())[j], decoder_outputs[j])
-
-    # 1.a.3)
-    graph_latent_space(dots)
 
     # 1.a.4)
     # Trying a letter similar to 'o', Change letter to have another generated image

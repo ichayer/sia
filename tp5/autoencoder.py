@@ -1,9 +1,9 @@
-from nn import MLP
+from nn import MLP, NoiseFunctionType
 from loss import MSE
 
 
 class Autoencoder(MLP):
-    def __init__(self, encoder=MLP(), decoder=MLP(), noise=None):
+    def __init__(self, encoder=MLP(), decoder=MLP(), noise: NoiseFunctionType = None):
         """
         An Autoencoder consists of an Encoder network and a Decoder network.
         In the constructor merged these two networks.
@@ -28,9 +28,9 @@ class Autoencoder(MLP):
             callbacks = {}
         if metrics is None:
             metrics = ["train_loss", "test_loss"]
-        super().train(dataset_input, dataset_input, dataset_test, loss=loss, epochs=epochs, metrics=metrics, tensorboard=tensorboard, callbacks=callbacks,
+        super().train(dataset_input, dataset_input, dataset_test, loss=loss, epochs=epochs, metrics=metrics,
+                      tensorboard=tensorboard, callbacks=callbacks,
                       autoencoder=True, noise=self.noise, batchSize=batchSize)
 
     def sampling(self, sampling_coordinates):
         return self.decoder.feedforward(sampling_coordinates)
-

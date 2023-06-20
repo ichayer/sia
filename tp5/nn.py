@@ -5,8 +5,9 @@ import logging
 
 from loss import MSE
 from tensorboardX import SummaryWriter
-from layers import Dense
+from typing import Callable
 
+NoiseFunctionType = Callable[[np.ndarray], np.ndarray]
 
 class Writer():
     def __init__(self, metrics=None, callbacks=None, tensorboard=False):
@@ -83,8 +84,9 @@ class MLP():
                 lastGradient = layer.backward(lastGradient, outputLayer=isOutputLayer,
                                               updateParameters=updateParameters)
 
-    def train(self, dataset_input, dataset_output, dataset_test=None, loss=MSE(), epochs=1, metrics=None, tensorboard=False, callbacks={},
-              autoencoder=False, noise=None, batchSize=1):
+    def train(self, dataset_input, dataset_output, dataset_test=None, loss=MSE(), epochs=1, metrics=None,
+              tensorboard=False, callbacks={},
+              autoencoder=False, noise: NoiseFunctionType = None, batchSize=1):
         if metrics is None:
             metrics = ["train_loss", "test_loss"]
         metricsWriter = Writer(metrics, callbacks, tensorboard)
@@ -99,7 +101,12 @@ class MLP():
             logging.debug(f" *** EPOCH {i + 1}/{epochs} ***")
             for j in range(len(dataset_input)):
 
-                input_reshaped = np.reshape(dataset_input[j], (len(dataset_input[j]), batchSize))
+                if noise is not None:
+                    noisy_input = noise(dataset_input[j])
+                    input_reshaped = np.reshape(noisy_input, (len(noisy_input), batchSize))
+                else:
+                    input_reshaped = np.reshape(dataset_input[j], (len(dataset_input[j]), batchSize))
+
                 output_reshaped = np.reshape(dataset_output[j], (len(dataset_output[j]), batchSize))
 
                 self.feedforward(input_reshaped)
@@ -112,7 +119,8 @@ class MLP():
                         metricsWriter.add(metric="train_accuracy", index=ind, value=self.getAccuracy(output_reshaped))
 
                     if dataset_test:
-                        self.validate(dataset_test, ind, callbacks, writer=metricsWriter, metrics=metrics, batchSize=batchSize)
+                        self.validate(dataset_test, ind, callbacks, writer=metricsWriter, metrics=metrics,
+                                      batchSize=batchSize)
 
                 ind += batchSize
         metricsWriter.close()
