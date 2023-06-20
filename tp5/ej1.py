@@ -44,16 +44,6 @@ def graph_fonts(original, decoded):
 
 
 def graph_latent_space(dots):
-    minimum = LATENT_FUNCTION.range[0]
-    if minimum is None:
-        minimum = min(dots, key=lambda x: x[0])[0]
-
-    maximum = LATENT_FUNCTION.range[1]
-    if maximum is None:
-        maximum = max(dots, key=lambda y: y[1])[0]
-
-    plt.xlim([minimum - 0.2, maximum + 0.2])
-    plt.ylim([minimum - 0.2, maximum + 0.2])
     for j in range(dots.__len__()):
         plt.scatter(dots[j][0], dots[j][1])
         plt.annotate(fonts_headers[j], xy=dots[j], xytext=(dots[j][0] + 0.01, dots[j][1] + 0.01), fontsize=12)
