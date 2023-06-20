@@ -40,6 +40,7 @@ class Activation(ABC):
 
 class Identity(Activation):
     _name = "Identity function"
+    range = [None, None]
 
     def apply(self, x):
         return x
@@ -54,6 +55,8 @@ class Identity(Activation):
 class Sigmoid(Activation):
     _name = "Sigmoid function"
 
+    range = [0, 1]
+
     def apply(self, x):
         return 1. / (1. + np.exp(-x))
 
@@ -67,6 +70,7 @@ class Sigmoid(Activation):
 class Tanh(Activation):
     _name = "Tanh - Hyperbolic tangent"
 
+    range = [-1, 1]
     def apply(self, x):
         return np.tanh(x)
 
@@ -80,6 +84,7 @@ class Tanh(Activation):
 class ReLU(Activation):
     _name = "ReLU - Rectified linear unit"
 
+    range = [0, None]
     def apply(self, x):
         return x * (x > 0)
 
@@ -93,6 +98,7 @@ class ReLU(Activation):
 class Softmax(Activation):
     _name = "Softmax function"
 
+    range = [0, 1]
     def apply(self, x):
         tmp = np.exp(x - np.max(x, axis=0))  # - np.max(x) prevents under-/overflow
         return tmp / tmp.sum(axis=0)

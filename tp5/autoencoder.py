@@ -30,3 +30,7 @@ class Autoencoder(MLP):
             metrics = ["train_loss", "test_loss"]
         super().train(dataset_input, dataset_input, dataset_test, loss=loss, epochs=epochs, metrics=metrics, tensorboard=tensorboard, callbacks=callbacks,
                       autoencoder=True, noise=self.noise, batchSize=batchSize)
+
+    def sampling(self, sampling_coordinates):
+        return self.decoder.feedforward(sampling_coordinates)
+

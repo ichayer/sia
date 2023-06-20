@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 import numpy as np
-import numpy.matlib as matlib
 import copy
 
 from activations import Sigmoid
@@ -59,14 +58,12 @@ class Dense(Layer):
         self.trainable = True # Layers can also be frozen !
 
     def feedforward(self, input):
+        if input.ndim == 1:
+            input = np.squeeze(input).reshape((input.shape[0], self.batchSize))
+
         self.input = input
 
-
-        print(f"input: {self.input}")
-
-        print(f"weight: {self.weight}")
-
-        self.z = np.dot(self.weight, self.input) + matlib.repmat(self.bias, input.shape[1], 1).T
+        self.z = np.dot(self.weight, self.input) + np.tile(self.bias, (self.input.shape[1], 1)).T
         self.a = self.activation.apply(self.z)
         return self.a
 

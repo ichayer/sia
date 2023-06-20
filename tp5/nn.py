@@ -52,9 +52,11 @@ class MLP():
     def addLayer(self, layer):
         self.layers.append(layer)
 
-    def feedforward(self, input_data):
+    def feedforward(self, input_data, input_history=None):
         for layer in self.layers:
             input_data = layer.feedforward(input_data)
+            if input_history is not None:
+                input_history.append(input_data)
 
         return input_data
 
@@ -97,32 +99,36 @@ class MLP():
             logging.debug(f" *** EPOCH {i + 1}/{epochs} ***")
             for j in range(len(dataset_input)):
 
-                print(dataset_input[j])
-                self.feedforward(dataset_input[j])
-                self.backpropagate(dataset_output[j])
+                input_reshaped = np.reshape(dataset_input[j], (len(dataset_input[j]), batchSize))
+                output_reshaped = np.reshape(dataset_output[j], (len(dataset_output[j]), batchSize))
+
+                self.feedforward(input_reshaped)
+                self.backpropagate(output_reshaped)
 
                 if ind % 1000 < batchSize:
                     if "train_loss" in metrics:
-                        metricsWriter.add(metric="train_loss", index=ind, value=self.getLoss(dataset_output[j]))
+                        metricsWriter.add(metric="train_loss", index=ind, value=self.getLoss(output_reshaped))
                     if "train_accuracy" in metrics:
-                        metricsWriter.add(metric="train_accuracy", index=ind, value=self.getAccuracy(dataset_output[j]))
+                        metricsWriter.add(metric="train_accuracy", index=ind, value=self.getAccuracy(output_reshaped))
 
                     if dataset_test:
-                        self.validate(dataset_test, ind, callbacks, writer=metricsWriter, metrics=metrics)
+                        self.validate(dataset_test, ind, callbacks, writer=metricsWriter, metrics=metrics, batchSize=batchSize)
 
                 ind += batchSize
         metricsWriter.close()
 
-    def validate(self, dataset_test, ind, callbacks, writer=None, metrics=None):
+    def validate(self, dataset_test, ind, callbacks, writer=None, metrics=None, batchSize=1):
         if metrics is None:
             metrics = ["train_loss", "test_loss"]
-        rand_ind = np.random.randint(0, len(dataset_test) - 1)
-        self.feedforward(dataset_test[rand_ind])
+        rand_ind = np.random.randint(0, len(dataset_test))
+        test_reshaped = np.reshape(dataset_test[rand_ind], (len(dataset_test[rand_ind]), batchSize))
+        self.feedforward(test_reshaped)
+
         if writer is not None:
             if "test_loss" in metrics:
-                writer.add(metric="test_loss", index=ind, value=self.getLoss(dataset_test[rand_ind]))
+                writer.add(metric="test_loss", index=ind, value=self.getLoss(test_reshaped))
             if "test_accuracy" in metrics:
-                writer.add(metric="test_accuracy", index=ind, value=self.getAccuracy(dataset_test[rand_ind]))
+                writer.add(metric="test_accuracy", index=ind, value=self.getAccuracy(test_reshaped))
 
     def getLoss(self, label):
         return self.loss.apply(label, self.layers[-1].a)
@@ -136,9 +142,6 @@ class MLP():
         """
         Compute the graph object representing the neural network.
         """
-        for layer in self.layers:
-            assert isinstance(layer, Dense), "Can't compute graph"
-
         neurons = [self.layers[0].inputDim]
         for layer in self.layers:
             neurons.append(layer.outputDim)
@@ -191,7 +194,6 @@ class MLP():
         graph, pos, colorMap = self.getGraph()
 
         fig = plt.figure()
-        fig.canvas.set_window_title("Neural Network")
         plt.plot()
         nx.draw_networkx_nodes(graph, pos, node_color=colorMap)
         nx.draw_networkx_edges(graph, pos)
