@@ -23,10 +23,10 @@ fonts_headers = np.array(
 )
 
 
-def graph_fonts(original, decoded):
+def graph_fonts(original, decoded, char_name=None):
     fig, (ax1, ax2) = plt.subplots(1, 2)
-    ax1.set_title('Original')
-    ax2.set_title('Decoded')
+    ax1.set_title(f'Original ({char_name})')
+    ax2.set_title(f'Decoded')
 
     ax1.imshow(np.array(original).reshape((7, 5)), cmap='gray')
     ax1.set_xticks(np.arange(0, 5, 1))
@@ -80,18 +80,20 @@ def create_autoencoder(noise: NoiseFunctionType, optimizer: Optimizer = Adam(1e-
 
 
 class Results:
-    def __init__(self, amount_correct_characters, decoder_outputs, dots):
+    def __init__(self, amount_correct_characters, decoder_outputs, autoencoder: Autoencoder,
+                 recognized_characters: list):
         self.amount_correct_characters = amount_correct_characters
         self.decoder_outputs = decoder_outputs
-        self.dots = dots
+        self.autoencoder = autoencoder
+        self.recognized_characters = recognized_characters
 
 
 def calculate_results(autoencoder: Autoencoder, dataset_input: dict) -> Results:
     dataset_input_list = list(dataset_input.values())
 
-    dots = []
     decoder_outputs = []
     amount_correct_characters = 0
+    recognized_characters = []
 
     for i in range(len(dataset_input_list)):
         input_reshaped = np.reshape(dataset_input_list[i], (len(dataset_input_list[i]), 1))
@@ -110,14 +112,9 @@ def calculate_results(autoencoder: Autoencoder, dataset_input: dict) -> Results:
 
         if amount_different_pixels <= 1:
             amount_correct_characters += 1
+            recognized_characters.append(fonts_headers[i])
 
-        # First index: 1 because latent space is in index 1
-        # Second index: 0 and 1 represent x and y respectively
-        # Third index: 0 because is a list of list
-        dot = (output_history[1][0][0], output_history[1][1][0])
-        dots.append(dot)
-
-    return Results(amount_correct_characters, decoder_outputs, dots)
+    return Results(amount_correct_characters, decoder_outputs, autoencoder, recognized_characters)
 
 
 def run(eta=1e-2, epochs=5000, salt_prob=0.1, pepper_prob=0.1):
@@ -151,7 +148,8 @@ def print_noice_example(noice_prob: float):
 
 RUNS_MAGIC_NUMBER = 30
 
-if __name__ == '__main__':
+
+def run_different_noise_probabilities():
     results = []
 
     noise_probs = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7]  # Valores variables de noise_prob
@@ -180,3 +178,67 @@ if __name__ == '__main__':
     plt.title('Average Amount of Correct Characters with Standard Deviation')
     plt.grid(True)
     plt.show()
+
+
+def run_different_etas():
+    results = []
+
+    etas = [1e-1, 1e-2, 1e-3]  # Valores variables de eta
+    noise_prob = 0.1  # Fija un valor de noise_prob
+
+    for eta in etas:
+        print(f"Eta: {eta}")
+        run_results = []
+        for i in range(RUNS_MAGIC_NUMBER):
+            print(f"Run {i}")
+            run_results.append(run(epochs=3000, eta=eta, salt_prob=noise_prob, pepper_prob=noise_prob))
+            print()
+        results.append(run_results)
+
+    correct_characters_averages = [np.average([result.amount_correct_characters for result in run_results]) for
+                                   run_results in results]
+    correct_characters_stds = [np.std([result.amount_correct_characters for result in run_results]) for run_results in
+                               results]
+
+    # Plotting the results
+    x_coords = np.arange(len(etas))
+    plt.bar(x_coords, correct_characters_averages, yerr=correct_characters_stds, align='center', alpha=0.5, ecolor='black', capsize=10)
+    plt.xlabel('Eta')
+    plt.xticks(x_coords, etas)
+    plt.ylabel('Average Amount of Correct Characters')
+    plt.title('Average Amount of Correct Characters with Standard Deviation')
+    plt.grid(True)
+    plt.show()
+
+
+
+def run_noise_character_detection():
+    noise_prob = 0.1
+    eta = 1e-2
+    # uncomment to see the noise example
+    # print_noice_example(noise_prob)
+
+    result = run(epochs=9000, eta=eta, salt_prob=noise_prob, pepper_prob=noise_prob)
+
+    print(f"Recognized characters: {result.recognized_characters}")
+
+    dataset = load_pattern_map('characters.txt')
+    recognized_characters = []
+    for key, value in dataset.items():
+        if key in result.recognized_characters:
+            recognized_characters.append(value)
+    for i in range(len(recognized_characters)):
+        noisy_char = salt_and_pepper_noise(recognized_characters[i], salt_prob=noise_prob, pepper_prob=noise_prob)
+        char = result.autoencoder.feedforward(noisy_char)
+        for j in range(len(char)):
+            if char[j][0] >= 0:
+                char[j][0] = 1
+            else:
+                char[j][0] = -1
+        graph_fonts(noisy_char, char, result.recognized_characters[i])
+
+
+if __name__ == '__main__':
+    # run_different_noise_probabilities()
+    # run_noise_character_detection()
+    run_different_etas()
