@@ -32,11 +32,17 @@ def graph_fonts(original, decoded):
 
 
 if __name__ == "__main__":
-    dataset_input = emoji_images[0:EMOJIS_CHOSEN]
+    emoji_indexes = np.array([0, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 19, 23, 24, 26,
+                              28, 29, 31, 32, 33, 35, 36, 38, 39, 41, 46, 48, 50, 51, 54, 55,
+                              57, 58, 59, 61, 62, 63, 64, 65, 67, 73, 75, 78, 81, 83, 84, 85,
+                              90, 91, 92, 93, 95])
+
+    data = np.array(emoji_images)
+    dataset_input = data[emoji_indexes]
     dataset_input_list = list(dataset_input)
 
     # Set the learning rate and optimizer for training
-    optimizer = Adam(0.001)
+    optimizer = Adam(0.0001)
 
     encoder = MLP()
     encoder.addLayer(Dense(inputDim=INPUT_SIZE, outputDim=HIDDEN_SIZE3, activation=ReLU(), optimizer=optimizer))
@@ -55,7 +61,7 @@ if __name__ == "__main__":
     print(vae)
 
     vae.train(dataset_input=dataset_input_list, loss=MSE(), metrics=["train_loss", "test_loss"],
-              tensorboard=False, epochs=100,
+              tensorboard=False, epochs=1000,
               callbacks={})
 
     for i in range(len(dataset_input_list)):
@@ -64,41 +70,40 @@ if __name__ == "__main__":
 
         # Plot of dataset images
         # Top 20 because SciView has limit of 29 graphs
-        if i < 20:
+        if i < 15:
             graph_fonts(list(dataset_input)[i], output)
-
-    vae.plotGraph()
 
     # ----------------------
     # Generating new samples
     # ----------------------
+    for _ in range(15):
 
-    n = 10
-    digit_size = INPUT_ROWS
-    images = np.zeros((INPUT_ROWS, INPUT_COLS * n))
+        n = 10
+        digit_size = INPUT_ROWS
+        images = np.zeros((INPUT_ROWS, INPUT_COLS * n))
 
-    random_index1 = np.random.randint(0, len(dataset_input_list))
-    input_reshaped1 = np.reshape(dataset_input_list[random_index1], (len(dataset_input_list[random_index1]), 1))
-    vae.feedforward(input_reshaped1)
-    img1 = vae.sampler.sample
+        random_index1 = np.random.choice(emoji_indexes)
+        input_reshaped1 = np.reshape(emoji_images[random_index1], (len(emoji_images[random_index1]), 1))
+        vae.feedforward(input_reshaped1)
+        img1 = vae.sampler.sample
 
-    random_index2 = np.random.randint(0, len(dataset_input_list))
-    while random_index1 == random_index2:
-        random_index2 = np.random.randint(0, len(dataset_input_list))
-    input_reshaped2 = np.reshape(dataset_input_list[random_index2], (len(dataset_input_list[random_index2]), 1))
-    vae.feedforward(input_reshaped2)
-    img2 = vae.sampler.sample
+        random_index2 = np.random.choice(emoji_indexes)
+        while random_index1 == random_index2:
+            random_index2 = np.random.choice(emoji_indexes)
+        input_reshaped2 = np.reshape(emoji_images[random_index2], (len(emoji_images[random_index2]), 1))
+        vae.feedforward(input_reshaped2)
+        img2 = vae.sampler.sample
 
-    for i in range(n):
-        z = (img1 * (n - 1 - i) + img2 * i) / (n - 1)
-        output = vae.decoder.feedforward(z)
-        output = output.reshape(INPUT_ROWS, INPUT_COLS)
-        images[:, i * INPUT_COLS:(i + 1) * INPUT_COLS] = output
+        for i in range(n):
+            z = (img1 * (n - 1 - i) + img2 * i) / (n - 1)
+            output = vae.decoder.feedforward(z)
+            output = output.reshape(INPUT_ROWS, INPUT_COLS)
+            images[:, i * INPUT_COLS:(i + 1) * INPUT_COLS] = output
 
-    plt.figure(figsize=(10, 10))
-    plt.title(f"From {emoji_names[random_index1]}({emoji_chars[random_index1]}) "
-              f"to {emoji_names[random_index2]}({emoji_chars[random_index2]})")
-    plt.imshow(images, cmap='gray')
-    plt.xticks([])
-    plt.yticks([])
-    plt.show()
+        plt.figure(figsize=(10, 10))
+        plt.title(f"From \"{emoji_names[random_index1]}\" "
+                  f"to \"{emoji_names[random_index2]}\"")
+        plt.imshow(images, cmap='gray')
+        plt.xticks([])
+        plt.yticks([])
+        plt.show()
