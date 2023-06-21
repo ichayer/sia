@@ -26,19 +26,12 @@ def graph_fonts(original, decoded):
     fig, (ax1, ax2) = plt.subplots(1, 2)
     ax1.set_title('Original')
     ax2.set_title('Decoded')
-
     ax1.imshow(np.array(original).reshape((7, 5)), cmap='gray')
-    ax1.set_xticks(np.arange(0, 5, 1))
-    ax1.set_yticks(np.arange(0, 7, 1))
-    ax1.set_xticklabels(np.arange(1, 6, 1))
-    ax1.set_yticklabels(np.arange(1, 8, 1))
-
     ax2.imshow(np.array(decoded).reshape((7, 5)), cmap='gray')
-    ax2.set_xticks(np.arange(0, 5, 1))
-    ax2.set_yticks(np.arange(0, 7, 1))
-    ax2.set_xticklabels(np.arange(1, 6, 1))
-    ax2.set_yticklabels(np.arange(1, 8, 1))
-
+    ax1.set_xticks([])
+    ax1.set_yticks([])
+    ax2.set_xticks([])
+    ax2.set_yticks([])
     fig.show()
 
 
@@ -137,4 +130,6 @@ if __name__ == "__main__":
 
     plt.title(f"New Character, similar to '{letter}'")
     plt.imshow(output.reshape(7, 5), cmap='gray')
+    plt.xticks([])
+    plt.yticks([])
     plt.show()

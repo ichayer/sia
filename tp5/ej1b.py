@@ -27,19 +27,12 @@ def graph_fonts(original, decoded, char_name=None):
     fig, (ax1, ax2) = plt.subplots(1, 2)
     ax1.set_title(f'Original ({char_name})')
     ax2.set_title(f'Decoded')
-
     ax1.imshow(np.array(original).reshape((7, 5)), cmap='gray')
-    ax1.set_xticks(np.arange(0, 5, 1))
-    ax1.set_yticks(np.arange(0, 7, 1))
-    ax1.set_xticklabels(np.arange(1, 6, 1))
-    ax1.set_yticklabels(np.arange(1, 8, 1))
-
     ax2.imshow(np.array(decoded).reshape((7, 5)), cmap='gray')
-    ax2.set_xticks(np.arange(0, 5, 1))
-    ax2.set_yticks(np.arange(0, 7, 1))
-    ax2.set_xticklabels(np.arange(1, 6, 1))
-    ax2.set_yticklabels(np.arange(1, 8, 1))
-
+    ax1.set_xticks([])
+    ax1.set_yticks([])
+    ax2.set_xticks([])
+    ax2.set_yticks([])
     fig.show()
 
 
@@ -209,7 +202,6 @@ def run_different_etas():
     plt.title('Average Amount of Correct Characters with Standard Deviation')
     plt.grid(True)
     plt.show()
-
 
 
 def run_noise_character_detection():
