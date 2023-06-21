@@ -1,10 +1,4 @@
-import numpy as np
-from tp5.optimizer import Adam
-from tp5.nn import MLP
-from tp5.layers import Dense
 from tp5.activations import ReLU, Sigmoid, Tanh
-from tp5.autoencoder import Autoencoder
-from tp5.loss import MSE
 from tp5.vae import *
 from tp4.Hopfield.pattern_loader import *
 from tp5.emojis import emoji_size, emoji_images, emoji_chars, emoji_names
@@ -17,14 +11,9 @@ LATENT_SIZE = 2
 HIDDEN_SIZE = 126
 HIDDEN_SIZE2 = 258
 
-EMOJIS_CHOSEN = 20
+EMOJIS_CHOSEN = len(emoji_images)
 
 NOISE = None
-
-fonts_headers = np.array(
-    ["`", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
-     "t", "u", "v", "w", "x", "y", "z", "{", "|", "}", "~", "DEL"]
-)
 
 
 def graph_fonts(original, decoded):
@@ -40,12 +29,6 @@ def graph_fonts(original, decoded):
 
     fig.show()
 
-def graph_latent_space(dots):
-    for j in range(dots.__len__()):
-        plt.scatter(dots[j][0], dots[j][1])
-        plt.annotate(emoji_chars[j], xy=dots[j], xytext=(dots[j][0] + 0.01, dots[j][1] + 0.01), fontsize=10)
-    plt.show()
-
 
 if __name__ == "__main__":
     dataset_input = emoji_images[0:EMOJIS_CHOSEN]
@@ -56,13 +39,11 @@ if __name__ == "__main__":
 
     encoder = MLP()
     encoder.addLayer(Dense(inputDim=INPUT_SIZE, outputDim=HIDDEN_SIZE, activation=ReLU(), optimizer=optimizer))
-    encoder.addLayer(Dense(inputDim=HIDDEN_SIZE, outputDim=HIDDEN_SIZE2, activation=ReLU(), optimizer=optimizer))
-    sampler = Sampler(HIDDEN_SIZE2, LATENT_SIZE, optimizer=optimizer)
+    sampler = Sampler(HIDDEN_SIZE, LATENT_SIZE, optimizer=optimizer)
 
     decoder = MLP()
     decoder.addLayer(Dense(inputDim=LATENT_SIZE, outputDim=HIDDEN_SIZE, activation=ReLU(), optimizer=optimizer))
-    decoder.addLayer(Dense(inputDim=HIDDEN_SIZE, outputDim=HIDDEN_SIZE2, activation=ReLU(), optimizer=optimizer))
-    decoder.addLayer(Dense(inputDim=HIDDEN_SIZE2, outputDim=INPUT_SIZE, activation=Sigmoid(), optimizer=optimizer))
+    decoder.addLayer(Dense(inputDim=HIDDEN_SIZE, outputDim=INPUT_SIZE, activation=Sigmoid(), optimizer=optimizer))
 
     vae = VAE(encoder, sampler, decoder)
 
@@ -71,7 +52,7 @@ if __name__ == "__main__":
     my_callbacks = {}  # {"loss": loss_callback}
 
     vae.train(dataset_input=dataset_input_list, loss=MSE(), metrics=["train_loss", "test_loss"],
-              tensorboard=False, epochs=20,
+              tensorboard=False, epochs=100,
               callbacks=my_callbacks)
 
     dots = []
@@ -91,16 +72,10 @@ if __name__ == "__main__":
         dot = (output_history[1][0][0], output_history[1][1][0])
         dots.append(dot)
 
-    # Graph of the neural network
-    vae.plotGraph()
-
     # Plot of dataset images
     # Top 20 because SciView has limit of 29 graphs
     for j in range(20):
         graph_fonts(list(dataset_input)[j], decoder_outputs[j])
-
-    # Plot of latent space
-    graph_latent_space(dots)
 
     # ----------------------
     # Generating new samples
@@ -108,7 +83,7 @@ if __name__ == "__main__":
 
     n = 10
     digit_size = INPUT_ROWS
-    images = np.zeros((INPUT_ROWS, INPUT_COLS*n))
+    images = np.zeros((INPUT_ROWS, INPUT_COLS * n))
 
     random_index1 = np.random.randint(0, len(dataset_input_list))
     input_reshaped1 = np.reshape(dataset_input_list[random_index1], (len(dataset_input_list[random_index1]), 1))
