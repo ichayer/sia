@@ -118,15 +118,10 @@ if __name__ == "__main__":
     for i in range(n):
         z = (img1 * (n - 1 - i) + img2 * i) / (n - 1)
         output = vae.decoder.feedforward(z)
-        for j in range(len(output)):
-            if output[j][0] >= 0:
-                output[j][0] = 1
-            else:
-                output[j][0] = -1
         output = output.reshape(INPUT_ROWS, INPUT_COLS)
         images[:, i * INPUT_COLS:(i + 1) * INPUT_COLS] = output
 
-    plt.figure(figsize=(emoji_size[0], emoji_size[1]))
+    plt.figure(figsize=(10, 10))
     plt.title(f"From {emoji_chars[random_index1]} to {emoji_chars[random_index2]}")
     plt.imshow(images, cmap='gray')
     plt.show()
