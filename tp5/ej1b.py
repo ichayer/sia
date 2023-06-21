@@ -8,6 +8,7 @@ from tp4.Hopfield.pattern_loader import *
 import matplotlib.pyplot as plt
 import numpy as np
 from time import time
+import concurrent.futures
 
 INPUT_SIZE = 35
 LATENT_SIZE = 2
@@ -139,12 +140,13 @@ def run(eta=1e-2, epochs=5000, salt_prob=0.1, pepper_prob=0.1):
     print(f"Epochs: {epochs}")
     return results
 
+
 def print_noice_example(noice_prob: float):
     dataset = list(load_pattern_map('characters.txt').values())
-    noisy_dataset = [salt_and_pepper_noise(pattern, salt_prob=noice_prob, pepper_prob=noice_prob) for pattern in dataset]
+    noisy_dataset = [salt_and_pepper_noise(pattern, salt_prob=noice_prob, pepper_prob=noice_prob) for pattern in
+                     dataset]
     for i in range(len(dataset)):
         graph_fonts(dataset[i], noisy_dataset[i])
-
 
 
 RUNS_MAGIC_NUMBER = 30
@@ -152,18 +154,29 @@ RUNS_MAGIC_NUMBER = 30
 if __name__ == '__main__':
     results = []
 
-    noise_prob = 0.1
+    noise_probs = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7]  # Valores variables de noise_prob
     eta = 1e-2
     # uncomment to see the noise example
     # print_noice_example(noise_prob)
 
-    for i in range(RUNS_MAGIC_NUMBER):
-        print(f"Run {i}")
-        results.append(run(epochs=5000, eta=eta, salt_prob=noise_prob, pepper_prob=noise_prob))
-        print()
+    for noise_prob in noise_probs:
+        print(f"Noise Probability: {noise_prob}")
+        run_results = []
+        for i in range(RUNS_MAGIC_NUMBER):
+            print(f"Run {i}")
+            run_results.append(run(epochs=3000, eta=eta, salt_prob=noise_prob, pepper_prob=noise_prob))
+            print()
+        results.append(run_results)
 
-    correct_characters_average = np.average([result.amount_correct_characters for result in results])
-    correct_characters_std = np.std([result.amount_correct_characters for result in results])
+    correct_characters_averages = [np.average([result.amount_correct_characters for result in run_results]) for
+                                   run_results in results]
+    correct_characters_stds = [np.std([result.amount_correct_characters for result in run_results]) for run_results in
+                               results]
 
-    print(f"Average amount of correct characters: {correct_characters_average}")
-    print(f"Standard deviation of amount of correct characters: {correct_characters_std}")
+    # Plotting the results
+    plt.errorbar(noise_probs, correct_characters_averages, yerr=correct_characters_stds, fmt='-o')
+    plt.xlabel('Noise Probability')
+    plt.ylabel('Average Amount of Correct Characters')
+    plt.title('Average Amount of Correct Characters with Standard Deviation')
+    plt.grid(True)
+    plt.show()
