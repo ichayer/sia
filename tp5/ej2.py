@@ -10,9 +10,6 @@ from tp4.Hopfield.pattern_loader import *
 from tp5.emojis import emoji_size, emoji_images, emoji_chars, emoji_names
 import matplotlib.pyplot as plt
 
-plt.rcParams['font.family'] = 'Noto Color Emoji'
-
-
 INPUT_ROWS = 20
 INPUT_COLS = 20
 INPUT_SIZE = INPUT_COLS * INPUT_ROWS
@@ -74,7 +71,7 @@ if __name__ == "__main__":
     my_callbacks = {}  # {"loss": loss_callback}
 
     vae.train(dataset_input=dataset_input_list, loss=MSE(), metrics=["train_loss", "test_loss"],
-              tensorboard=False, epochs=3000,
+              tensorboard=False, epochs=20,
               callbacks=my_callbacks)
 
     dots = []
@@ -85,6 +82,9 @@ if __name__ == "__main__":
         input_reshaped = np.reshape(dataset_input_list[i], (len(dataset_input_list[i]), 1))
         output_history = []
         output = vae.feedforward(input_reshaped, output_history)
+
+        print(f"{i}: {input_reshaped}")
+        print(f"{i}: {output}")
 
         decoder_outputs.append(output)
 
