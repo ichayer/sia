@@ -64,9 +64,6 @@ if __name__ == "__main__":
         output_history = []
         output = vae.feedforward(input_reshaped, output_history)
 
-        print(f"{i}: {input_reshaped}")
-        print(f"{i}: {output}")
-
         decoder_outputs.append(output)
 
         dot = (output_history[1][0][0], output_history[1][1][0])
