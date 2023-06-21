@@ -9,9 +9,8 @@ from tp5.vae import *
 from tp4.Hopfield.pattern_loader import *
 from tp5.emojis import emoji_size, emoji_images, emoji_chars, emoji_names
 import matplotlib.pyplot as plt
-import matplotlib
 
-matplotlib.rcParams['font.family'] = 'DejaVu Sans'
+plt.rcParams['font.family'] = 'DejaVu Sans'
 
 
 INPUT_ROWS = 20
