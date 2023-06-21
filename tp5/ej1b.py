@@ -139,15 +139,27 @@ def run(eta=1e-2, epochs=5000, salt_prob=0.1, pepper_prob=0.1):
     print(f"Epochs: {epochs}")
     return results
 
+def print_noice_example(noice_prob: float):
+    dataset = list(load_pattern_map('characters.txt').values())
+    noisy_dataset = [salt_and_pepper_noise(pattern, salt_prob=noice_prob, pepper_prob=noice_prob) for pattern in dataset]
+    for i in range(len(dataset)):
+        graph_fonts(dataset[i], noisy_dataset[i])
+
+
 
 RUNS_MAGIC_NUMBER = 30
 
 if __name__ == '__main__':
     results = []
 
+    noise_prob = 0.1
+    eta = 1e-2
+    # uncomment to see the noise example
+    # print_noice_example(noise_prob)
+
     for i in range(RUNS_MAGIC_NUMBER):
         print(f"Run {i}")
-        results.append(run(epochs=5000))
+        results.append(run(epochs=5000, eta=eta, salt_prob=noise_prob, pepper_prob=noise_prob))
         print()
 
     correct_characters_average = np.average([result.amount_correct_characters for result in results])
