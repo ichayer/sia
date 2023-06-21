@@ -1,5 +1,5 @@
-from tp5.optimizer import Adam
-from tp5.nn import MLP
+from tp5.optimizer import Adam, Optimizer
+from tp5.nn import MLP, NoiseFunctionType
 from tp5.layers import Dense
 from tp5.activations import ReLU, Sigmoid, Tanh
 from tp5.autoencoder import Autoencoder
@@ -7,6 +7,7 @@ from tp5.loss import MSE
 from tp4.Hopfield.pattern_loader import *
 import matplotlib.pyplot as plt
 import numpy as np
+from time import time
 
 INPUT_SIZE = 35
 LATENT_SIZE = 2
@@ -60,13 +61,7 @@ def salt_and_pepper_noise(input: np.ndarray, salt_prob=0.1, pepper_prob=0.1) -> 
     return noisy_image
 
 
-# The code below will run a denoising autoencoder on the character's dataset.
-if __name__ == "__main__":
-    dataset_input = load_pattern_map('characters.txt')
-
-    # set the learning rate and optimizer for training
-    optimizer = Adam(1e-2)
-
+def create_autoencoder(noise: NoiseFunctionType, optimizer: Optimizer = Adam(1e-2)) -> Autoencoder:
     encoder = MLP()
     # 35 -> 15 -> 2
     encoder.addLayer(Dense(inputDim=INPUT_SIZE, outputDim=HIDDEN_SIZE, activation=Sigmoid(), optimizer=optimizer))
@@ -78,16 +73,19 @@ if __name__ == "__main__":
     decoder.addLayer(Dense(inputDim=LATENT_SIZE, outputDim=HIDDEN_SIZE, activation=Sigmoid(), optimizer=optimizer))
     decoder.addLayer(Dense(inputDim=HIDDEN_SIZE, outputDim=INPUT_SIZE, activation=Tanh(), optimizer=optimizer))
 
-    autoencoder = Autoencoder(encoder, decoder, noise=salt_and_pepper_noise)
+    autoencoder = Autoencoder(encoder, decoder, noise=noise)
 
-    print(autoencoder)
+    return autoencoder
 
-    my_callbacks = {}  # {"loss": loss_callback}
 
-    autoencoder.train(dataset_input=list(dataset_input.values()), loss=MSE(), metrics=["train_loss", "test_loss"],
-                      tensorboard=False, epochs=10000,
-                      callbacks=my_callbacks)
+class Results:
+    def __init__(self, amount_correct_characters, decoder_outputs, dots):
+        self.amount_correct_characters = amount_correct_characters
+        self.decoder_outputs = decoder_outputs
+        self.dots = dots
 
+
+def calculate_results(autoencoder: Autoencoder, dataset_input: dict) -> Results:
     dataset_input_list = list(dataset_input.values())
 
     dots = []
@@ -112,40 +110,48 @@ if __name__ == "__main__":
         if amount_different_pixels <= 1:
             amount_correct_characters += 1
 
-        print(f"Character: {fonts_headers[i]}")
-        print(f"Error in pixels: {amount_different_pixels}")
-
         # First index: 1 because latent space is in index 1
         # Second index: 0 and 1 represent x and y respectively
         # Third index: 0 because is a list of list
         dot = (output_history[1][0][0], output_history[1][1][0])
         dots.append(dot)
 
-    # 1.a.1)
-    # Graph of the neural network
-    autoencoder.plotGraph()
+    return Results(amount_correct_characters, decoder_outputs, dots)
 
-    # 1.a.2)
-    print(f"Recognized characters: {amount_correct_characters}/{len(dataset_input_list)}")
-    # Top 10 because SciView has limit of 29 graphs
-    for j in range(10):
-        graph_fonts(list(dataset_input.values())[j], decoder_outputs[j])
 
-    # 1.a.4)
-    # Trying a letter similar to 'o', Change letter to have another generated image
-    letter = 'o'
-    index = np.where(fonts_headers == letter)[0][0]
+def run(eta=1e-2, epochs=5000, salt_prob=0.1, pepper_prob=0.1):
+    start_time = time()
+    dataset_input = load_pattern_map('characters.txt')
+    noise = lambda input: salt_and_pepper_noise(input, salt_prob=salt_prob, pepper_prob=pepper_prob)
 
-    new_character_coordinates = [dots[index][0] + 0.05, dots[index][1] + 0.05]  # offset of 0.05
-    new_character_coordinates_reshaped = np.reshape(new_character_coordinates, (2, 1))
-    output = autoencoder.sampling(new_character_coordinates_reshaped)
+    autoencoder = create_autoencoder(optimizer=Adam(eta), noise=noise)
 
-    for j in range(len(output)):
-        if output[j][0] >= 0:
-            output[j][0] = 1
-        else:
-            output[j][0] = -1
+    my_callbacks = {}  # {"loss": loss_callback}
 
-    plt.title(f"New Character, similar to '{letter}'")
-    plt.imshow(output.reshape(7, 5), cmap='gray')
-    plt.show()
+    autoencoder.train(dataset_input=list(dataset_input.values()), loss=MSE(), metrics=["train_loss", "test_loss"],
+                      tensorboard=False, epochs=epochs, callbacks=my_callbacks)
+
+    results = calculate_results(autoencoder, dataset_input)
+    end_time = time()
+    elapsed_time = end_time - start_time
+    print(f"Amount of correct characters: {results.amount_correct_characters}")
+    print(f"Elapsed time: {elapsed_time} seconds")
+    print(f"Epochs: {epochs}")
+    return results
+
+
+RUNS_MAGIC_NUMBER = 30
+
+if __name__ == '__main__':
+    results = []
+
+    for i in range(RUNS_MAGIC_NUMBER):
+        print(f"Run {i}")
+        results.append(run(epochs=5000))
+        print()
+
+    correct_characters_average = np.average([result.amount_correct_characters for result in results])
+    correct_characters_std = np.std([result.amount_correct_characters for result in results])
+
+    print(f"Average amount of correct characters: {correct_characters_average}")
+    print(f"Standard deviation of amount of correct characters: {correct_characters_std}")
