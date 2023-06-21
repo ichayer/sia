@@ -35,6 +35,11 @@ def graph_fonts(original, decoded):
     ax2.set_title('Decoded')
     ax1.imshow(np.array(original).reshape((INPUT_ROWS, INPUT_COLS)), cmap='gray')
     ax2.imshow(np.array(decoded).reshape((INPUT_ROWS, INPUT_COLS)), cmap='gray')
+    ax1.set_xticks([])
+    ax1.set_yticks([])
+    ax2.set_xticks([])
+    ax2.set_yticks([])
+
     fig.show()
 
 def graph_latent_space(dots):
@@ -123,4 +128,6 @@ if __name__ == "__main__":
     plt.figure(figsize=(10, 10))
     plt.title(f"From {emoji_chars[random_index1]} to {emoji_chars[random_index2]}")
     plt.imshow(images, cmap='gray')
+    plt.xticks([])
+    plt.yticks([])
     plt.show()
