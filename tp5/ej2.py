@@ -10,14 +10,15 @@ from tp4.Hopfield.pattern_loader import *
 from tp5.emojis import emoji_size, emoji_images, emoji_chars, emoji_names
 import matplotlib.pyplot as plt
 
-plt.rcParams['font.family'] = 'DejaVu Sans'
+plt.rcParams['font.family'] = 'Noto Color Emoji'
 
 
 INPUT_ROWS = 20
 INPUT_COLS = 20
 INPUT_SIZE = INPUT_COLS * INPUT_ROWS
 LATENT_SIZE = 2
-HIDDEN_SIZE = 50
+HIDDEN_SIZE = 126
+HIDDEN_SIZE2 = 258
 
 EMOJIS_CHOSEN = 20
 
@@ -57,12 +58,14 @@ if __name__ == "__main__":
     optimizer = Adam(1e-2)
 
     encoder = MLP()
-    encoder.addLayer(Dense(inputDim=INPUT_SIZE, outputDim=HIDDEN_SIZE, activation=Sigmoid(), optimizer=optimizer))
-    sampler = Sampler(HIDDEN_SIZE, LATENT_SIZE, optimizer=optimizer)
+    encoder.addLayer(Dense(inputDim=INPUT_SIZE, outputDim=HIDDEN_SIZE, activation=ReLU(), optimizer=optimizer))
+    encoder.addLayer(Dense(inputDim=HIDDEN_SIZE, outputDim=HIDDEN_SIZE2, activation=ReLU(), optimizer=optimizer))
+    sampler = Sampler(HIDDEN_SIZE2, LATENT_SIZE, optimizer=optimizer)
 
     decoder = MLP()
-    decoder.addLayer(Dense(inputDim=LATENT_SIZE, outputDim=HIDDEN_SIZE, activation=Sigmoid(), optimizer=optimizer))
-    decoder.addLayer(Dense(inputDim=HIDDEN_SIZE, outputDim=INPUT_SIZE, activation=Sigmoid(), optimizer=optimizer))
+    decoder.addLayer(Dense(inputDim=LATENT_SIZE, outputDim=HIDDEN_SIZE, activation=ReLU(), optimizer=optimizer))
+    decoder.addLayer(Dense(inputDim=HIDDEN_SIZE, outputDim=HIDDEN_SIZE2, activation=ReLU(), optimizer=optimizer))
+    decoder.addLayer(Dense(inputDim=HIDDEN_SIZE2, outputDim=INPUT_SIZE, activation=Sigmoid(), optimizer=optimizer))
 
     vae = VAE(encoder, sampler, decoder)
 
@@ -126,7 +129,8 @@ if __name__ == "__main__":
         images[:, i * INPUT_COLS:(i + 1) * INPUT_COLS] = output
 
     plt.figure(figsize=(10, 10))
-    plt.title(f"From {emoji_chars[random_index1]} to {emoji_chars[random_index2]}")
+    plt.title(f"From {emoji_names[random_index1]}({emoji_chars[random_index1]}) "
+              f"to {emoji_names[random_index2]}({emoji_chars[random_index2]})")
     plt.imshow(images, cmap='gray')
     plt.xticks([])
     plt.yticks([])
