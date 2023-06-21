@@ -1,4 +1,4 @@
-from tp5.activations import ReLU, Sigmoid, Tanh
+from tp5.activations import *
 from tp5.vae import *
 from tp4.Hopfield.pattern_loader import *
 from tp5.emojis import emoji_size, emoji_images, emoji_chars, emoji_names
@@ -7,9 +7,10 @@ import matplotlib.pyplot as plt
 INPUT_ROWS = 20
 INPUT_COLS = 20
 INPUT_SIZE = INPUT_COLS * INPUT_ROWS
-LATENT_SIZE = 2
-HIDDEN_SIZE = 126
-HIDDEN_SIZE2 = 258
+LATENT_SIZE = 20
+HIDDEN_SIZE = 100
+HIDDEN_SIZE2 = 200
+HIDDEN_SIZE3 = 300
 
 EMOJIS_CHOSEN = len(emoji_images)
 
@@ -35,15 +36,19 @@ if __name__ == "__main__":
     dataset_input_list = list(dataset_input)
 
     # Set the learning rate and optimizer for training
-    optimizer = Adam(1e-2)
+    optimizer = Adam(0.001)
 
     encoder = MLP()
-    encoder.addLayer(Dense(inputDim=INPUT_SIZE, outputDim=HIDDEN_SIZE, activation=ReLU(), optimizer=optimizer))
+    encoder.addLayer(Dense(inputDim=INPUT_SIZE, outputDim=HIDDEN_SIZE3, activation=ReLU(), optimizer=optimizer))
+    encoder.addLayer(Dense(inputDim=HIDDEN_SIZE3, outputDim=HIDDEN_SIZE2, activation=ReLU(), optimizer=optimizer))
+    encoder.addLayer(Dense(inputDim=HIDDEN_SIZE2, outputDim=HIDDEN_SIZE, activation=ReLU(), optimizer=optimizer))
     sampler = Sampler(HIDDEN_SIZE, LATENT_SIZE, optimizer=optimizer)
 
     decoder = MLP()
     decoder.addLayer(Dense(inputDim=LATENT_SIZE, outputDim=HIDDEN_SIZE, activation=ReLU(), optimizer=optimizer))
-    decoder.addLayer(Dense(inputDim=HIDDEN_SIZE, outputDim=INPUT_SIZE, activation=Sigmoid(), optimizer=optimizer))
+    decoder.addLayer(Dense(inputDim=HIDDEN_SIZE, outputDim=HIDDEN_SIZE2, activation=ReLU(), optimizer=optimizer))
+    decoder.addLayer(Dense(inputDim=HIDDEN_SIZE2, outputDim=HIDDEN_SIZE3, activation=ReLU(), optimizer=optimizer))
+    decoder.addLayer(Dense(inputDim=HIDDEN_SIZE3, outputDim=INPUT_SIZE, activation=Sigmoid(), optimizer=optimizer))
 
     vae = VAE(encoder, sampler, decoder)
 
@@ -61,6 +66,8 @@ if __name__ == "__main__":
         # Top 20 because SciView has limit of 29 graphs
         if i < 20:
             graph_fonts(list(dataset_input)[i], output)
+
+    vae.plotGraph()
 
     # ----------------------
     # Generating new samples
