@@ -17,6 +17,8 @@ INPUT_SIZE = INPUT_COLS * INPUT_ROWS
 LATENT_SIZE = 20
 HIDDEN_SIZE = 100
 
+EMOJIS_CHOSEN = 20
+
 NOISE = None
 
 fonts_headers = np.array(
@@ -43,7 +45,7 @@ def graph_latent_space(dots):
 
 
 if __name__ == "__main__":
-    dataset_input = emoji_images[0:20]
+    dataset_input = emoji_images[0:EMOJIS_CHOSEN]
 
     # set the learning rate and optimizer for training
     optimizer = Adam(1e-2)
@@ -54,7 +56,7 @@ if __name__ == "__main__":
 
     decoder = MLP()
     decoder.addLayer(Dense(inputDim=LATENT_SIZE, outputDim=HIDDEN_SIZE, activation=Sigmoid(), optimizer=optimizer))
-    decoder.addLayer(Dense(inputDim=HIDDEN_SIZE, outputDim=INPUT_SIZE, activation=Tanh(), optimizer=optimizer))
+    decoder.addLayer(Dense(inputDim=HIDDEN_SIZE, outputDim=INPUT_SIZE, activation=Sigmoid(), optimizer=optimizer))
 
     vae = VAE(encoder, sampler, decoder)
 
@@ -124,7 +126,7 @@ if __name__ == "__main__":
         output = output.reshape(INPUT_ROWS, INPUT_COLS)
         images[:, i * INPUT_COLS:(i + 1) * INPUT_COLS] = output
 
-    plt.figure(figsize=(emoji_size, emoji_size))
+    plt.figure(figsize=(emoji_size[0], emoji_size[1]))
     plt.title(f"From {emoji_chars[random_index1]} to {emoji_chars[random_index2]}")
     plt.imshow(images, cmap='gray')
     plt.show()
