@@ -9,13 +9,16 @@ from tp5.vae import *
 from tp4.Hopfield.pattern_loader import *
 from tp5.emojis import emoji_size, emoji_images, emoji_chars, emoji_names
 import matplotlib.pyplot as plt
+import matplotlib
+
+matplotlib.rcParams['font.family'] = 'DejaVu Sans'
 
 
 INPUT_ROWS = 20
 INPUT_COLS = 20
 INPUT_SIZE = INPUT_COLS * INPUT_ROWS
-LATENT_SIZE = 20
-HIDDEN_SIZE = 100
+LATENT_SIZE = 10
+HIDDEN_SIZE = 50
 
 EMOJIS_CHOSEN = 20
 
@@ -31,10 +34,8 @@ def graph_fonts(original, decoded):
     fig, (ax1, ax2) = plt.subplots(1, 2)
     ax1.set_title('Original')
     ax2.set_title('Decoded')
-
     ax1.imshow(np.array(original).reshape((INPUT_ROWS, INPUT_COLS)), cmap='gray')
     ax2.imshow(np.array(decoded).reshape((INPUT_ROWS, INPUT_COLS)), cmap='gray')
-
     fig.show()
 
 def graph_latent_space(dots):
@@ -46,6 +47,7 @@ def graph_latent_space(dots):
 
 if __name__ == "__main__":
     dataset_input = emoji_images[0:EMOJIS_CHOSEN]
+    dataset_input_list = list(dataset_input)
 
     # set the learning rate and optimizer for training
     optimizer = Adam(1e-2)
@@ -64,11 +66,9 @@ if __name__ == "__main__":
 
     my_callbacks = {}  # {"loss": loss_callback}
 
-    vae.train(dataset_input=list(dataset_input), loss=MSE(), metrics=["train_loss", "test_loss"],
-              tensorboard=False, epochs=1000,
+    vae.train(dataset_input=dataset_input_list, loss=MSE(), metrics=["train_loss", "test_loss"],
+              tensorboard=False, epochs=3000,
               callbacks=my_callbacks)
-
-    dataset_input_list = list(dataset_input)
 
     dots = []
     decoder_outputs = []
