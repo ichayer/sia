@@ -107,12 +107,13 @@ emoji_size = (20, 20)
 emoji_images = []
 
 def load_emoji_images():
-    img = np.asarray(Image.open('tp5/emojis.png').convert("L"))
+    img = np.asarray(Image.open('emojis.png').convert("L"))
     emojis_per_row = img.shape[1] / emoji_size[1]
     for i in range(len(emoji_names)):
         y = int((i // emojis_per_row) * emoji_size[0])
         x = int((i % emojis_per_row) * emoji_size[1])
-        print(f"X={x} Y={y}")
-        emoji_images.append(img[y:(y+emoji_size[1]), x:(x+emoji_size[0])])
+        emoji_matrix = img[y:(y + emoji_size[1]), x:(x + emoji_size[0])] / 255
+        emoji_vector = emoji_matrix.flatten()
+        emoji_images.append(emoji_vector)
 
 load_emoji_images()
