@@ -34,7 +34,7 @@ if __name__ == "__main__":
     dataset_input = emoji_images[0:EMOJIS_CHOSEN]
     dataset_input_list = list(dataset_input)
 
-    # set the learning rate and optimizer for training
+    # Set the learning rate and optimizer for training
     optimizer = Adam(1e-2)
 
     encoder = MLP()
@@ -49,30 +49,18 @@ if __name__ == "__main__":
 
     print(vae)
 
-    my_callbacks = {}  # {"loss": loss_callback}
-
     vae.train(dataset_input=dataset_input_list, loss=MSE(), metrics=["train_loss", "test_loss"],
               tensorboard=False, epochs=100,
-              callbacks=my_callbacks)
-
-    dots = []
-    decoder_outputs = []
-    amount_correct_characters = 0
+              callbacks={})
 
     for i in range(len(dataset_input_list)):
         input_reshaped = np.reshape(dataset_input_list[i], (len(dataset_input_list[i]), 1))
-        output_history = []
-        output = vae.feedforward(input_reshaped, output_history)
+        output = vae.feedforward(input_reshaped)
 
-        decoder_outputs.append(output)
-
-        dot = (output_history[1][0][0], output_history[1][1][0])
-        dots.append(dot)
-
-    # Plot of dataset images
-    # Top 20 because SciView has limit of 29 graphs
-    for j in range(20):
-        graph_fonts(list(dataset_input)[j], decoder_outputs[j])
+        # Plot of dataset images
+        # Top 20 because SciView has limit of 29 graphs
+        if i < 20:
+            graph_fonts(list(dataset_input)[i], output)
 
     # ----------------------
     # Generating new samples
