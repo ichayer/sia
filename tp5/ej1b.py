@@ -8,7 +8,8 @@ from tp4.Hopfield.pattern_loader import *
 import matplotlib.pyplot as plt
 import numpy as np
 from time import time
-import concurrent.futures
+import imageio
+from PIL import Image
 
 INPUT_SIZE = 35
 LATENT_SIZE = 2
@@ -195,7 +196,8 @@ def run_different_etas():
 
     # Plotting the results
     x_coords = np.arange(len(etas))
-    plt.bar(x_coords, correct_characters_averages, yerr=correct_characters_stds, align='center', alpha=0.5, ecolor='black', capsize=10)
+    plt.bar(x_coords, correct_characters_averages, yerr=correct_characters_stds, align='center', alpha=0.5,
+            ecolor='black', capsize=10)
     plt.xlabel('Eta')
     plt.xticks(x_coords, etas)
     plt.ylabel('Average Amount of Correct Characters')
@@ -230,7 +232,33 @@ def run_noise_character_detection():
         graph_fonts(noisy_char, char, result.recognized_characters[i])
 
 
+def run_noise_over_character_n_times(n: int, char: str):
+    dataset = load_pattern_map('characters.txt')
+    noise_prob = 0.1
+
+    c_char = dataset[char]
+
+    # List to store each frame for gif
+    c_frames = []
+
+    for i in range(n):
+        noisy_c_char = salt_and_pepper_noise(c_char, salt_prob=noise_prob, pepper_prob=noise_prob)
+
+        # Convert matrices to images and append to frames list
+        # Normalize values from -1-1 to 0-255
+        c_frame = Image.fromarray(((noisy_c_char.reshape(7, 5) + 1) * 0.5 * 255).astype(np.uint8))
+
+        # Resize images, e.g., to 140x100 while keeping aspect ratio
+        c_frame = c_frame.resize((560, 400), Image.NEAREST)
+
+        c_frames.append(c_frame)
+
+    # Save frames as gif
+    imageio.mimsave('noisy_c_char.gif', c_frames, duration=0.001, loop=0)
+
+
 if __name__ == '__main__':
     # run_different_noise_probabilities()
     # run_noise_character_detection()
-    run_different_etas()
+    # run_different_etas()
+    run_noise_over_character_n_times(999, 'f')
