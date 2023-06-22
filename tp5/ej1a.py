@@ -1,7 +1,7 @@
 from tp5.optimizer import Adam
 from tp5.nn import MLP
 from tp5.layers import Dense
-from tp5.activations import ReLU, Sigmoid, Tanh
+from tp5.activations import ReLU, Sigmoid, Tanh, Identity
 from tp5.autoencoder import Autoencoder
 from tp5.loss import MSE
 from tp4.Hopfield.pattern_loader import *
@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 INPUT_SIZE = 35
 LATENT_SIZE = 2
 HIDDEN_SIZE = 15
+HIDDEN_SIZE2 = 20
 
 # Using ReLU here causes overflow in next hidden layer Sigmoid function
 LATENT_FUNCTION = Sigmoid()
@@ -46,12 +47,13 @@ if __name__ == "__main__":
     dataset_input = load_pattern_map('characters.txt')
 
     # set the learning rate and optimizer for training
-    optimizer = Adam(1e-2)
+    optimizer = Adam(0.01)
+
+    amount_correct_characters = 0
 
     encoder = MLP()
     encoder.addLayer(Dense(inputDim=INPUT_SIZE, outputDim=HIDDEN_SIZE, activation=Sigmoid(), optimizer=optimizer))
-    encoder.addLayer(
-        Dense(inputDim=HIDDEN_SIZE, outputDim=LATENT_SIZE, activation=LATENT_FUNCTION, optimizer=optimizer))
+    encoder.addLayer(Dense(inputDim=HIDDEN_SIZE, outputDim=LATENT_SIZE, activation=Identity(), optimizer=optimizer))
 
     decoder = MLP()
     decoder.addLayer(Dense(inputDim=LATENT_SIZE, outputDim=HIDDEN_SIZE, activation=Sigmoid(), optimizer=optimizer))
@@ -64,14 +66,13 @@ if __name__ == "__main__":
     my_callbacks = {}  # {"loss": loss_callback}
 
     autoencoder.train(dataset_input=list(dataset_input.values()), loss=MSE(), metrics=["train_loss", "test_loss"],
-                      tensorboard=False, epochs=5000,
+                      tensorboard=False, epochs=10000,
                       callbacks=my_callbacks)
 
     dataset_input_list = list(dataset_input.values())
 
     dots = []
     decoder_outputs = []
-    amount_correct_characters = 0
 
     for i in range(len(dataset_input_list)):
         input_reshaped = np.reshape(dataset_input_list[i], (len(dataset_input_list[i]), 1))
@@ -100,36 +101,40 @@ if __name__ == "__main__":
         dot = (output_history[1][0][0], output_history[1][1][0])
         dots.append(dot)
 
+    print(f"Recognized characters: {amount_correct_characters}/{len(dataset_input_list)}")
+
     # 1.a.1)
     # Graph of the neural network
-    autoencoder.plotGraph()
+    # autoencoder.plotGraph()
 
     # 1.a.2)
-    print(f"Recognized characters: {amount_correct_characters}/{len(dataset_input_list)}")
+
     # Top 10 because SciView has limit of 29 graphs
-    for j in range(10):
-        graph_fonts(list(dataset_input.values())[j], decoder_outputs[j])
+    # for j in range(10):
+        # graph_fonts(list(dataset_input.values())[j], decoder_outputs[j])
 
     # 1.a.3)
     graph_latent_space(dots)
 
     # 1.a.4)
     # Trying a letter similar to 'o', Change letter to have another generated image
-    letter = 'o'
-    index = np.where(fonts_headers == letter)[0][0]
+    letters = ['o', 'x', '~', "{"]
+    for letter in letters:
+        index = np.where(fonts_headers == letter)[0][0]
 
-    new_character_coordinates = [dots[index][0] + 0.05, dots[index][1] + 0.05]  # offset of 0.05
-    new_character_coordinates_reshaped = np.reshape(new_character_coordinates, (2, 1))
-    output = autoencoder.sampling(new_character_coordinates_reshaped)
+        new_character_coordinates = [dots[index][0] + 0.2, dots[index][1] + 0.2]  # offset of 0.05
+        new_character_coordinates_reshaped = np.reshape(new_character_coordinates, (2, 1))
+        output = autoencoder.sampling(new_character_coordinates_reshaped)
 
-    for j in range(len(output)):
-        if output[j][0] >= 0:
-            output[j][0] = 1
-        else:
-            output[j][0] = -1
+        for j in range(len(output)):
+            if output[j][0] >= 0:
+                output[j][0] = 1
+            else:
+                output[j][0] = -1
 
-    plt.title(f"New Character, similar to '{letter}'")
-    plt.imshow(output.reshape(7, 5), cmap='gray')
-    plt.xticks([])
-    plt.yticks([])
-    plt.show()
+        plt.title(f"New character, near to '{letter}'")
+        plt.imshow(output.reshape(7, 5), cmap='gray')
+        plt.xticks([])
+        plt.yticks([])
+        plt.show()
+
